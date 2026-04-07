@@ -95,14 +95,6 @@ body {
 }
 
 /* NAV */
-.cat-nav {
-  position: sticky; top: 0; z-index: 100;
-  background: rgba(28,28,28,0.97);
-  backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--border);
-  overflow-x: auto; scrollbar-width: none;
-}
-.cat-nav::-webkit-scrollbar { display: none; }
 .cat-nav-inner {
   display: flex; gap: 2px;
   padding: 8px 12px;
@@ -371,6 +363,67 @@ body {
   font-family: 'Cormorant Garamond', serif;
   font-style: italic; font-size: 11px; color: var(--cream-20);
 }
+
+/* MAIN TABS */
+.tab-nav {
+  position: sticky; top: 0; z-index: 110;
+  background: rgba(20,20,20,0.98);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--gold-border);
+}
+.tab-nav-inner {
+  display: flex;
+  max-width: 660px; margin: 0 auto;
+  padding: 0 16px;
+}
+.tab-btn {
+  flex: 1;
+  padding: 13px 8px;
+  border: none; border-bottom: 2px solid transparent;
+  background: transparent;
+  color: var(--cream-35);
+  font-family: 'Jost', sans-serif;
+  font-size: 13px; font-weight: 400;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  transition: all 0.18s;
+  white-space: nowrap;
+  text-align: center;
+}
+.tab-btn:hover { color: var(--cream-60); }
+.tab-btn.active {
+  color: var(--gold);
+  font-weight: 600;
+  border-bottom-color: var(--gold);
+}
+
+/* SUB-NAV (Food tab sections) */
+.cat-nav {
+  position: sticky; top: 47px; z-index: 100;
+  background: rgba(28,28,28,0.97);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  overflow-x: auto; scrollbar-width: none;
+}
+.cat-nav::-webkit-scrollbar { display: none; }
+.cat-nav.hidden { display: none; }
+
+/* TAB PANES */
+.tab-pane { display: none; }
+.tab-pane.active { display: block; }
+
+/* CUSTOMER NAME INPUT */
+.name-input {
+  width: 100%; background: var(--charcoal-mid);
+  border: 1px solid var(--border); border-radius: 7px;
+  padding: 10px 13px; color: var(--cream);
+  font-family: 'Jost', sans-serif; font-size: 13px;
+  font-weight: 300; outline: none;
+  height: 42px; margin-bottom: 8px;
+  transition: border-color 0.2s;
+}
+.name-input::placeholder { color: var(--cream-20); }
+.name-input:focus { border-color: var(--gold-border); }
 </style>
 </head>
 <body>
@@ -382,6 +435,14 @@ body {
   <p class="hero-sub">A curated dining experience</p>
 </header>
 
+<nav class="tab-nav" id="tabNav">
+  <div class="tab-nav-inner">
+    <button class="tab-btn active" data-tab="food" data-pane="tabFood">🍽️ Food</button>
+    <button class="tab-btn" data-tab="drinks" data-pane="tabDrinks">🥤 Drinks</button>
+    <button class="tab-btn" data-tab="confectionaries" data-pane="tabConfectionaries">🥐 Confectionaries</button>
+  </div>
+</nav>
+
 <nav class="cat-nav" id="catNav">
   <div class="cat-nav-inner">
     <button class="cat-btn active" data-target="specials">✦ Specials</button>
@@ -391,11 +452,13 @@ body {
     <button class="cat-btn" data-target="swallow">🍲 Swallow</button>
     <button class="cat-btn" data-target="soups">🥣 Soups</button>
     <button class="cat-btn" data-target="sides">🥗 Sides</button>
-    <button class="cat-btn" data-target="pastries">🥐 Pastries</button>
   </div>
 </nav>
 
 <main class="content">
+
+<!-- Food Tab Pane -->
+<div class="tab-pane active" id="tabFood">
 
   <section class="menu-section specials-section" id="specials">
     <div class="section-header">
@@ -475,6 +538,31 @@ body {
     <div class="menu-item"><div class="item-info"><div class="item-name">Beans</div></div><div class="item-price"><span class="cur">₦</span>500</div><button class="add-btn" data-name="Beans" data-price="500" onclick="addItem(this)">+</button></div>
   </section>
 
+</div><!-- end #tabFood -->
+
+<!-- Drinks Tab Pane -->
+<div class="tab-pane" id="tabDrinks">
+  <section class="menu-section visible" id="drinks">
+    <div class="section-header">
+      <div class="section-icon">🥤</div>
+      <h2 class="section-title">Drinks</h2>
+      <div class="section-rule"></div>
+    </div>
+    <div class="menu-item"><div class="item-info"><div class="item-name">Soft Drinks<span class="item-sub">Coke, Fanta, Sprite, 5Alive</span></div></div><div class="item-price"><span class="cur">₦</span>400</div><button class="add-btn" data-name="Soft Drink" data-price="400" onclick="addItem(this)">+</button></div>
+    <div class="menu-item"><div class="item-info"><div class="item-name">Malt — Maltina / Dubic</div></div><div class="item-price"><span class="cur">₦</span>500</div><button class="add-btn" data-name="Malt (Maltina/Dubic)" data-price="500" onclick="addItem(this)">+</button></div>
+    <div class="menu-item"><div class="item-info"><div class="item-name">Juice — Chivita / Hollandia</div></div><div class="item-price"><span class="cur">₦</span>500</div><button class="add-btn" data-name="Juice (Chivita/Hollandia)" data-price="500" onclick="addItem(this)">+</button></div>
+    <div class="menu-item"><div class="item-info"><div class="item-name">Water — Table Water</div></div><div class="item-price"><span class="cur">₦</span>200</div><button class="add-btn" data-name="Table Water" data-price="200" onclick="addItem(this)">+</button></div>
+    <div class="menu-item"><div class="item-info"><div class="item-name">Chapman<span class="item-sub">House favourite</span></div></div><div class="item-price"><span class="cur">₦</span>1,500</div><button class="add-btn" data-name="Chapman" data-price="1500" onclick="addItem(this)">+</button></div>
+    <div class="menu-item"><div class="item-info"><div class="item-name">Zobo Drink</div></div><div class="item-price"><span class="cur">₦</span>600</div><button class="add-btn" data-name="Zobo Drink" data-price="600" onclick="addItem(this)">+</button></div>
+    <div class="menu-item"><div class="item-info"><div class="item-name">Kunu / Tigernut</div></div><div class="item-price"><span class="cur">₦</span>600</div><button class="add-btn" data-name="Kunu/Tigernut" data-price="600" onclick="addItem(this)">+</button></div>
+    <div class="menu-item"><div class="item-info"><div class="item-name">Energy Drink — Power Horse / Bullet</div></div><div class="item-price"><span class="cur">₦</span>800</div><button class="add-btn" data-name="Energy Drink" data-price="800" onclick="addItem(this)">+</button></div>
+    <div class="menu-item"><div class="item-info"><div class="item-name">Beer — Star / Heineken / Gulder</div></div><div class="item-price"><span class="cur">₦</span>800</div><button class="add-btn" data-name="Beer (Star/Heineken/Gulder)" data-price="800" onclick="addItem(this)">+</button></div>
+    <div class="menu-item"><div class="item-info"><div class="item-name">Stout — Guinness / Odeku</div></div><div class="item-price"><span class="cur">₦</span>900</div><button class="add-btn" data-name="Stout (Guinness/Odeku)" data-price="900" onclick="addItem(this)">+</button></div>
+  </section>
+</div><!-- end #tabDrinks -->
+
+<!-- Confectionaries Tab Pane -->
+<div class="tab-pane" id="tabConfectionaries">
   <section class="menu-section" id="pastries">
     <div class="section-header"><div class="section-icon">🥐</div><h2 class="section-title">Pastries</h2><div class="section-rule"></div></div>
     <div class="menu-item"><div class="item-info"><div class="item-name">King's Roll</div></div><div class="item-price"><span class="cur">₦</span>1,000</div><button class="add-btn" data-name="King's Roll" data-price="1000" onclick="addItem(this)">+</button></div>
@@ -484,6 +572,7 @@ body {
     <div class="menu-item"><div class="item-info"><div class="item-name">Meat Pie — Small</div></div><div class="item-price"><span class="cur">₦</span>400</div><button class="add-btn" data-name="Meat Pie (Small)" data-price="400" onclick="addItem(this)">+</button></div>
     <div class="menu-item"><div class="item-info"><div class="item-name">Beef Roll</div></div><div class="item-price"><span class="cur">₦</span>400</div><button class="add-btn" data-name="Beef Roll" data-price="400" onclick="addItem(this)">+</button></div>
   </section>
+</div><!-- end #tabConfectionaries -->
 
 </main>
 
@@ -516,6 +605,7 @@ body {
       <span class="cp-total-amt" id="cpTotal">₦0</span>
     </div>
     <div class="cp-source">Ordering from: <span id="sourceLabel">—</span></div>
+    <input type="text" class="name-input" id="customerName" placeholder="Your name (optional)" autocomplete="name">
     <textarea class="note-input" id="noteInput" placeholder="Any special requests? (optional)"></textarea>
     <button class="wa-btn" onclick="sendToWhatsApp()">
       <svg class="wa-svg" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
@@ -527,17 +617,31 @@ body {
 <script>
   const WA = '2347060988973';
   let cart = [];
+
+  /* Table / source resolution */
   const params = new URLSearchParams(window.location.search);
-  const src = params.get('src') || 'direct';
+  const tableParam = params.get('table');
+  if (tableParam && /^[1-8]$/.test(tableParam)) {
+    localStorage.setItem('kd_table', tableParam);
+  }
+  const tableNum = localStorage.getItem('kd_table');
+  const src = tableNum ? ('table-' + tableNum) : (params.get('src') || 'direct');
 
   function fmtSrc(s) {
     if (s.startsWith('table-')) return 'Table ' + s.replace('table-', '');
     const map = { packaging: 'Takeaway Packaging', instagram: 'Instagram', flyer: 'Flyer / Ad', direct: 'Walk-in' };
-    return map[s] || s.replace(/-/g, ' ').replace(/\w/g, c => c.toUpperCase());
+    return map[s] || s.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
   }
 
   document.getElementById('sourceLabel').textContent = fmtSrc(src);
 
+  /* Customer name persistence */
+  const nameInput = document.getElementById('customerName');
+  const savedName = localStorage.getItem('kd_customer_name');
+  if (savedName) nameInput.value = savedName;
+  nameInput.addEventListener('input', () => localStorage.setItem('kd_customer_name', nameInput.value.trim()));
+
+  /* Cart logic */
   function addItem(btn) {
     const name = btn.dataset.name, price = parseInt(btn.dataset.price);
     const ex = cart.find(i => i.name === name);
@@ -555,13 +659,13 @@ body {
     const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
     const count = cart.reduce((s, i) => s + i.qty, 0);
     document.getElementById('cartCount').textContent = count;
-    document.getElementById('cartTotalBar').textContent = '₦' + total.toLocaleString();
-    document.getElementById('cpTotal').textContent = '₦' + total.toLocaleString();
-    document.getElementById('cartPreview').textContent = cart.map(i => (i.qty > 1 ? i.qty + '× ' : '') + i.name).join(', ') || 'Your order';
+    document.getElementById('cartTotalBar').textContent = '\u20a6' + total.toLocaleString();
+    document.getElementById('cpTotal').textContent = '\u20a6' + total.toLocaleString();
+    document.getElementById('cartPreview').textContent = cart.map(i => (i.qty > 1 ? i.qty + '\u00d7 ' : '') + i.name).join(', ') || 'Your order';
     document.getElementById('cartBar').classList.toggle('visible', count > 0);
     const list = document.getElementById('cpItems');
-    if (!cart.length) { list.innerHTML = '<p class="empty-msg">No items yet — add something from the menu</p>'; return; }
-    list.innerHTML = cart.map((item, i) => `<div class="cp-item"><div class="cp-item-name">${item.name}</div><div class="qty-ctrl"><button class="qty-btn" onclick="changeQty(${i},-1)">&#x2212;</button><span class="qty-num">${item.qty}</span><button class="qty-btn" onclick="changeQty(${i},1)">+</button></div><div class="cp-item-price">₦${(item.price*item.qty).toLocaleString()}</div></div>`).join('');
+    if (!cart.length) { list.innerHTML = '<p class="empty-msg">No items yet \u2014 add something from the menu</p>'; return; }
+    list.innerHTML = cart.map((item, i) => `<div class="cp-item"><div class="cp-item-name">${item.name}</div><div class="qty-ctrl"><button class="qty-btn" onclick="changeQty(${i},-1)">&#x2212;</button><span class="qty-num">${item.qty}</span><button class="qty-btn" onclick="changeQty(${i},1)">+</button></div><div class="cp-item-price">\u20a6${(item.price*item.qty).toLocaleString()}</div></div>`).join('');
   }
 
   function openCart() { document.getElementById('cartPanel').classList.add('open'); }
@@ -571,34 +675,62 @@ body {
     if (!cart.length) return;
     const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
     const note = document.getElementById('noteInput').value.trim();
-    let msg = `*New Order — King's Delight Eatery*
-*From:* ${fmtSrc(src)}
-
-`;
-    cart.forEach(i => msg += `• ${i.qty}× ${i.name} — ₦${(i.price*i.qty).toLocaleString()}
-`);
-    msg += `
-*Total: ₦${total.toLocaleString()}*`;
-    if (note) msg += `
-
-*Note:* ${note}`;
+    const customerName = document.getElementById('customerName').value.trim();
+    const tableNo = localStorage.getItem('kd_table');
+    let msg = "*New Order \u2014 King's Delight Eatery*\n";
+    if (tableNo) msg += "*🪑 Table: " + tableNo + "*\n";
+    if (customerName) msg += "*\ud83d\udc64 Customer: " + customerName + "*\n";
+    msg += "*From:* " + fmtSrc(src) + "\n\n";
+    cart.forEach(i => msg += "\u2022 " + i.qty + "\u00d7 " + i.name + " \u2014 \u20a6" + (i.price*i.qty).toLocaleString() + "\n");
+    msg += "\n*Total: \u20a6" + total.toLocaleString() + "*";
+    if (note) msg += "\n\n*Note:* " + note;
     window.open('https://wa.me/' + WA + '?text=' + encodeURIComponent(msg), '_blank');
   }
 
-  const sections = document.querySelectorAll('.menu-section');
-  const btns = document.querySelectorAll('.cat-btn');
-  btns.forEach(b => b.addEventListener('click', () => {
+  /* Tab switching */
+  const tabBtns = document.querySelectorAll('.tab-btn');
+  const catNav = document.getElementById('catNav');
+
+  tabBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      tabBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+      document.getElementById(btn.dataset.pane).classList.add('active');
+      catNav.classList.toggle('hidden', btn.dataset.tab !== 'food');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  });
+
+  /* Food sub-nav scroll */
+  const foodSections = document.querySelectorAll('#tabFood .menu-section');
+  const subNavBtns = document.querySelectorAll('.cat-btn');
+
+  subNavBtns.forEach(b => b.addEventListener('click', () => {
     const el = document.getElementById(b.dataset.target);
-    if (el) window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - document.getElementById('catNav').offsetHeight - 14, behavior: 'smooth' });
-  }));
-  new IntersectionObserver(entries => entries.forEach(e => {
-    if (e.isIntersecting) {
-      btns.forEach(b => b.classList.remove('active'));
-      const a = document.querySelector(`[data-target="${e.target.id}"]`);
-      if (a) { a.classList.add('active'); a.scrollIntoView({ behavior:'smooth', block:'nearest', inline:'center' }); }
+    if (el) {
+      const catNavH = catNav.classList.contains('hidden') ? 0 : catNav.offsetHeight;
+      const navH = document.getElementById('tabNav').offsetHeight + catNavH;
+      window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - navH - 14, behavior: 'smooth' });
     }
-  }), { rootMargin: '-15% 0px -75% 0px' }).observe && sections.forEach(s => new IntersectionObserver(entries => entries.forEach(e => { if (e.isIntersecting) { btns.forEach(b => b.classList.remove('active')); const a = document.querySelector(`[data-target="${e.target.id}"]`); if (a) a.classList.add('active'); } }), { rootMargin: '-15% 0px -75% 0px' }).observe(s));
-  new IntersectionObserver(entries => entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); } }), { threshold: 0.06 }).observe && sections.forEach(s => new IntersectionObserver(entries => entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); } }), { threshold: 0.06 }).observe(s));
+  }));
+
+  /* Single IntersectionObserver for food section active highlight */
+  const activeObserver = new IntersectionObserver(entries => entries.forEach(e => {
+    if (e.isIntersecting) {
+      subNavBtns.forEach(b => b.classList.remove('active'));
+      const a = document.querySelector('.cat-btn[data-target="' + e.target.id + '"]');
+      if (a) { a.classList.add('active'); a.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' }); }
+    }
+  }), { rootMargin: '-15% 0px -75% 0px' });
+  foodSections.forEach(s => activeObserver.observe(s));
+
+  /* Single fade-in observer */
+  const allSections = document.querySelectorAll('.menu-section');
+  const fadeObserver = new IntersectionObserver(entries => entries.forEach(e => {
+    if (e.isIntersecting) e.target.classList.add('visible');
+  }), { threshold: 0.06 });
+  allSections.forEach(s => fadeObserver.observe(s));
 </script>
 </body>
 </html>
