@@ -748,5 +748,16 @@ body {
     }
   });
 </script>
+<script>
+  /* Set favicon to logo */
+  (function() {
+    var logoImg = document.querySelector('.login-crown img');
+    var favicon = document.querySelector("link[rel='icon']");
+    if (logoImg && favicon) {
+      favicon.href = logoImg.src;
+      favicon.type = 'image/png';
+    }
+  })();
+</script>
 </body>
 </html>
