@@ -1354,7 +1354,12 @@ body {
     if (e.isIntersecting) {
       subNavBtns.forEach(b => b.classList.remove('active'));
       const a = document.querySelector('.cat-btn[data-target="' + e.target.id + '"]');
-      if (a) { a.classList.add('active'); a.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' }); }
+      if (a) {
+        a.classList.add('active');
+        const btnRect = a.getBoundingClientRect();
+        const navRect = catNav.getBoundingClientRect();
+        catNav.scrollTo({ left: catNav.scrollLeft + btnRect.left - navRect.left - (navRect.width - btnRect.width) / 2, behavior: 'smooth' });
+      }
     }
   }), { rootMargin: '-15% 0px -75% 0px' });
   foodSections.forEach(s => activeObserver.observe(s));
