@@ -782,27 +782,15 @@ body {
       <span class="cp-total-label">Total</span>
       <span class="cp-total-amt" id="cpTotal">₦0</span>
     </div>
-    <button class="wa-btn" onclick="openCheckout()" style="background:var(--gold);color:#111;border:none">
-      Checkout Now &nbsp;→
-    </button>
-  </div>
-</div>
-
-<!-- CHECKOUT PANEL -->
-<div class="checkout-panel" id="checkoutPanel">
-  <div class="cp-head">
-    <button class="cp-close" onclick="closeCheckout()" style="font-size:15px;letter-spacing:0">← Back</button>
-    <span class="cp-title">Checkout</span>
-    <span style="width:50px"></span>
-  </div>
-  <div class="checkout-body" id="checkoutBody"></div>
-  <div class="checkout-footer">
+    <input type="text" class="name-input" id="coName" placeholder="Your name (optional)" autocomplete="name">
+    <textarea class="note-input" id="coNote" placeholder="Any special requests? (optional)"></textarea>
     <button class="wa-btn" onclick="sendToWhatsApp()">
       <svg class="wa-svg" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
       Send Order via WhatsApp
     </button>
   </div>
 </div>
+
 
 <script>
   const WA = '2347060988973';
@@ -1108,19 +1096,6 @@ body {
     document.getElementById('cartTotalBar').textContent = t;
   }
 
-  /* Called from checkout panel order-type toggle */
-  function setOrderTypeCheckout(type, btn) {
-    orderType = type;
-    btn.closest('.order-type-toggle').querySelectorAll('.ot-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    document.getElementById('otEatIn').classList.toggle('active', type === 'eat-in');
-    document.getElementById('otTakeOut').classList.toggle('active', type === 'take-out');
-    renderCheckout();
-    const t = '\u20a6' + grandTotal().toLocaleString();
-    document.getElementById('cpTotal').textContent = t;
-    document.getElementById('cartTotalBar').textContent = t;
-  }
-
   /* Render functions */
   function renderAll() {
     const count = totalItemCount();
@@ -1185,63 +1160,6 @@ body {
 
   function openCart() { document.getElementById('cartPanel').classList.add('open'); }
   function closeCart() { document.getElementById('cartPanel').classList.remove('open'); }
-
-  /* Checkout panel */
-  function openCheckout() {
-    if (!hasItems()) return;
-    renderCheckout();
-    document.getElementById('checkoutPanel').classList.add('open');
-  }
-  function closeCheckout() { document.getElementById('checkoutPanel').classList.remove('open'); }
-
-  function renderCheckout() {
-    const body = document.getElementById('checkoutBody');
-    const tableNo = localStorage.getItem('kd_table');
-    const savedName = escHtml(localStorage.getItem('kd_customer_name') || '');
-
-    let html = '<p class="checkout-section-title">Order Type</p>';
-    html += '<div class="order-type-toggle" style="margin-bottom:16px">';
-    html += '<button class="ot-btn' + (orderType === 'eat-in' ? ' active' : '') + '" onclick="setOrderTypeCheckout(\'eat-in\',this)">\ud83c\udf7d\ufe0f Eat In</button>';
-    html += '<button class="ot-btn' + (orderType === 'take-out' ? ' active' : '') + '" onclick="setOrderTypeCheckout(\'take-out\',this)">\ud83e\udd61 Take Out</button>';
-    html += '</div>';
-
-    html += '<p class="checkout-section-title">Order Summary</p>';
-    const fromLabel = tableNo ? 'Table ' + tableNo : fmtSrc(src);
-    html += '<div style="font-size:12px;color:var(--cream-35);margin-bottom:8px">Ordering from: <span style="color:var(--gold)">' + fromLabel + '</span></div>';
-
-    plates.forEach(function(plate, pIdx) {
-      if (!plate.items.length) return;
-      html += '<div class="checkout-plate-label">Plate ' + (pIdx + 1) + '</div>';
-      plate.items.forEach(function(item) {
-        html += '<div class="checkout-summary-item"><span>' + item.name + (item.qty > 1 ? ' \u00d7' + item.qty : '') + '</span>';
-        html += '<span class="item-amt">' + (item.free ? 'Free' : '\u20a6' + (item.price * item.qty).toLocaleString()) + '</span></div>';
-      });
-    });
-
-    if (orderType === 'take-out') {
-      const n = nonEmptyPlateCount();
-      html += '<div class="checkout-summary-item" style="color:var(--cream-35);margin-top:6px">';
-      html += '<span>Packaging (' + n + ' plate' + (n > 1 ? 's' : '') + ')</span>';
-      html += '<span class="item-amt">\u20a6' + (PACK_PRICE * n).toLocaleString() + '</span></div>';
-    }
-
-    html += '<div class="co-total-row"><span class="co-total-label">Total</span><span class="co-total-amt">\u20a6' + grandTotal().toLocaleString() + '</span></div>';
-
-    html += '<p class="checkout-section-title">Your Details</p>';
-    html += '<input type="text" class="name-input" id="coName" placeholder="Your name (optional)" autocomplete="name" value="' + savedName + '">';
-    html += '<textarea class="note-input" id="coNote" placeholder="Any special requests? (optional)"></textarea>';
-
-    body.innerHTML = html;
-
-    const coName = document.getElementById('coName');
-    let coDebounce;
-    coName.addEventListener('input', function() {
-      clearTimeout(coDebounce);
-      coDebounce = setTimeout(function() {
-        localStorage.setItem('kd_customer_name', coName.value.trim());
-      }, 400);
-    });
-  }
 
   /* HTML escaping for safe attribute/content injection */
   function escHtml(s) {
@@ -1450,6 +1368,21 @@ body {
 
   /* Initial render */
   renderAll();
+
+  /* Persist customer name */
+  (function() {
+    var nameEl = document.getElementById('coName');
+    if (nameEl) {
+      nameEl.value = localStorage.getItem('kd_customer_name') || '';
+      var debounce;
+      nameEl.addEventListener('input', function() {
+        clearTimeout(debounce);
+        debounce = setTimeout(function() {
+          localStorage.setItem('kd_customer_name', nameEl.value.trim());
+        }, 400);
+      });
+    }
+  })();
 
   /* Load menu from Supabase (or static fallback) */
   loadMenu();
