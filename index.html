@@ -1158,14 +1158,7 @@ body {
     document.getElementById('cpTotal').textContent = '\u20a6' + grandTotal().toLocaleString();
   }
 
-  function openCart() {
-    document.getElementById('cartPanel').classList.add('open');
-    /* Restore saved customer name */
-    var nameEl = document.getElementById('coName');
-    if (nameEl && !nameEl.value) {
-      nameEl.value = localStorage.getItem('kd_customer_name') || '';
-    }
-  }
+  function openCart() { document.getElementById('cartPanel').classList.add('open'); }
   function closeCart() { document.getElementById('cartPanel').classList.remove('open'); }
 
   /* HTML escaping for safe attribute/content injection */
