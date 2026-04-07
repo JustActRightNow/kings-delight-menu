@@ -400,7 +400,7 @@ body {
 
 /* SUB-NAV (Food tab sections) */
 .cat-nav {
-  position: sticky; top: 47px; z-index: 100;
+  position: sticky; top: 91px; z-index: 100;
   background: rgba(28,28,28,0.97);
   backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--border);
@@ -457,6 +457,124 @@ body {
   white-space: nowrap;
 }
 
+/* SEARCH BAR */
+.search-wrap {
+  position: sticky; top: 47px; z-index: 105;
+  background: rgba(28,28,28,0.97);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  padding: 8px 16px;
+}
+.search-wrap.food-active { top: 91px; }
+.search-inner { position: relative; max-width: 660px; margin: 0 auto; }
+.search-input {
+  width: 100%; background: rgba(255,255,255,0.05);
+  border: 1px solid var(--border); border-radius: 20px;
+  padding: 8px 16px 8px 38px; color: var(--cream);
+  font-family: 'Jost', sans-serif; font-size: 13px;
+  outline: none; transition: border-color 0.2s;
+}
+.search-input::placeholder { color: var(--cream-20); }
+.search-input:focus { border-color: var(--gold-border); }
+.search-icon {
+  position: absolute; left: 13px; top: 50%; transform: translateY(-50%);
+  font-size: 14px; opacity: 0.4; pointer-events: none;
+}
+
+/* ORDER TYPE TOGGLE */
+.order-type-toggle {
+  display: flex; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; margin-bottom: 14px;
+}
+.ot-btn {
+  flex: 1; padding: 10px 8px; background: transparent;
+  border: none; color: var(--cream-35);
+  font-family: 'Jost', sans-serif; font-size: 12px; font-weight: 500;
+  cursor: pointer; letter-spacing: 0.04em; transition: all 0.15s;
+}
+.ot-btn:first-child { border-right: 1px solid var(--border); }
+.ot-btn.active { background: var(--gold); color: #111; font-weight: 600; }
+
+/* PLATE CARDS */
+.plate-card {
+  border: 1px solid var(--border); border-radius: 9px; margin-bottom: 10px; overflow: hidden;
+}
+.plate-card.active-plate { border-color: var(--gold-border); }
+.plate-header {
+  display: flex; align-items: center; gap: 6px;
+  padding: 8px 12px; background: rgba(255,255,255,0.03);
+  border-bottom: 1px solid var(--border);
+}
+.plate-label {
+  flex: 1; font-size: 11px; font-weight: 600; color: var(--gold);
+  letter-spacing: 0.1em; text-transform: uppercase;
+}
+.plate-action-btn {
+  width: 26px; height: 26px; border-radius: 6px;
+  border: 1px solid var(--border); background: transparent;
+  color: var(--cream-35); cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; transition: all 0.15s; flex-shrink: 0;
+}
+.plate-action-btn:hover { border-color: var(--gold-border); color: var(--gold); }
+.plate-action-btn.del:hover { border-color: rgba(178,34,34,0.4); color: #e05555; }
+.plate-items { padding: 4px 12px 8px; }
+.plate-sub-total {
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 11px; color: var(--cream-35); padding: 6px 0 2px;
+  border-top: 1px solid var(--border); margin-top: 4px; letter-spacing: 0.03em;
+}
+.add-plate-btn {
+  width: 100%; padding: 10px;
+  border: 1px dashed var(--border); border-radius: 8px;
+  background: transparent; color: var(--cream-35);
+  font-family: 'Jost', sans-serif; font-size: 12px;
+  letter-spacing: 0.05em; cursor: pointer; transition: all 0.15s; margin-bottom: 10px;
+}
+.add-plate-btn:hover { border-color: var(--gold-border); color: var(--gold); }
+.pack-row {
+  display: flex; justify-content: space-between; font-size: 12px;
+  color: var(--cream-35); padding: 8px 0; border-top: 1px solid var(--border); margin-bottom: 2px;
+}
+
+/* ACTIVE PLATE INDICATOR */
+.plate-indicator {
+  font-size: 10px; color: var(--gold); letter-spacing: 0.08em; opacity: 0.85;
+}
+
+/* CHECKOUT PANEL */
+.checkout-panel {
+  position: fixed; inset: 0; z-index: 400;
+  background: var(--charcoal);
+  display: flex; flex-direction: column;
+  transform: translateX(100%);
+  transition: transform 0.28s ease;
+}
+.checkout-panel.open { transform: translateX(0); }
+.checkout-body {
+  flex: 1; overflow-y: auto; padding: 4px 18px 16px;
+}
+.checkout-section-title {
+  font-family: 'Jost', sans-serif; font-size: 10px;
+  letter-spacing: 0.15em; color: var(--cream-35); text-transform: uppercase;
+  margin: 16px 0 8px;
+}
+.checkout-plate-label {
+  font-size: 11px; color: var(--gold); font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.08em; margin: 10px 0 4px;
+}
+.checkout-summary-item {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  font-size: 13px; padding: 4px 0; color: var(--cream-60); gap: 8px;
+}
+.checkout-summary-item .item-amt { color: var(--cream); white-space: nowrap; flex-shrink: 0; }
+.co-total-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 12px 0; border-top: 1px solid var(--border); margin-top: 8px;
+}
+.co-total-label { font-size: 11px; letter-spacing: 0.15em; color: var(--cream-35); text-transform: uppercase; }
+.co-total-amt { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; color: var(--gold); }
+.checkout-footer { padding: 14px 18px 30px; border-top: 1px solid var(--border); }
+
 /* INSTAGRAM LINK in footer */
 .footer-ig {
   display: inline-flex; align-items: center; gap: 5px;
@@ -489,6 +607,14 @@ body {
     <button class="tab-btn" data-tab="confectionaries" data-pane="tabConfectionaries">🥐 Confectionaries</button>
   </div>
 </nav>
+
+<!-- SEARCH BAR -->
+<div class="search-wrap food-active" id="searchWrap">
+  <div class="search-inner">
+    <span class="search-icon">🔍</span>
+    <input type="search" id="searchInput" placeholder="Search meals, drinks…" class="search-input" autocomplete="off">
+  </div>
+</div>
 
 <nav class="cat-nav" id="catNav">
   <div class="cat-nav-inner">
@@ -649,7 +775,10 @@ body {
 <div class="cart-bar" id="cartBar">
   <div class="cart-bar-inner">
     <div class="cart-badge" id="cartCount">0</div>
-    <div class="cart-preview"><div class="cart-preview-text" id="cartPreview">Your order</div></div>
+    <div class="cart-preview">
+      <div class="cart-preview-text" id="cartPreview">Your order</div>
+      <div class="plate-indicator" id="plateIndicator"></div>
+    </div>
     <div class="cart-total-bar" id="cartTotalBar">₦0</div>
     <button class="view-order-btn" onclick="openCart()">View Order</button>
   </div>
@@ -663,13 +792,29 @@ body {
   </div>
   <div class="cp-items" id="cpItems"></div>
   <div class="cp-footer">
+    <div class="order-type-toggle">
+      <button class="ot-btn active" id="otEatIn" onclick="setOrderType('eat-in')">🍽️ Eat In</button>
+      <button class="ot-btn" id="otTakeOut" onclick="setOrderType('take-out')">🥡 Take Out</button>
+    </div>
     <div class="cp-total-row">
       <span class="cp-total-label">Total</span>
       <span class="cp-total-amt" id="cpTotal">₦0</span>
     </div>
-    <div class="cp-source">Ordering from: <span id="sourceLabel">—</span></div>
-    <input type="text" class="name-input" id="customerName" placeholder="Your name (optional)" autocomplete="name">
-    <textarea class="note-input" id="noteInput" placeholder="Any special requests? (optional)"></textarea>
+    <button class="wa-btn" onclick="openCheckout()" style="background:var(--gold);color:#111;border:none">
+      Checkout Now &nbsp;→
+    </button>
+  </div>
+</div>
+
+<!-- CHECKOUT PANEL -->
+<div class="checkout-panel" id="checkoutPanel">
+  <div class="cp-head">
+    <button class="cp-close" onclick="closeCheckout()" style="font-size:15px;letter-spacing:0">← Back</button>
+    <span class="cp-title">Checkout</span>
+    <span style="width:50px"></span>
+  </div>
+  <div class="checkout-body" id="checkoutBody"></div>
+  <div class="checkout-footer">
     <button class="wa-btn" onclick="sendToWhatsApp()">
       <svg class="wa-svg" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
       Send Order via WhatsApp
@@ -679,7 +824,13 @@ body {
 
 <script>
   const WA = '2347060988973';
-  let cart = [];
+  const PACK_PRICE = 200;
+
+  /* Plates-based cart */
+  let plates = [{ id: 1, items: [] }];
+  let activePlateIndex = 0;
+  let nextPlateId = 2;
+  let orderType = 'eat-in';
 
   /* Table / source resolution */
   const params = new URLSearchParams(window.location.search);
@@ -696,117 +847,329 @@ body {
     return map[s] || s.replace(/-/g, ' ').replace(/\S+/g, w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase());
   }
 
-  document.getElementById('sourceLabel').textContent = fmtSrc(src);
-
-  /* Customer name persistence */
-  const nameInput = document.getElementById('customerName');
-  const savedName = localStorage.getItem('kd_customer_name');
-  if (savedName) nameInput.value = savedName;
-  let nameDebounce;
-  nameInput.addEventListener('input', () => {
-    clearTimeout(nameDebounce);
-    nameDebounce = setTimeout(() => localStorage.setItem('kd_customer_name', nameInput.value.trim()), 400);
-  });
+  /* Plate helpers */
+  function getActivePlate() { return plates[activePlateIndex]; }
+  function hasItems() { return plates.some(p => p.items.length > 0); }
+  function subtotal() {
+    return plates.reduce((s, p) => s + p.items.reduce((ss, i) => ss + (i.free ? 0 : i.price * i.qty), 0), 0);
+  }
+  function nonEmptyPlateCount() { return plates.filter(p => p.items.length > 0).length; }
+  function packagingCost() { return orderType === 'take-out' ? PACK_PRICE * nonEmptyPlateCount() : 0; }
+  function grandTotal() { return subtotal() + packagingCost(); }
+  function totalItemCount() {
+    return plates.reduce((s, p) => s + p.items.reduce((ss, i) => ss + i.qty, 0), 0);
+  }
 
   /* Cart logic */
   function addItem(btn) {
     const name = btn.dataset.name, price = parseInt(btn.dataset.price);
     const isFree = btn.dataset.free === 'true';
-    const ex = cart.find(i => i.name === name);
-    if (ex) {
-      if (!isFree) ex.qty++;
+    const plate = getActivePlate();
+    const ex = plate.items.find(i => i.name === name);
+    if (ex) { if (!isFree) ex.qty++; }
+    else { plate.items.push({ name, price, qty: 1, free: isFree }); }
+    renderAll();
+  }
+
+  function changePlateItemQty(pIdx, iIdx, d) {
+    const items = plates[pIdx].items;
+    items[iIdx].qty += d;
+    if (items[iIdx].qty <= 0) items.splice(iIdx, 1);
+    if (items.length === 0 && plates.length > 1) { deletePlate(pIdx); return; }
+    renderAll();
+  }
+
+  function addNewPlate() {
+    plates.push({ id: nextPlateId++, items: [] });
+    activePlateIndex = plates.length - 1;
+    renderAll();
+    closeCart();
+  }
+
+  function duplicatePlate(idx) {
+    const p = plates[idx];
+    plates.splice(idx + 1, 0, { id: nextPlateId++, items: p.items.map(i => ({ ...i })) });
+    renderAll();
+  }
+
+  function deletePlate(idx) {
+    if (plates.length === 1) {
+      plates[0].items = [];
+      activePlateIndex = 0;
     } else {
-      cart.push({ name, price, qty: 1, free: isFree });
+      plates.splice(idx, 1);
+      if (activePlateIndex >= plates.length) activePlateIndex = plates.length - 1;
     }
     renderAll();
   }
 
-  function changeQty(idx, d) {
-    cart[idx].qty += d;
-    if (cart[idx].qty <= 0) cart.splice(idx, 1);
+  function editPlate(idx) {
+    activePlateIndex = idx;
     renderAll();
+    closeCart();
   }
 
+  /* Order type */
+  function setOrderType(type) {
+    orderType = type;
+    document.getElementById('otEatIn').classList.toggle('active', type === 'eat-in');
+    document.getElementById('otTakeOut').classList.toggle('active', type === 'take-out');
+    renderCartPanel();
+    const t = '\u20a6' + grandTotal().toLocaleString();
+    document.getElementById('cpTotal').textContent = t;
+    document.getElementById('cartTotalBar').textContent = t;
+  }
+
+  /* Called from checkout panel order-type toggle */
+  function setOrderTypeCheckout(type, btn) {
+    orderType = type;
+    btn.closest('.order-type-toggle').querySelectorAll('.ot-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('otEatIn').classList.toggle('active', type === 'eat-in');
+    document.getElementById('otTakeOut').classList.toggle('active', type === 'take-out');
+    renderCheckout();
+    const t = '\u20a6' + grandTotal().toLocaleString();
+    document.getElementById('cpTotal').textContent = t;
+    document.getElementById('cartTotalBar').textContent = t;
+  }
+
+  /* Render functions */
   function renderAll() {
-    const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
-    const count = cart.reduce((s, i) => s + i.qty, 0);
+    const count = totalItemCount();
     document.getElementById('cartCount').textContent = count;
-    document.getElementById('cartTotalBar').textContent = '\u20a6' + total.toLocaleString();
-    document.getElementById('cpTotal').textContent = '\u20a6' + total.toLocaleString();
-    document.getElementById('cartPreview').textContent = cart.map(i => (i.qty > 1 ? i.qty + '\u00d7 ' : '') + i.name).join(', ') || 'Your order';
-    document.getElementById('cartBar').classList.toggle('visible', count > 0);
+    document.getElementById('cartTotalBar').textContent = '\u20a6' + grandTotal().toLocaleString();
+    document.getElementById('cartBar').classList.toggle('visible', hasItems());
+
+    const activePlate = getActivePlate();
+    const plateNum = activePlateIndex + 1;
+    const preview = activePlate.items.length
+      ? activePlate.items.map(i => (i.qty > 1 ? i.qty + '\u00d7 ' : '') + i.name).join(', ')
+      : 'Your order';
+    document.getElementById('cartPreview').textContent = plates.length > 1 ? plates.length + ' plates' : preview;
+    document.getElementById('plateIndicator').textContent = hasItems() ? 'Adding to Plate ' + plateNum : '';
+    renderCartPanel();
+  }
+
+  function renderCartPanel() {
     const list = document.getElementById('cpItems');
-    if (!cart.length) { list.innerHTML = '<p class="empty-msg">No items yet \u2014 add something from the menu</p>'; return; }
-    list.innerHTML = cart.map((item, i) => item.free ? `<div class="cp-item"><div class="cp-item-name">${item.name}</div><div class="cp-item-price" style="color:rgba(120,210,120,0.75);font-style:italic">Free</div><button class="qty-btn" style="margin-left:8px" onclick="changeQty(${i},-1)">&#x2715;</button></div>` : `<div class="cp-item"><div class="cp-item-name">${item.name}</div><div class="qty-ctrl"><button class="qty-btn" onclick="changeQty(${i},-1)">&#x2212;</button><span class="qty-num">${item.qty}</span><button class="qty-btn" onclick="changeQty(${i},1)">+</button></div><div class="cp-item-price">\u20a6${(item.price*item.qty).toLocaleString()}</div></div>`).join('');
+    if (!hasItems()) {
+      list.innerHTML = '<p class="empty-msg">No items yet \u2014 add something from the menu</p>';
+      document.getElementById('cpTotal').textContent = '\u20a6' + grandTotal().toLocaleString();
+      return;
+    }
+    let html = '';
+    plates.forEach(function(plate, pIdx) {
+      if (!plate.items.length) return;
+      const isActive = pIdx === activePlateIndex;
+      const plateTotal = plate.items.reduce((s, i) => s + (i.free ? 0 : i.price * i.qty), 0);
+      html += '<div class="plate-card' + (isActive ? ' active-plate' : '') + '">';
+      html += '<div class="plate-header">';
+      html += '<span class="plate-label">Plate ' + (pIdx + 1) + (isActive ? ' \u2714' : '') + '</span>';
+      html += '<button class="plate-action-btn" title="Edit plate" onclick="editPlate(' + pIdx + ')">\u270f\ufe0f</button>';
+      html += '<button class="plate-action-btn" title="Duplicate plate" onclick="duplicatePlate(' + pIdx + ')">\u29c9</button>';
+      html += '<button class="plate-action-btn del" title="Delete plate" onclick="deletePlate(' + pIdx + ')">\u2715</button>';
+      html += '</div><div class="plate-items">';
+      plate.items.forEach(function(item, iIdx) {
+        if (item.free) {
+          html += '<div class="cp-item"><div class="cp-item-name">' + item.name + '</div>';
+          html += '<div class="cp-item-price" style="color:rgba(120,210,120,0.75);font-style:italic">Free</div>';
+          html += '<button class="qty-btn" style="margin-left:8px" onclick="changePlateItemQty(' + pIdx + ',' + iIdx + ',-1)">\u2715</button></div>';
+        } else {
+          html += '<div class="cp-item"><div class="cp-item-name">' + item.name + '</div>';
+          html += '<div class="qty-ctrl">';
+          html += '<button class="qty-btn" onclick="changePlateItemQty(' + pIdx + ',' + iIdx + ',-1)">\u2212</button>';
+          html += '<span class="qty-num">' + item.qty + '</span>';
+          html += '<button class="qty-btn" onclick="changePlateItemQty(' + pIdx + ',' + iIdx + ',1)">+</button></div>';
+          html += '<div class="cp-item-price">\u20a6' + (item.price * item.qty).toLocaleString() + '</div></div>';
+        }
+      });
+      html += '<div class="plate-sub-total"><span>Plate total</span><span>\u20a6' + plateTotal.toLocaleString() + '</span></div>';
+      html += '</div></div>';
+    });
+    html += '<button class="add-plate-btn" onclick="addNewPlate()">+ Add another plate</button>';
+    if (orderType === 'take-out') {
+      const n = nonEmptyPlateCount();
+      html += '<div class="pack-row"><span>Packaging \u00d7 ' + n + ' plate' + (n > 1 ? 's' : '') + '</span><span>\u20a6' + (PACK_PRICE * n).toLocaleString() + '</span></div>';
+    }
+    list.innerHTML = html;
+    document.getElementById('cpTotal').textContent = '\u20a6' + grandTotal().toLocaleString();
   }
 
   function openCart() { document.getElementById('cartPanel').classList.add('open'); }
   function closeCart() { document.getElementById('cartPanel').classList.remove('open'); }
 
+  /* Checkout panel */
+  function openCheckout() {
+    if (!hasItems()) return;
+    renderCheckout();
+    document.getElementById('checkoutPanel').classList.add('open');
+  }
+  function closeCheckout() { document.getElementById('checkoutPanel').classList.remove('open'); }
+
+  function renderCheckout() {
+    const body = document.getElementById('checkoutBody');
+    const tableNo = localStorage.getItem('kd_table');
+    const savedName = escHtml(localStorage.getItem('kd_customer_name') || '');
+
+    let html = '<p class="checkout-section-title">Order Type</p>';
+    html += '<div class="order-type-toggle" style="margin-bottom:16px">';
+    html += '<button class="ot-btn' + (orderType === 'eat-in' ? ' active' : '') + '" onclick="setOrderTypeCheckout(\'eat-in\',this)">\ud83c\udf7d\ufe0f Eat In</button>';
+    html += '<button class="ot-btn' + (orderType === 'take-out' ? ' active' : '') + '" onclick="setOrderTypeCheckout(\'take-out\',this)">\ud83e\udd61 Take Out</button>';
+    html += '</div>';
+
+    html += '<p class="checkout-section-title">Order Summary</p>';
+    const fromLabel = tableNo ? 'Table ' + tableNo : fmtSrc(src);
+    html += '<div style="font-size:12px;color:var(--cream-35);margin-bottom:8px">Ordering from: <span style="color:var(--gold)">' + fromLabel + '</span></div>';
+
+    plates.forEach(function(plate, pIdx) {
+      if (!plate.items.length) return;
+      html += '<div class="checkout-plate-label">Plate ' + (pIdx + 1) + '</div>';
+      plate.items.forEach(function(item) {
+        html += '<div class="checkout-summary-item"><span>' + item.name + (item.qty > 1 ? ' \u00d7' + item.qty : '') + '</span>';
+        html += '<span class="item-amt">' + (item.free ? 'Free' : '\u20a6' + (item.price * item.qty).toLocaleString()) + '</span></div>';
+      });
+    });
+
+    if (orderType === 'take-out') {
+      const n = nonEmptyPlateCount();
+      html += '<div class="checkout-summary-item" style="color:var(--cream-35);margin-top:6px">';
+      html += '<span>Packaging (' + n + ' plate' + (n > 1 ? 's' : '') + ')</span>';
+      html += '<span class="item-amt">\u20a6' + (PACK_PRICE * n).toLocaleString() + '</span></div>';
+    }
+
+    html += '<div class="co-total-row"><span class="co-total-label">Total</span><span class="co-total-amt">\u20a6' + grandTotal().toLocaleString() + '</span></div>';
+
+    html += '<p class="checkout-section-title">Your Details</p>';
+    html += '<input type="text" class="name-input" id="coName" placeholder="Your name (optional)" autocomplete="name" value="' + savedName + '">';
+    html += '<textarea class="note-input" id="coNote" placeholder="Any special requests? (optional)"></textarea>';
+
+    body.innerHTML = html;
+
+    const coName = document.getElementById('coName');
+    let coDebounce;
+    coName.addEventListener('input', function() {
+      clearTimeout(coDebounce);
+      coDebounce = setTimeout(function() {
+        localStorage.setItem('kd_customer_name', coName.value.trim());
+      }, 400);
+    });
+  }
+
+  /* HTML escaping for safe attribute/content injection */
+  function escHtml(s) {
+    return String(s)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  /* Sanitization */
   function sanitizeInput(s) {
     return s
-      .replace(/<[^>]*>/g, '')          // strip HTML tags
-      .replace(/[*_~`]/g, '')           // strip WhatsApp/markdown formatting chars
-      .replace(/[\n\r]{3,}/g, '\n\n') // collapse excess newlines
-      .replace(/https?:\/\/\S+/gi, '[link]') // neutralise raw URLs
-      .slice(0, 300)                    // hard length cap
+      .replace(/<[^>]*>/g, '')
+      .replace(/[*_~`]/g, '')
+      .replace(/[\n\r]{3,}/g, '\n\n')
+      .replace(/https?:\/\/\S+/gi, '[link]')
+      .slice(0, 300)
       .trim();
   }
 
   function orderCode(total, itemCount) {
-    /* Lightweight tamper-evident code so the eatery can spot edited totals.
-       Formula: ((total * 37 + itemCount * 7919) ^ 0xABCD) % 1000000, zero-padded to 6 digits. */
     const raw = ((total * 37 + itemCount * 7919) ^ 0xABCD) % 1000000;
     return String(raw).padStart(6, '0');
   }
 
   function sendToWhatsApp() {
-    if (!cart.length) return;
-    const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
-    const itemCount = cart.reduce((s, i) => s + (i.free ? 0 : i.qty), 0);
-    const note = sanitizeInput(document.getElementById('noteInput').value.trim());
-    const customerName = sanitizeInput(document.getElementById('customerName').value.trim());
+    if (!hasItems()) return;
+    const total = grandTotal();
+    const itemCount = plates.reduce((s, p) => s + p.items.reduce((ss, i) => ss + (i.free ? 0 : i.qty), 0), 0);
+
+    const coNameEl = document.getElementById('coName');
+    const coNoteEl = document.getElementById('coNote');
+    const customerName = sanitizeInput(coNameEl ? coNameEl.value.trim() : '');
+    const note = sanitizeInput(coNoteEl ? coNoteEl.value.trim() : '');
     const tableNo = localStorage.getItem('kd_table');
+
     let msg = "*New Order \u2014 King's Delight Eatery*\n";
-    if (tableNo) msg += "*🪑 Table: " + tableNo + "*\n";
-    if (customerName) msg += "*👤 Customer: " + customerName + "*\n";
+    if (tableNo) msg += "*\ud83e\ude91 Table: " + tableNo + "*\n";
+    if (customerName) msg += "*\ud83d\udc64 Customer: " + customerName + "*\n";
+    msg += "*Order Type: " + (orderType === 'take-out' ? '\ud83e\udd61 Take Out' : '\ud83c\udf7d\ufe0f Eat In') + "*\n";
     msg += "*From:* " + fmtSrc(src) + "\n\n";
-    cart.forEach(i => msg += "\u2022 " + (i.free ? "" : i.qty + "\u00d7 ") + i.name + " \u2014 " + (i.free ? "Free" : "\u20a6" + (i.price*i.qty).toLocaleString()) + "\n");
+
+    plates.forEach(function(plate, pIdx) {
+      if (!plate.items.length) return;
+      msg += "*\u2014 Plate " + (pIdx + 1) + " \u2014*\n";
+      plate.items.forEach(function(i) {
+        msg += "\u2022 " + (i.free ? "" : i.qty + "\u00d7 ") + i.name + " \u2014 " + (i.free ? "Free" : "\u20a6" + (i.price * i.qty).toLocaleString()) + "\n";
+      });
+    });
+
+    if (orderType === 'take-out') {
+      const n = nonEmptyPlateCount();
+      msg += "\u2022 Packaging (" + n + " plate" + (n > 1 ? "s" : "") + ") \u2014 \u20a6" + (PACK_PRICE * n).toLocaleString() + "\n";
+    }
+
     msg += "\n*Total: \u20a6" + total.toLocaleString() + "*";
     if (note) msg += "\n\n*Note:* " + note;
-    msg += "\n\n\u{1F512} Order Code: " + orderCode(total, itemCount);
+    msg += "\n\n\ud83d\udd12 Order Code: " + orderCode(total, itemCount);
     window.open('https://wa.me/' + WA + '?text=' + encodeURIComponent(msg), '_blank');
   }
 
   /* Tab switching */
   const tabBtns = document.querySelectorAll('.tab-btn');
   const catNav = document.getElementById('catNav');
+  const searchWrap = document.getElementById('searchWrap');
 
-  tabBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
+  tabBtns.forEach(function(btn) {
+    btn.addEventListener('click', function() {
       tabBtns.forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
       document.getElementById(btn.dataset.pane).classList.add('active');
-      catNav.classList.toggle('hidden', btn.dataset.tab !== 'food');
+      const isFood = btn.dataset.tab === 'food';
+      catNav.classList.toggle('hidden', !isFood);
+      searchWrap.classList.toggle('food-active', isFood);
+      document.getElementById('searchInput').value = '';
+      doSearch('');
       window.scrollTo({ top: 0, behavior: 'smooth' });
     });
+  });
+
+  /* Search */
+  function doSearch(q) {
+    const qLower = q.toLowerCase().trim();
+    document.querySelectorAll('.tab-pane.active .menu-item').forEach(function(item) {
+      const text = item.querySelector('.item-name').textContent.toLowerCase();
+      item.style.display = qLower && !text.includes(qLower) ? 'none' : '';
+    });
+    document.querySelectorAll('.tab-pane.active .menu-section').forEach(function(sec) {
+      if (!qLower) { sec.style.display = ''; return; }
+      const hasVisible = Array.from(sec.querySelectorAll('.menu-item')).some(i => i.style.display !== 'none');
+      sec.style.display = hasVisible ? '' : 'none';
+    });
+  }
+
+  document.getElementById('searchInput').addEventListener('input', function() {
+    doSearch(this.value);
   });
 
   /* Food sub-nav scroll */
   const foodSections = document.querySelectorAll('#tabFood .menu-section');
   const subNavBtns = document.querySelectorAll('.cat-btn');
 
-  subNavBtns.forEach(b => b.addEventListener('click', () => {
+  subNavBtns.forEach(b => b.addEventListener('click', function() {
     const el = document.getElementById(b.dataset.target);
     if (el) {
       const catNavH = catNav.classList.contains('hidden') ? 0 : catNav.offsetHeight;
-      const navH = document.getElementById('tabNav').offsetHeight + catNavH;
+      const searchH = searchWrap ? searchWrap.offsetHeight : 0;
+      const navH = document.getElementById('tabNav').offsetHeight + catNavH + searchH;
       window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - navH - 14, behavior: 'smooth' });
     }
   }));
 
-  /* Single IntersectionObserver for food section active highlight */
+  /* IntersectionObserver for food section active highlight */
   const activeObserver = new IntersectionObserver(entries => entries.forEach(e => {
     if (e.isIntersecting) {
       subNavBtns.forEach(b => b.classList.remove('active'));
@@ -816,12 +1179,16 @@ body {
   }), { rootMargin: '-15% 0px -75% 0px' });
   foodSections.forEach(s => activeObserver.observe(s));
 
-  /* Single fade-in observer */
+  /* Fade-in observer */
   const allSections = document.querySelectorAll('.menu-section');
   const fadeObserver = new IntersectionObserver(entries => entries.forEach(e => {
     if (e.isIntersecting) e.target.classList.add('visible');
   }), { threshold: 0.06 });
   allSections.forEach(s => fadeObserver.observe(s));
+
+  /* Initial render */
+  renderAll();
 </script>
+
 </body>
 </html>
