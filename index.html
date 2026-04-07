@@ -630,7 +630,7 @@ body {
   function fmtSrc(s) {
     if (s.startsWith('table-')) return 'Table ' + s.replace('table-', '');
     const map = { packaging: 'Takeaway Packaging', instagram: 'Instagram', flyer: 'Flyer / Ad', direct: 'Walk-in' };
-    return map[s] || s.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+    return map[s] || s.replace(/-/g, ' ').replace(/\S+/g, w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase());
   }
 
   document.getElementById('sourceLabel').textContent = fmtSrc(src);
@@ -676,7 +676,7 @@ body {
   function closeCart() { document.getElementById('cartPanel').classList.remove('open'); }
 
   function sanitizeInput(s) {
-    return s.replace(/[*_~`]/g, '');
+    return s.replace(/[*_~`\n\r]/g, '').trim();
   }
 
   function sendToWhatsApp() {
@@ -687,7 +687,7 @@ body {
     const tableNo = localStorage.getItem('kd_table');
     let msg = "*New Order \u2014 King's Delight Eatery*\n";
     if (tableNo) msg += "*🪑 Table: " + tableNo + "*\n";
-    if (customerName) msg += "*\ud83d\udc64 Customer: " + customerName + "*\n";
+    if (customerName) msg += "*👤 Customer: " + customerName + "*\n";
     msg += "*From:* " + fmtSrc(src) + "\n\n";
     cart.forEach(i => msg += "\u2022 " + i.qty + "\u00d7 " + i.name + " \u2014 \u20a6" + (i.price*i.qty).toLocaleString() + "\n");
     msg += "\n*Total: \u20a6" + total.toLocaleString() + "*";
