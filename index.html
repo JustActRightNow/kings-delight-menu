@@ -401,7 +401,7 @@ body {
 
 /* SUB-NAV (Food tab sections) */
 .cat-nav {
-  position: sticky; top: 91px; z-index: 100;
+  position: sticky; top: 47px; z-index: 100;
   background: rgba(28,28,28,0.97);
   backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--border);
@@ -654,14 +654,6 @@ body {
   </div>
 </nav>
 
-<!-- SEARCH BAR -->
-<div class="search-wrap food-active" id="searchWrap">
-  <div class="search-inner">
-    <span class="search-icon">🔍</span>
-    <input type="search" id="searchInput" placeholder="Search food, drinks, pastries…" class="search-input" autocomplete="off">
-  </div>
-</div>
-
 <nav class="cat-nav" id="catNav">
   <div class="cat-nav-inner">
     <button class="cat-btn" data-target="offers" style="display:none">🎉 Offers</button>
@@ -674,6 +666,14 @@ body {
     <button class="cat-btn" data-target="sides">🥗 Sides</button>
   </div>
 </nav>
+
+<!-- SEARCH BAR -->
+<div class="search-wrap food-active" id="searchWrap">
+  <div class="search-inner">
+    <span class="search-icon">🔍</span>
+    <input type="search" id="searchInput" placeholder="Search food, drinks, pastries…" class="search-input" autocomplete="off">
+  </div>
+</div>
 
 <main class="content">
 
@@ -1386,6 +1386,16 @@ body {
 
   /* Load menu from Supabase (or static fallback) */
   loadMenu();
+
+  /* Set favicon to logo */
+  (function() {
+    var logoImg = document.querySelector('.hero-logo img');
+    var favicon = document.querySelector("link[rel='icon']");
+    if (logoImg && favicon) {
+      favicon.href = logoImg.src;
+      favicon.type = 'image/png';
+    }
+  })();
 </script>
 
 </body>
