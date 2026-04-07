@@ -639,7 +639,11 @@ body {
   const nameInput = document.getElementById('customerName');
   const savedName = localStorage.getItem('kd_customer_name');
   if (savedName) nameInput.value = savedName;
-  nameInput.addEventListener('input', () => localStorage.setItem('kd_customer_name', nameInput.value.trim()));
+  let nameDebounce;
+  nameInput.addEventListener('input', () => {
+    clearTimeout(nameDebounce);
+    nameDebounce = setTimeout(() => localStorage.setItem('kd_customer_name', nameInput.value.trim()), 400);
+  });
 
   /* Cart logic */
   function addItem(btn) {
@@ -671,11 +675,15 @@ body {
   function openCart() { document.getElementById('cartPanel').classList.add('open'); }
   function closeCart() { document.getElementById('cartPanel').classList.remove('open'); }
 
+  function sanitizeInput(s) {
+    return s.replace(/[*_~`]/g, '');
+  }
+
   function sendToWhatsApp() {
     if (!cart.length) return;
     const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
-    const note = document.getElementById('noteInput').value.trim();
-    const customerName = document.getElementById('customerName').value.trim();
+    const note = sanitizeInput(document.getElementById('noteInput').value.trim());
+    const customerName = sanitizeInput(document.getElementById('customerName').value.trim());
     const tableNo = localStorage.getItem('kd_table');
     let msg = "*New Order \u2014 King's Delight Eatery*\n";
     if (tableNo) msg += "*🪑 Table: " + tableNo + "*\n";
