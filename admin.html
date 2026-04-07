@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>King's Delight — Admin</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%231C1C1C'/%3E%3Ctext x='16' y='23' font-size='20' text-anchor='middle' fill='%23FFBF00'%3E%F0%9F%91%91%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --gold: #FFBF00;
+  --gold-light: #FFD84D;
+  --gold-dim: rgba(255,191,0,0.13);
+  --gold-border: rgba(255,191,0,0.25);
+  --charcoal: #1C1C1C;
+  --charcoal-mid: #232323;
+  --charcoal-card: #292929;
+  --charcoal-hover: #2F2F2F;
+  --border: rgba(255,255,255,0.07);
+  --cream: #FFF5E1;
+  --cream-60: rgba(255,245,225,0.6);
+  --cream-35: rgba(255,245,225,0.35);
+  --cream-20: rgba(255,245,225,0.18);
+  --red: #B22222;
+  --green: #2a9d5c;
+}
+html { overflow-x: hidden; width: 100%; }
+body {
+  background: var(--charcoal);
+  color: var(--cream);
+  font-family: 'Jost', sans-serif;
+  font-weight: 300;
+  min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── LOGIN SCREEN ───────────────────────────────────────── */
+#loginScreen {
+  display: flex; align-items: center; justify-content: center;
+  min-height: 100vh; padding: 24px;
+}
+.login-card {
+  width: 100%; max-width: 360px;
+  background: var(--charcoal-card);
+  border: 1px solid var(--gold-border);
+  border-radius: 14px;
+  padding: 36px 28px 32px;
+  text-align: center;
+}
+.login-crown { font-size: 40px; margin-bottom: 16px; }
+.login-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 22px; font-weight: 700;
+  color: var(--gold); margin-bottom: 4px;
+}
+.login-sub { font-size: 12px; color: var(--cream-35); margin-bottom: 28px; letter-spacing: 0.04em; }
+.field { margin-bottom: 14px; text-align: left; }
+.field label { display: block; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--cream-35); margin-bottom: 6px; }
+.field input {
+  width: 100%; background: var(--charcoal-mid);
+  border: 1px solid var(--border); border-radius: 7px;
+  padding: 11px 13px; color: var(--cream);
+  font-family: 'Jost', sans-serif; font-size: 14px; font-weight: 300;
+  outline: none; transition: border-color 0.2s;
+}
+.field input::placeholder { color: var(--cream-20); }
+.field input:focus { border-color: var(--gold-border); }
+.login-btn {
+  width: 100%; padding: 13px; margin-top: 8px;
+  background: var(--gold); color: #111;
+  border: none; border-radius: 8px;
+  font-family: 'Jost', sans-serif; font-size: 13px; font-weight: 600;
+  letter-spacing: 0.06em; cursor: pointer;
+  transition: opacity 0.15s;
+}
+.login-btn:hover { opacity: 0.88; }
+.login-btn:disabled { opacity: 0.5; cursor: default; }
+.login-error {
+  margin-top: 12px; font-size: 12px;
+  color: #e05555; min-height: 18px;
+}
+
+/* ── ADMIN PANEL ─────────────────────────────────────────── */
+#adminPanel { display: none; }
+.admin-header {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(20,20,20,0.98);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--gold-border);
+  padding: 0 20px;
+}
+.admin-header-inner {
+  max-width: 860px; margin: 0 auto;
+  display: flex; align-items: center; gap: 12px;
+  padding: 14px 0;
+}
+.admin-logo-text {
+  font-family: 'Playfair Display', serif;
+  font-size: 16px; color: var(--gold); font-weight: 700; flex: 1;
+}
+.admin-logo-text span { font-family: 'Jost', sans-serif; font-size: 11px; font-weight: 400; color: var(--cream-35); letter-spacing: 0.1em; margin-left: 8px; }
+.logout-btn {
+  padding: 7px 16px;
+  background: transparent; color: var(--cream-35);
+  border: 1px solid var(--border); border-radius: 6px;
+  font-family: 'Jost', sans-serif; font-size: 12px;
+  cursor: pointer; transition: all 0.15s;
+}
+.logout-btn:hover { border-color: rgba(178,34,34,0.4); color: #e05555; }
+
+.admin-body { max-width: 860px; margin: 0 auto; padding: 24px 20px 80px; }
+
+/* STATS */
+.stats-row { display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; }
+.stat-card {
+  flex: 1; min-width: 100px;
+  background: var(--charcoal-card); border: 1px solid var(--border);
+  border-radius: 10px; padding: 14px 16px; text-align: center;
+}
+.stat-num { font-family: 'Playfair Display', serif; font-size: 24px; color: var(--gold); }
+.stat-label { font-size: 10px; letter-spacing: 0.1em; color: var(--cream-35); text-transform: uppercase; margin-top: 2px; }
+.stat-card.oos .stat-num { color: #e05555; }
+.stat-card.promo .stat-num { color: var(--gold-light); }
+
+/* SECTION HEADING */
+.admin-section-title {
+  font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--cream-35); margin: 0 0 12px;
+}
+
+/* FILTER TABS */
+.filter-row { display: flex; gap: 6px; margin-bottom: 20px; flex-wrap: wrap; }
+.filter-btn {
+  padding: 7px 14px; border-radius: 20px;
+  border: 1px solid var(--border); background: transparent;
+  color: var(--cream-35); font-family: 'Jost', sans-serif;
+  font-size: 12px; cursor: pointer; transition: all 0.15s;
+  white-space: nowrap;
+}
+.filter-btn:hover { color: var(--cream-60); }
+.filter-btn.active { background: var(--gold); border-color: var(--gold); color: #111; font-weight: 600; }
+
+/* ITEM ROWS */
+.item-row {
+  display: flex; align-items: center; gap: 10px;
+  background: var(--charcoal-card); border: 1px solid var(--border);
+  border-radius: 9px; padding: 11px 14px; margin-bottom: 6px;
+  transition: border-color 0.18s;
+}
+.item-row:hover { border-color: rgba(255,255,255,0.12); }
+.item-row.unavailable { opacity: 0.55; }
+.item-row-info { flex: 1; min-width: 0; }
+.item-row-name { font-size: 13px; color: var(--cream); line-height: 1.3; }
+.item-row-meta { font-size: 11px; color: var(--cream-35); margin-top: 2px; }
+.section-badge {
+  display: inline-block; font-size: 10px; padding: 1px 6px;
+  border-radius: 3px; border: 1px solid var(--border);
+  color: var(--cream-35); margin-right: 4px; letter-spacing: 0.04em;
+}
+.promo-badge {
+  display: inline-block; font-size: 10px; padding: 1px 6px;
+  border-radius: 3px; border: 1px solid var(--gold-border);
+  color: var(--gold); margin-right: 4px; letter-spacing: 0.04em;
+}
+
+/* PRICE EDIT */
+.price-cell { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+.price-display {
+  font-family: 'Jost', sans-serif; font-size: 13px; font-weight: 500;
+  color: var(--gold); cursor: pointer; padding: 4px 8px;
+  border-radius: 5px; border: 1px solid transparent;
+  transition: border-color 0.15s; white-space: nowrap;
+}
+.price-display:hover { border-color: var(--gold-border); }
+.price-input {
+  width: 90px; background: var(--charcoal-mid);
+  border: 1px solid var(--gold-border); border-radius: 5px;
+  padding: 5px 8px; color: var(--cream);
+  font-family: 'Jost', sans-serif; font-size: 13px;
+  outline: none;
+}
+.price-save-btn {
+  padding: 4px 10px; background: var(--gold); color: #111;
+  border: none; border-radius: 5px; font-size: 12px; font-weight: 600;
+  cursor: pointer; transition: opacity 0.15s;
+}
+.price-save-btn:hover { opacity: 0.85; }
+
+/* TOGGLE SWITCH */
+.toggle-wrap { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.toggle {
+  position: relative; display: inline-block;
+  width: 42px; height: 24px;
+}
+.toggle input { opacity: 0; width: 0; height: 0; }
+.toggle-slider {
+  position: absolute; cursor: pointer;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(178,34,34,0.35);
+  border: 1px solid rgba(178,34,34,0.3);
+  border-radius: 24px; transition: 0.2s;
+}
+.toggle-slider::before {
+  position: absolute; content: '';
+  height: 18px; width: 18px;
+  left: 2px; bottom: 2px;
+  background: rgba(255,255,255,0.5);
+  border-radius: 50%; transition: 0.2s;
+}
+.toggle input:checked + .toggle-slider { background: rgba(42,157,92,0.35); border-color: rgba(42,157,92,0.45); }
+.toggle input:checked + .toggle-slider::before { transform: translateX(18px); background: var(--green); }
+.toggle-label { font-size: 11px; color: var(--cream-35); width: 28px; text-align: left; }
+
+/* DELETE BUTTON */
+.del-btn {
+  width: 28px; height: 28px; border-radius: 6px;
+  border: 1px solid var(--border); background: transparent;
+  color: var(--cream-35); cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; transition: all 0.15s; flex-shrink: 0;
+}
+.del-btn:hover { border-color: rgba(178,34,34,0.4); color: #e05555; }
+
+/* ADD PROMO FORM */
+.add-promo-card {
+  background: var(--charcoal-card);
+  border: 1px solid var(--gold-border);
+  border-radius: 12px; padding: 20px; margin-bottom: 32px;
+}
+.add-promo-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 16px; color: var(--gold); margin-bottom: 16px;
+}
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media (max-width: 520px) { .form-grid { grid-template-columns: 1fr; } }
+.form-field label { display: block; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--cream-35); margin-bottom: 5px; }
+.form-field input, .form-field select {
+  width: 100%; background: var(--charcoal-mid);
+  border: 1px solid var(--border); border-radius: 7px;
+  padding: 9px 12px; color: var(--cream);
+  font-family: 'Jost', sans-serif; font-size: 13px; font-weight: 300;
+  outline: none; transition: border-color 0.2s;
+}
+.form-field input::placeholder { color: var(--cream-20); }
+.form-field input:focus, .form-field select:focus { border-color: var(--gold-border); }
+.form-field select option { background: var(--charcoal-mid); }
+.form-checkbox { display: flex; align-items: center; gap: 8px; margin-top: 4px; }
+.form-checkbox input[type=checkbox] { width: 16px; height: 16px; accent-color: var(--gold); cursor: pointer; }
+.form-checkbox label { font-size: 13px; color: var(--cream-60); cursor: pointer; }
+.form-row-full { grid-column: 1 / -1; }
+.add-promo-btn {
+  margin-top: 16px; padding: 11px 24px;
+  background: var(--gold); color: #111;
+  border: none; border-radius: 8px;
+  font-family: 'Jost', sans-serif; font-size: 13px; font-weight: 600;
+  letter-spacing: 0.05em; cursor: pointer; transition: opacity 0.15s;
+}
+.add-promo-btn:hover { opacity: 0.88; }
+.add-promo-btn:disabled { opacity: 0.5; cursor: default; }
+
+/* NOTICE / TOAST */
+.toast {
+  position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+  background: var(--charcoal-card); border: 1px solid var(--gold-border);
+  border-radius: 8px; padding: 10px 20px;
+  font-size: 13px; color: var(--cream); z-index: 999;
+  opacity: 0; transition: opacity 0.25s; pointer-events: none;
+  white-space: nowrap;
+}
+.toast.show { opacity: 1; }
+.toast.error { border-color: rgba(178,34,34,0.4); color: #e05555; }
+
+/* LOADING */
+.loading-msg { text-align: center; padding: 48px 20px; color: var(--cream-35); font-size: 14px; }
+
+/* EMPTY */
+.empty-msg { text-align: center; padding: 32px 20px; color: var(--cream-35); font-style: italic; font-size: 13px; }
+
+/* SECTION DIVIDER */
+.section-divider { font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--cream-35); margin: 20px 0 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
+</style>
+</head>
+<body>
+
+<!-- ── LOGIN SCREEN ──────────────────────────────────────────────────────── -->
+<div id="loginScreen">
+  <div class="login-card">
+    <div class="login-crown">👑</div>
+    <h1 class="login-title">King's Delight</h1>
+    <p class="login-sub">Admin Panel · Staff Access Only</p>
+    <div class="field">
+      <label for="loginEmail">Email</label>
+      <input type="email" id="loginEmail" placeholder="admin@example.com" autocomplete="email">
+    </div>
+    <div class="field">
+      <label for="loginPassword">Password</label>
+      <input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password">
+    </div>
+    <button class="login-btn" id="loginBtn" onclick="doLogin()">Sign In</button>
+    <p class="login-error" id="loginError"></p>
+  </div>
+</div>
+
+<!-- ── ADMIN PANEL ────────────────────────────────────────────────────────── -->
+<div id="adminPanel">
+  <header class="admin-header">
+    <div class="admin-header-inner">
+      <div class="admin-logo-text">King's Delight <span>ADMIN</span></div>
+      <a href="/" style="font-size:12px;color:var(--cream-35);text-decoration:none;margin-right:8px">View Menu ↗</a>
+      <button class="logout-btn" onclick="doLogout()">Sign Out</button>
+    </div>
+  </header>
+
+  <div class="admin-body">
+
+    <!-- Stats -->
+    <div class="stats-row" id="statsRow">
+      <div class="stat-card">
+        <div class="stat-num" id="statTotal">—</div>
+        <div class="stat-label">Total Items</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" id="statAvail" style="color:var(--green)">—</div>
+        <div class="stat-label">Available</div>
+      </div>
+      <div class="stat-card oos">
+        <div class="stat-num" id="statOOS">—</div>
+        <div class="stat-label">Out of Stock</div>
+      </div>
+      <div class="stat-card promo">
+        <div class="stat-num" id="statPromo">—</div>
+        <div class="stat-label">Active Promos</div>
+      </div>
+    </div>
+
+    <!-- Add Promo Form -->
+    <div class="add-promo-card">
+      <div class="add-promo-title">🎉 Add Promo / Seasonal Offer</div>
+      <div class="form-grid">
+        <div class="form-field">
+          <label for="promoName">Item Name *</label>
+          <input type="text" id="promoName" placeholder="e.g. King's Meal">
+        </div>
+        <div class="form-field">
+          <label for="promoPrice">Price (₦) *</label>
+          <input type="number" id="promoPrice" placeholder="e.g. 4500" min="0">
+        </div>
+        <div class="form-field">
+          <label for="promoExpiry">Offer Expires On</label>
+          <input type="date" id="promoExpiry">
+        </div>
+        <div class="form-field">
+          <label for="promoSublabel">Sub-label (optional)</label>
+          <input type="text" id="promoSublabel" placeholder="e.g. Limited time">
+        </div>
+        <div class="form-field form-row-full">
+          <div class="form-checkbox">
+            <input type="checkbox" id="promoIsCombo">
+            <label for="promoIsCombo">This is a combo pack / meal deal</label>
+          </div>
+        </div>
+      </div>
+      <button class="add-promo-btn" id="addPromoBtn" onclick="addPromoItem()">Add Promo Item</button>
+    </div>
+
+    <!-- Filters -->
+    <div class="filter-row" id="filterRow">
+      <button class="filter-btn active" onclick="setFilter('all', this)">All Items</button>
+      <button class="filter-btn" onclick="setFilter('unavailable', this)">Out of Stock</button>
+      <button class="filter-btn" onclick="setFilter('promos', this)">Promos</button>
+    </div>
+
+    <!-- Item List -->
+    <div id="itemList"><div class="loading-msg">Loading menu…</div></div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+  /* ── Supabase Config ─────────────────────────────────────────────────────
+   * Use the same values you put in index.html
+   * ────────────────────────────────────────────────────────────────────── */
+  const SUPABASE_URL  = 'https://YOUR_PROJECT_ID.supabase.co';
+  const SUPABASE_ANON = 'YOUR_ANON_KEY';
+
+  var authToken = null;
+  var allItems  = [];
+  var currentFilter = 'all';
+
+  /* ── Auth ────────────────────────────────────────────────────────────── */
+  async function doLogin() {
+    var email = document.getElementById('loginEmail').value.trim();
+    var password = document.getElementById('loginPassword').value;
+    var errEl = document.getElementById('loginError');
+    var btn = document.getElementById('loginBtn');
+    errEl.textContent = '';
+    if (!email || !password) { errEl.textContent = 'Please enter email and password.'; return; }
+    btn.disabled = true; btn.textContent = 'Signing in…';
+    try {
+      var res = await fetch(SUPABASE_URL + '/auth/v1/token?grant_type=password', {
+        method: 'POST',
+        headers: { 'apikey': SUPABASE_ANON, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email, password: password })
+      });
+      var data = await res.json();
+      if (!res.ok) { throw new Error(data.error_description || data.msg || 'Login failed'); }
+      authToken = data.access_token;
+      sessionStorage.setItem('kd_admin_token', authToken);
+      showAdmin();
+    } catch (e) {
+      errEl.textContent = e.message;
+    } finally {
+      btn.disabled = false; btn.textContent = 'Sign In';
+    }
+  }
+
+  function doLogout() {
+    authToken = null;
+    sessionStorage.removeItem('kd_admin_token');
+    document.getElementById('adminPanel').style.display = 'none';
+    document.getElementById('loginScreen').style.display = 'flex';
+    document.getElementById('loginPassword').value = '';
+    document.getElementById('loginError').textContent = '';
+  }
+
+  function showAdmin() {
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('adminPanel').style.display = 'block';
+    loadItems();
+  }
+
+  /* ── API Helpers ─────────────────────────────────────────────────────── */
+  function apiHeaders(isWrite) {
+    var h = { 'apikey': SUPABASE_ANON, 'Authorization': 'Bearer ' + (isWrite ? authToken : SUPABASE_ANON) };
+    if (isWrite) { h['Content-Type'] = 'application/json'; h['Prefer'] = 'return=representation'; }
+    return h;
+  }
+
+  async function apiCall(method, path, body) {
+    var res = await fetch(SUPABASE_URL + path, {
+      method: method,
+      headers: apiHeaders(method !== 'GET'),
+      body: body ? JSON.stringify(body) : undefined
+    });
+    if (res.status === 204) return null;
+    var data = await res.json();
+    if (!res.ok) throw new Error((data && (data.message || data.msg)) || 'API error ' + res.status);
+    return data;
+  }
+
+  /* ── Items CRUD ──────────────────────────────────────────────────────── */
+  async function loadItems() {
+    document.getElementById('itemList').innerHTML = '<div class="loading-msg">Loading menu…</div>';
+    try {
+      allItems = await apiCall('GET', '/rest/v1/menu_items?select=*&order=section.asc,sort_order.asc', null);
+      updateStats();
+      renderList();
+    } catch (e) {
+      document.getElementById('itemList').innerHTML = '<div class="empty-msg" style="color:#e05555">' + escHtml(e.message) + '</div>';
+    }
+  }
+
+  async function toggleAvailability(id, newVal) {
+    try {
+      await apiCall('PATCH', '/rest/v1/menu_items?id=eq.' + encodeURIComponent(id), { available: newVal });
+      var item = allItems.find(function(i) { return i.id === id; });
+      if (item) item.available = newVal;
+      updateStats();
+      renderList();
+      showToast(newVal ? 'Item marked available' : 'Marked out of stock');
+    } catch (e) {
+      showToast(e.message, true);
+      /* Revert the toggle */
+      loadItems();
+    }
+  }
+
+  async function savePrice(id, newPrice) {
+    try {
+      await apiCall('PATCH', '/rest/v1/menu_items?id=eq.' + encodeURIComponent(id), { price: newPrice });
+      var item = allItems.find(function(i) { return i.id === id; });
+      if (item) item.price = newPrice;
+      renderList();
+      showToast('Price updated to \u20a6' + newPrice.toLocaleString());
+    } catch (e) {
+      showToast(e.message, true);
+    }
+  }
+
+  async function deleteItem(id, name) {
+    if (!confirm('Delete "' + name + '"? This cannot be undone.')) return;
+    try {
+      await apiCall('DELETE', '/rest/v1/menu_items?id=eq.' + encodeURIComponent(id), null);
+      allItems = allItems.filter(function(i) { return i.id !== id; });
+      updateStats();
+      renderList();
+      showToast('Item deleted');
+    } catch (e) {
+      showToast(e.message, true);
+    }
+  }
+
+  async function addPromoItem() {
+    var name     = document.getElementById('promoName').value.trim();
+    var price    = parseInt(document.getElementById('promoPrice').value, 10);
+    var expiry   = document.getElementById('promoExpiry').value || null;
+    var sublabel = document.getElementById('promoSublabel').value.trim() || null;
+    var isCombo  = document.getElementById('promoIsCombo').checked;
+
+    if (!name) { showToast('Item name is required', true); return; }
+    if (isNaN(price) || price < 0) { showToast('Enter a valid price', true); return; }
+
+    var btn = document.getElementById('addPromoBtn');
+    btn.disabled = true; btn.textContent = 'Adding…';
+    try {
+      var newItem = await apiCall('POST', '/rest/v1/menu_items', {
+        name: name, price: price, section: 'promos', tab: 'food',
+        available: true, category_type: 'promo',
+        promo_expires_at: expiry, combo: isCombo,
+        sub_label: sublabel, is_free: false, sort_order: 0,
+        has_variants: false, variants: null
+      });
+      allItems.push(Array.isArray(newItem) ? newItem[0] : newItem);
+      updateStats();
+      renderList();
+      /* Clear form */
+      ['promoName','promoPrice','promoExpiry','promoSublabel'].forEach(function(id) {
+        document.getElementById(id).value = '';
+      });
+      document.getElementById('promoIsCombo').checked = false;
+      showToast('Promo item added!');
+    } catch (e) {
+      showToast(e.message, true);
+    } finally {
+      btn.disabled = false; btn.textContent = 'Add Promo Item';
+    }
+  }
+
+  /* ── Rendering ───────────────────────────────────────────────────────── */
+  function setFilter(f, btn) {
+    currentFilter = f;
+    document.querySelectorAll('.filter-btn').forEach(function(b) { b.classList.remove('active'); });
+    btn.classList.add('active');
+    renderList();
+  }
+
+  function updateStats() {
+    var today = todayMidnight();
+    var total = allItems.length;
+    var avail = allItems.filter(function(i) { return i.available; }).length;
+    var oos   = total - avail;
+    var promos = allItems.filter(function(i) {
+      if (i.category_type !== 'promo') return false;
+      if (i.promo_expires_at) { var exp = new Date(i.promo_expires_at); if (exp < today) return false; }
+      return true;
+    }).length;
+    document.getElementById('statTotal').textContent = total;
+    document.getElementById('statAvail').textContent = avail;
+    document.getElementById('statOOS').textContent   = oos;
+    document.getElementById('statPromo').textContent = promos;
+  }
+
+  function renderList() {
+    var today = todayMidnight();
+    var filtered = allItems.filter(function(item) {
+      if (currentFilter === 'unavailable') return !item.available;
+      if (currentFilter === 'promos') return item.category_type === 'promo';
+      return true;
+    });
+
+    if (filtered.length === 0) {
+      document.getElementById('itemList').innerHTML = '<div class="empty-msg">No items match this filter.</div>';
+      return;
+    }
+
+    /* Group by section */
+    var sections = {};
+    filtered.forEach(function(item) {
+      var key = item.section;
+      if (!sections[key]) sections[key] = [];
+      sections[key].push(item);
+    });
+
+    var sectionLabels = {
+      specials: "Chef's Specials", mains: 'Mains', proteins: 'Proteins',
+      grill: 'Grill Zone', swallow: 'Swallow', soups: 'Soups', sides: 'Sides',
+      drinks: 'Drinks', pastries: 'Pastries', promos: 'Promos'
+    };
+
+    var html = '';
+    Object.keys(sections).forEach(function(sec) {
+      html += '<div class="section-divider">' + (sectionLabels[sec] || sec) + '</div>';
+      sections[sec].forEach(function(item) {
+        var isPromo = item.category_type === 'promo';
+        var isExpired = isPromo && item.promo_expires_at && new Date(item.promo_expires_at) < today;
+        var expiryText = '';
+        if (isPromo) {
+          expiryText = item.promo_expires_at
+            ? (isExpired ? '<span style="color:#e05555">Expired ' + escHtml(item.promo_expires_at) + '</span>'
+                         : 'Expires ' + escHtml(item.promo_expires_at))
+            : 'No expiry set';
+        }
+        /* Use data-id (UUID) for click handlers; user-controlled data stays in data-* attrs */
+        var safeId   = escHtml(item.id);
+        var safeName = escHtml(item.name);
+        var priceDisplay = item.has_variants
+          ? '<span style="font-size:11px;color:var(--cream-35)">Variants</span>'
+          : '<div class="price-cell" id="priceCell_' + safeId + '">'
+            + '<span class="price-display" title="Click to edit price" data-id="' + safeId + '" onclick="startPriceEdit(this.dataset.id)">'
+            + '\u20a6' + item.price.toLocaleString()
+            + '</span></div>';
+
+        html += '<div class="item-row' + (item.available ? '' : ' unavailable') + '" id="row_' + safeId + '">';
+        html += '<div class="item-row-info">';
+        html += '<div class="item-row-name">' + safeName;
+        if (isPromo) html += ' <span class="promo-badge">PROMO' + (item.combo ? ' · COMBO' : '') + '</span>';
+        if (item.sub_label) html += ' <span style="font-size:11px;color:var(--cream-35);font-style:italic">' + escHtml(item.sub_label) + '</span>';
+        html += '</div>';
+        html += '<div class="item-row-meta"><span class="section-badge">' + escHtml(item.section) + '</span>';
+        if (expiryText) html += expiryText;
+        html += '</div>';
+        html += '</div>';
+        html += priceDisplay;
+        html += '<div class="toggle-wrap">';
+        html += '<label class="toggle"><input type="checkbox"' + (item.available ? ' checked' : '') + ' data-id="' + safeId + '" onchange="toggleAvailability(this.dataset.id, this.checked)"><span class="toggle-slider"></span></label>';
+        html += '<span class="toggle-label">' + (item.available ? 'On' : 'Off') + '</span>';
+        html += '</div>';
+        if (isPromo) {
+          html += '<button class="del-btn" title="Delete promo item" data-id="' + safeId + '" data-name="' + safeName + '" onclick="handleDelete(this)">&#x2715;</button>';
+        }
+        html += '</div>';
+      });
+    });
+
+    document.getElementById('itemList').innerHTML = html;
+  }
+
+  function handleDelete(btn) {
+    deleteItem(btn.dataset.id, btn.dataset.name);
+  }
+
+  function startPriceEdit(id) {
+    var cell = document.getElementById('priceCell_' + id);
+    if (!cell) return;
+    var item = allItems.find(function(i) { return i.id === id; });
+    if (!item) return;
+    var safeId = escHtml(id);
+    cell.innerHTML =
+      '<input class="price-input" id="priceInput_' + safeId + '" type="number" min="0" value="' + item.price + '" data-id="' + safeId + '" onkeydown="priceKeydown(event, this.dataset.id)">' +
+      '<button class="price-save-btn" data-id="' + safeId + '" onclick="commitPrice(this.dataset.id)">Save</button>';
+    var inp = document.getElementById('priceInput_' + id);
+    if (inp) { inp.focus(); inp.select(); }
+  }
+
+  function priceKeydown(e, id) {
+    if (e.key === 'Enter') commitPrice(id);
+    if (e.key === 'Escape') renderList();
+  }
+
+  function commitPrice(id) {
+    var inp = document.getElementById('priceInput_' + id);
+    if (!inp) return;
+    var val = parseInt(inp.value, 10);
+    if (isNaN(val) || val < 0) { showToast('Enter a valid price', true); return; }
+    savePrice(id, val);
+  }
+
+  /* ── Utilities ───────────────────────────────────────────────────────── */
+  function escHtml(s) {
+    return String(s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+
+  function todayMidnight() {
+    var d = new Date(); d.setHours(0, 0, 0, 0); return d;
+  }
+
+  var toastTimer;
+  function showToast(msg, isError) {
+    var el = document.getElementById('toast');
+    el.textContent = msg;
+    el.className = 'toast show' + (isError ? ' error' : '');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function() { el.className = 'toast'; }, 2800);
+  }
+
+  /* ── Init ────────────────────────────────────────────────────────────── */
+  document.addEventListener('DOMContentLoaded', function() {
+    /* Allow Enter key to submit login */
+    document.getElementById('loginPassword').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') doLogin();
+    });
+    document.getElementById('loginEmail').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') document.getElementById('loginPassword').focus();
+    });
+    /* Restore session — validate token with a lightweight test request */
+    var saved = sessionStorage.getItem('kd_admin_token');
+    if (saved) {
+      fetch(SUPABASE_URL + '/rest/v1/menu_items?select=id&limit=1', {
+        headers: { 'apikey': SUPABASE_ANON, 'Authorization': 'Bearer ' + saved }
+      }).then(function(res) {
+        if (res.ok) { authToken = saved; showAdmin(); }
+        else { sessionStorage.removeItem('kd_admin_token'); }
+      }).catch(function() { sessionStorage.removeItem('kd_admin_token'); });
+    }
+  });
+</script>
+</body>
+</html>
