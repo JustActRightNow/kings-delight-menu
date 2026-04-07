@@ -590,6 +590,51 @@ body {
 }
 .footer-ig:hover { opacity: 1; }
 .footer-ig svg { width: 14px; height: 14px; fill: var(--gold); }
+
+/* OUT OF STOCK */
+.item-unavailable { opacity: 0.5; }
+.oos-badge {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 11px; font-style: italic;
+  color: rgba(200,60,60,0.9);
+  border: 1px solid rgba(178,34,34,0.3);
+  border-radius: 4px; padding: 2px 8px;
+  white-space: nowrap; flex-shrink: 0;
+}
+
+/* PROMO / OFFERS SECTION */
+.promo-section .section-title { color: var(--gold); }
+.promo-section .section-icon {
+  background: rgba(255,191,0,0.15);
+  border-color: rgba(255,191,0,0.35);
+}
+.promo-section .section-rule {
+  background: linear-gradient(90deg, rgba(255,191,0,0.35), transparent);
+}
+.promo-note {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic; font-size: 13px;
+  color: var(--cream-35);
+  margin: -8px 0 14px 48px;
+  letter-spacing: 0.04em;
+}
+.combo-tag {
+  display: inline-block;
+  font-family: 'Jost', sans-serif;
+  font-size: 9px; letter-spacing: 0.08em; font-weight: 600;
+  color: var(--gold); border: 1px solid var(--gold-border);
+  border-radius: 3px; padding: 1px 5px; margin-left: 6px;
+  vertical-align: middle; text-transform: uppercase;
+}
+
+/* LOADING SKELETON */
+.menu-loading { display: flex; flex-direction: column; gap: 6px; padding-top: 6px; }
+.menu-skeleton {
+  height: 44px; background: var(--charcoal-card);
+  border-radius: 9px; border: 1px solid var(--border);
+  animation: skelPulse 1.4s ease-in-out infinite;
+}
+@keyframes skelPulse { 0%,100%{ opacity:0.35 } 50%{ opacity:0.6 } }
 </style>
 </head>
 <body>
@@ -619,6 +664,7 @@ body {
 
 <nav class="cat-nav" id="catNav">
   <div class="cat-nav-inner">
+    <button class="cat-btn" data-target="offers" style="display:none">🎉 Offers</button>
     <button class="cat-btn active" data-target="specials">✦ Specials</button>
     <button class="cat-btn" data-target="mains">🍚 Mains</button>
     <button class="cat-btn" data-target="proteins">🥩 Proteins</button>
@@ -633,7 +679,14 @@ body {
 
 <!-- Food Tab Pane -->
 <div class="tab-pane active" id="tabFood">
-
+  <section class="menu-section promo-section" id="offers" style="display:none">
+    <div class="section-header">
+      <div class="section-icon">🎉</div>
+      <h2 class="section-title">Offers &amp; Combos</h2>
+      <div class="section-rule"></div>
+    </div>
+    <p class="promo-note">Limited-time combos &amp; seasonal specials</p>
+  </section>
   <section class="menu-section specials-section" id="specials">
     <div class="section-header">
       <div class="section-icon">⭐</div>
@@ -641,77 +694,32 @@ body {
       <div class="section-rule"></div>
     </div>
     <p class="specials-note">Signature plates, crafted with intention</p>
-    <div class="menu-item"><div class="item-info"><div class="item-name">Ofada × Ayamase &amp; Egg</div></div><div class="item-price"><span class="cur">₦</span>3,500</div><button class="add-btn" data-name="Ofada × Ayamase & Egg" data-price="3500" onclick="addItem(this)">+</button></div>
-    <div class="menu-item"><div class="item-info"><div class="item-name">Continental Rice × Shredded Chicken</div></div><div class="item-price"><span class="cur">₦</span>4,000</div><button class="add-btn" data-name="Continental Rice × Shredded Chicken" data-price="4000" onclick="addItem(this)">+</button></div>
-    <div class="menu-item"><div class="item-info"><div class="item-name">Stir-Fried Basmati × Shredded Chicken</div></div><div class="item-price"><span class="cur">₦</span>4,000</div><button class="add-btn" data-name="Stir-Fried Basmati × Shredded Chicken" data-price="4000" onclick="addItem(this)">+</button></div>
-    <div class="menu-item"><div class="item-info"><div class="item-name">Singapore Noodles × Shredded Chicken</div></div><div class="item-price"><span class="cur">₦</span>4,000</div><button class="add-btn" data-name="Singapore Noodles × Shredded Chicken" data-price="4000" onclick="addItem(this)">+</button></div>
-    <div class="menu-item"><div class="item-info"><div class="item-name">Spaghetti Jollof × Shredded Chicken</div></div><div class="item-price"><span class="cur">₦</span>3,500</div><button class="add-btn" data-name="Spaghetti Jollof × Shredded Chicken" data-price="3500" onclick="addItem(this)">+</button></div>
+    <div class="menu-loading" id="skelSpecials"><div class="menu-skeleton"></div><div class="menu-skeleton"></div><div class="menu-skeleton"></div></div>
   </section>
-
   <section class="menu-section" id="mains">
     <div class="section-header"><div class="section-icon">🍚</div><h2 class="section-title">Mains</h2><div class="section-rule"></div></div>
-    <div class="menu-item"><div class="item-info"><div class="item-name">Asun Rice</div></div><div class="item-price"><span class="cur">₦</span>3,500</div><button class="add-btn" data-name="Asun Rice" data-price="3500" onclick="addItem(this)">+</button></div>
-    <div class="menu-item"><div class="item-info"><div class="item-name">Smoky Jollof Rice</div></div><div class="item-price"><span class="cur">₦</span>500</div><button class="add-btn" data-name="Smoky Jollof Rice" data-price="500" onclick="addItem(this)">+</button></div>
-    <div class="menu-item"><div class="item-info"><div class="item-name">Fried Rice</div></div><div class="item-price"><span class="cur">₦</span>500</div><button class="add-btn" data-name="Fried Rice" data-price="500" onclick="addItem(this)">+</button></div>
-    <div class="menu-item"><div class="item-info"><div class="item-name">Steamed White Rice</div></div><div class="item-price"><span class="cur">₦</span>500</div><button class="add-btn" data-name="Steamed White Rice" data-price="500" onclick="addItem(this)">+</button></div>
-    <div class="menu-item"><div class="item-info"><div class="item-name">Porridge<span class="item-sub">House favourite</span></div></div><div class="item-price"><span class="cur">₦</span>2,000</div><button class="add-btn" data-name="Porridge" data-price="2000" onclick="addItem(this)">+</button></div>
-    <div class="menu-item"><div class="item-info"><div class="item-name">Village Rice</div></div><div class="item-price"><span class="cur">₦</span>2,500</div><button class="add-btn" data-name="Village Rice" data-price="2500" onclick="addItem(this)">+</button></div>
+    <div class="menu-loading" id="skelMains"><div class="menu-skeleton"></div><div class="menu-skeleton"></div><div class="menu-skeleton"></div></div>
   </section>
-
   <section class="menu-section" id="proteins">
     <div class="section-header"><div class="section-icon">🥩</div><h2 class="section-title">Proteins</h2><div class="section-rule"></div></div>
-    <div class="menu-item"><div class="item-info"><div class="item-name">Assorted</div></div><div class="item-price"><span class="cur">₦</span>1,200</div><button class="add-btn" data-name="Assorted" data-price="1200" onclick="addItem(this)">+</button></div>
-    <div class="menu-item"><div class="item-info"><div class="item-name">Beef</div></div><div class="item-price"><span class="cur">₦</span>1,200</div><button class="add-btn" data-name="Beef" data-price="1200" onclick="addItem(this)">+</button></div>
-    <div class="menu-item"><div class="item-info"><div class="item-name">Chicken</div></div><div class="item-price"><span class="cur">₦</span>2,000</div><button class="add-btn" data-name="Chicken" data-price="2000" onclick="addItem(this)">+</button></div>
-    <div class="menu-item"><div class="item-info"><div class="item-name">Big Chicken</div></div><div class="item-price"><span class="cur">₦</span>3,000</div><button class="add-btn" data-name="Big Chicken" data-price="3000" onclick="addItem(this)">+</button></div>
-    <div class="menu-item"><div class="item-info"><div class="item-name">BBQ Chicken</div></div><div class="item-price"><span class="cur">₦</span>3,500</div><button class="add-btn" data-name="BBQ Chicken" data-price="3500" onclick="addItem(this)">+</button></div>
-    <div class="menu-item"><div class="item-info"><div class="item-name">Fish — Titus</div></div><div class="item-price"><span class="cur">₦</span>2,000</div><button class="add-btn" data-name="Fish (Titus)" data-price="2000" onclick="addItem(this)">+</button></div>
-    <div class="menu-item"><div class="item-info"><div class="item-name">Panla</div></div><div class="item-price"><span class="cur">₦</span>1,500</div><button class="add-btn" data-name="Panla" data-price="1500" onclick="addItem(this)">+</button></div>
-    <div class="menu-item"><div class="item-info"><div class="item-name">Goat Meat<span class="item-sub">House favourite</span></div></div><div class="item-price"><span class="cur">₦</span>2,500</div><button class="add-btn" data-name="Goat Meat" data-price="2500" onclick="addItem(this)">+</button></div>
-    <div class="menu-item"><div class="item-info"><div class="item-name">Ponmo</div></div><div class="item-price"><span class="cur">₦</span>1,000</div><button class="add-btn" data-name="Ponmo" data-price="1000" onclick="addItem(this)">+</button></div>
-    <div class="menu-item"><div class="item-info"><div class="item-name">Turkey</div></div><div class="item-price"><span class="cur">₦</span>4,000</div><button class="add-btn" data-name="Turkey" data-price="4000" onclick="addItem(this)">+</button></div>
+    <div class="menu-loading" id="skelProteins"><div class="menu-skeleton"></div><div class="menu-skeleton"></div><div class="menu-skeleton"></div></div>
   </section>
-
   <section class="menu-section" id="grill">
     <div class="section-header"><div class="section-icon">🔥</div><h2 class="section-title">Grill Zone</h2><div class="section-rule"></div></div>
-    <div class="menu-item"><div class="item-info"><div class="item-name">Asun</div></div><div class="item-price"><span class="cur">₦</span>3,000</div><button class="add-btn" data-name="Asun" data-price="3000" onclick="addItem(this)">+</button></div>
-    <div class="menu-item"><div class="item-info"><div class="item-name">BBQ Catfish × Fries</div></div><div class="item-price"><span class="cur">₦</span>8,000</div><button class="add-btn" data-name="BBQ Catfish × Fries" data-price="8000" onclick="addItem(this)">+</button></div>
-    <div class="menu-item"><div class="item-info"><div class="item-name">BBQ Chicken × Chips</div></div><div class="item-price"><span class="cur">₦</span>8,000</div><button class="add-btn" data-name="BBQ Chicken × Chips" data-price="8000" onclick="addItem(this)">+</button></div>
-    <div class="menu-item"><div class="item-info"><div class="item-name">Chicken Burger</div></div><div class="item-price"><span class="cur">₦</span>3,500</div><button class="add-btn" data-name="Chicken Burger" data-price="3500" onclick="addItem(this)">+</button></div>
-    <div class="menu-item"><div class="item-info"><div class="item-name">Chicken Wings</div></div><div class="item-price"><span class="cur">₦</span>2,000</div><button class="add-btn" data-name="Chicken Wings" data-price="2000" onclick="addItem(this)">+</button></div>
-    <div class="menu-item"><div class="item-info"><div class="item-name">Sharwarma<span class="item-sub">House favourite</span></div></div><div class="item-price"><span class="cur">₦</span>3,000</div><button class="add-btn" data-name="Sharwarma" data-price="3000" onclick="addItem(this)">+</button></div>
-    <div class="menu-item"><div class="item-info"><div class="item-name">Sharwarma × Combo</div></div><div class="item-price"><span class="cur">₦</span>3,500</div><button class="add-btn" data-name="Sharwarma × Combo" data-price="3500" onclick="addItem(this)">+</button></div>
-    <div class="menu-item"><div class="item-info"><div class="item-name">GizDodo</div></div><div class="item-price"><span class="cur">₦</span>3,000</div><button class="add-btn" data-name="GizDodo" data-price="3000" onclick="addItem(this)">+</button></div>
-    <div class="menu-item"><div class="item-info"><div class="item-name">WngsDodo</div></div><div class="item-price"><span class="cur">₦</span>3,000</div><button class="add-btn" data-name="WngsDodo" data-price="3000" onclick="addItem(this)">+</button></div>
-    <div class="menu-item"><div class="item-info"><div class="item-name">Isi Ewu</div></div><div class="item-price"><span class="cur">₦</span>6,000</div><button class="add-btn" data-name="Isi Ewu" data-price="6000" onclick="addItem(this)">+</button></div>
+    <div class="menu-loading" id="skelGrill"><div class="menu-skeleton"></div><div class="menu-skeleton"></div><div class="menu-skeleton"></div></div>
   </section>
-
   <section class="menu-section" id="swallow">
     <div class="section-header"><div class="section-icon">🍲</div><h2 class="section-title">Swallow</h2><div class="section-rule"></div></div>
-    <div class="menu-item"><div class="item-info"><div class="item-name">Amala</div></div><div class="item-price"><span class="cur">₦</span>1,000</div><button class="add-btn" data-name="Amala" data-price="1000" onclick="addItem(this)">+</button></div>
-    <div class="menu-item"><div class="item-info"><div class="item-name">Poundo<span class="item-sub">House favourite</span></div></div><div class="item-price"><span class="cur">₦</span>1,000</div><button class="add-btn" data-name="Poundo" data-price="1000" onclick="addItem(this)">+</button></div>
-    <div class="menu-item"><div class="item-info"><div class="item-name">Semo</div></div><div class="item-price"><span class="cur">₦</span>1,000</div><button class="add-btn" data-name="Semo" data-price="1000" onclick="addItem(this)">+</button></div>
-    <div class="menu-item"><div class="item-info"><div class="item-name">Fufu</div></div><div class="item-price"><span class="cur">₦</span>700</div><button class="add-btn" data-name="Fufu" data-price="700" onclick="addItem(this)">+</button></div>
-    <div class="menu-item"><div class="item-info"><div class="item-name">Eba</div></div><div class="variant-group"><button class="variant-btn" data-name="Eba (Small)" data-price="500" onclick="addItem(this)">Small &nbsp;₦500</button><button class="variant-btn" data-name="Eba (Big)" data-price="700" onclick="addItem(this)">Big &nbsp;₦700</button></div></div>
+    <div class="menu-loading" id="skelSwallow"><div class="menu-skeleton"></div><div class="menu-skeleton"></div><div class="menu-skeleton"></div></div>
   </section>
-
   <section class="menu-section" id="soups">
     <div class="section-header"><div class="section-icon">🥣</div><h2 class="section-title">Soups</h2><div class="section-rule"></div></div>
-    <div class="menu-item"><div class="item-info"><div class="item-name">Efo Riro</div></div><div class="item-price"><span class="cur">₦</span>1,000</div><button class="add-btn" data-name="Efo Riro" data-price="1000" onclick="addItem(this)">+</button></div>
-    <div class="menu-item"><div class="item-info"><div class="item-name">Egusi</div></div><div class="item-price"><span class="cur">₦</span>1,000</div><button class="add-btn" data-name="Egusi" data-price="1000" onclick="addItem(this)">+</button></div>
-    <div class="menu-item"><div class="item-info"><div class="item-name">Okra</div></div><div class="item-price"><span class="cur">₦</span>1,000</div><button class="add-btn" data-name="Okra" data-price="1000" onclick="addItem(this)">+</button></div>
-    <div class="menu-item"><div class="item-info"><div class="item-name">Edikang Ikong<span class="item-sub">House favourite</span></div></div><div class="item-price"><span class="cur">₦</span>1,500</div><button class="add-btn" data-name="Edikang Ikong" data-price="1500" onclick="addItem(this)">+</button></div>
-    <div class="menu-item"><div class="item-info"><div class="item-name">Gbegiri</div></div><span class="free-label">Complimentary</span><button class="add-btn" data-name="Gbegiri" data-price="0" data-free="true" onclick="addItem(this)">+</button></div>
-    <div class="menu-item"><div class="item-info"><div class="item-name">Ewedu</div></div><span class="free-label">Complimentary</span><button class="add-btn" data-name="Ewedu" data-price="0" data-free="true" onclick="addItem(this)">+</button></div>
+    <div class="menu-loading" id="skelSoups"><div class="menu-skeleton"></div><div class="menu-skeleton"></div><div class="menu-skeleton"></div></div>
   </section>
-
   <section class="menu-section" id="sides">
     <div class="section-header"><div class="section-icon">🥗</div><h2 class="section-title">Sides</h2><div class="section-rule"></div></div>
-    <div class="menu-item"><div class="item-info"><div class="item-name">Salad<span class="item-sub">House favourite</span></div></div><div class="item-price"><span class="cur">₦</span>1,000</div><button class="add-btn" data-name="Salad" data-price="1000" onclick="addItem(this)">+</button></div>
-    <div class="menu-item"><div class="item-info"><div class="item-name">Plantain</div></div><div class="item-price"><span class="cur">₦</span>1,000</div><button class="add-btn" data-name="Plantain" data-price="1000" onclick="addItem(this)">+</button></div>
-    <div class="menu-item"><div class="item-info"><div class="item-name">Beans</div></div><div class="item-price"><span class="cur">₦</span>500</div><button class="add-btn" data-name="Beans" data-price="500" onclick="addItem(this)">+</button></div>
+    <div class="menu-loading" id="skelSides"><div class="menu-skeleton"></div><div class="menu-skeleton"></div><div class="menu-skeleton"></div></div>
   </section>
-
 </div><!-- end #tabFood -->
 
 <!-- Drinks Tab Pane -->
@@ -722,26 +730,7 @@ body {
       <h2 class="section-title">Drinks</h2>
       <div class="section-rule"></div>
     </div>
-    <div class="menu-item"><div class="item-info"><div class="item-name">Water</div></div><div class="item-price"><span class="cur">₦</span>400</div><button class="add-btn" data-name="Water" data-price="400" onclick="addItem(this)">+</button></div>
-    <div class="menu-item"><div class="item-info"><div class="item-name">Coke</div></div><div class="item-price"><span class="cur">₦</span>700</div><button class="add-btn" data-name="Coke" data-price="700" onclick="addItem(this)">+</button></div>
-    <div class="menu-item"><div class="item-info"><div class="item-name">Fanta</div></div><div class="item-price"><span class="cur">₦</span>700</div><button class="add-btn" data-name="Fanta" data-price="700" onclick="addItem(this)">+</button></div>
-    <div class="menu-item"><div class="item-info"><div class="item-name">Sprite</div></div><div class="item-price"><span class="cur">₦</span>700</div><button class="add-btn" data-name="Sprite" data-price="700" onclick="addItem(this)">+</button></div>
-    <div class="menu-item"><div class="item-info"><div class="item-name">Pepsi</div></div><div class="item-price"><span class="cur">₦</span>700</div><button class="add-btn" data-name="Pepsi" data-price="700" onclick="addItem(this)">+</button></div>
-    <div class="menu-item"><div class="item-info"><div class="item-name">Fearless</div></div><div class="item-price"><span class="cur">₦</span>700</div><button class="add-btn" data-name="Fearless" data-price="700" onclick="addItem(this)">+</button></div>
-    <div class="menu-item"><div class="item-info"><div class="item-name">Predator</div></div><div class="item-price"><span class="cur">₦</span>700</div><button class="add-btn" data-name="Predator" data-price="700" onclick="addItem(this)">+</button></div>
-    <div class="menu-item"><div class="item-info"><div class="item-name">Zobo</div></div><div class="item-price"><span class="cur">₦</span>700</div><button class="add-btn" data-name="Zobo" data-price="700" onclick="addItem(this)">+</button></div>
-    <div class="menu-item"><div class="item-info"><div class="item-name">Malt</div></div><div class="item-price"><span class="cur">₦</span>800</div><button class="add-btn" data-name="Malt" data-price="800" onclick="addItem(this)">+</button></div>
-    <div class="menu-item"><div class="item-info"><div class="item-name">Fayrouz</div></div><div class="item-price"><span class="cur">₦</span>1,000</div><button class="add-btn" data-name="Fayrouz" data-price="1000" onclick="addItem(this)">+</button></div>
-    <div class="menu-item"><div class="item-info"><div class="item-name">5Alive Pulpy</div></div><div class="item-price"><span class="cur">₦</span>2,000</div><button class="add-btn" data-name="5Alive Pulpy" data-price="2000" onclick="addItem(this)">+</button></div>
-    <div class="menu-item"><div class="item-info"><div class="item-name">Schweppes</div></div><div class="item-price"><span class="cur">₦</span>1,000</div><button class="add-btn" data-name="Schweppes" data-price="1000" onclick="addItem(this)">+</button></div>
-    <div class="menu-item"><div class="item-info"><div class="item-name">Tiger Drink</div></div><div class="item-price"><span class="cur">₦</span>1,200</div><button class="add-btn" data-name="Tiger Drink" data-price="1200" onclick="addItem(this)">+</button></div>
-    <div class="menu-item"><div class="item-info"><div class="item-name">SmirnOff Ice</div></div><div class="item-price"><span class="cur">₦</span>1,200</div><button class="add-btn" data-name="SmirnOff Ice" data-price="1200" onclick="addItem(this)">+</button></div>
-    <div class="menu-item"><div class="item-info"><div class="item-name">Hollandia Yoghurt (Big)</div></div><div class="item-price"><span class="cur">₦</span>3,000</div><button class="add-btn" data-name="Hollandia Yoghurt (Big)" data-price="3000" onclick="addItem(this)">+</button></div>
-    <div class="menu-item"><div class="item-info"><div class="item-name">Hollandia Yoghurt (Med.)</div></div><div class="item-price"><span class="cur">₦</span>1,500</div><button class="add-btn" data-name="Hollandia Yoghurt (Med.)" data-price="1500" onclick="addItem(this)">+</button></div>
-    <div class="menu-item"><div class="item-info"><div class="item-name">Monster Energy</div></div><div class="item-price"><span class="cur">₦</span>1,500</div><button class="add-btn" data-name="Monster Energy" data-price="1500" onclick="addItem(this)">+</button></div>
-    <div class="menu-item"><div class="item-info"><div class="item-name">Chivita Active</div></div><div class="item-price"><span class="cur">₦</span>2,500</div><button class="add-btn" data-name="Chivita Active" data-price="2500" onclick="addItem(this)">+</button></div>
-    <div class="menu-item"><div class="item-info"><div class="item-name">Chivita Exotic</div></div><div class="item-price"><span class="cur">₦</span>2,500</div><button class="add-btn" data-name="Chivita Exotic" data-price="2500" onclick="addItem(this)">+</button></div>
-    <div class="menu-item"><div class="item-info"><div class="item-name">Chivita Red Grape</div></div><div class="item-price"><span class="cur">₦</span>2,800</div><button class="add-btn" data-name="Chivita Red Grape" data-price="2800" onclick="addItem(this)">+</button></div>
+    <div class="menu-loading" id="skelDrinks"><div class="menu-skeleton"></div><div class="menu-skeleton"></div><div class="menu-skeleton"></div></div>
   </section>
 </div><!-- end #tabDrinks -->
 
@@ -749,17 +738,9 @@ body {
 <div class="tab-pane" id="tabPastries">
   <section class="menu-section" id="pastries">
     <div class="section-header"><div class="section-icon">🥐</div><h2 class="section-title">Pastries</h2><div class="section-rule"></div></div>
-    <div class="menu-item"><div class="item-info"><div class="item-name">King's Roll</div></div><div class="item-price"><span class="cur">₦</span>1,000</div><button class="add-btn" data-name="King's Roll" data-price="1000" onclick="addItem(this)">+</button></div>
-    <div class="menu-item"><div class="item-info"><div class="item-name">Doughnut</div></div><div class="item-price"><span class="cur">₦</span>400</div><button class="add-btn" data-name="Doughnut" data-price="400" onclick="addItem(this)">+</button></div>
-    <div class="menu-item"><div class="item-info"><div class="item-name">Chicken Pie<span class="item-sub">House favourite</span></div></div><div class="item-price"><span class="cur">₦</span>1,200</div><button class="add-btn" data-name="Chicken Pie" data-price="1200" onclick="addItem(this)">+</button></div>
-    <div class="menu-item"><div class="item-info"><div class="item-name">Meat Pie</div></div><div class="item-price"><span class="cur">₦</span>1,000</div><button class="add-btn" data-name="Meat Pie" data-price="1000" onclick="addItem(this)">+</button></div>
-    <div class="menu-item"><div class="item-info"><div class="item-name">Meat Pie — Small</div></div><div class="item-price"><span class="cur">₦</span>400</div><button class="add-btn" data-name="Meat Pie (Small)" data-price="400" onclick="addItem(this)">+</button></div>
-    <div class="menu-item"><div class="item-info"><div class="item-name">Beef Roll</div></div><div class="item-price"><span class="cur">₦</span>400</div><button class="add-btn" data-name="Beef Roll" data-price="400" onclick="addItem(this)">+</button></div>
+    <div class="menu-loading" id="skelPastries"><div class="menu-skeleton"></div><div class="menu-skeleton"></div><div class="menu-skeleton"></div></div>
   </section>
 </div><!-- end #tabPastries -->
-
-
-
 </main>
 
 <footer class="footer">
@@ -826,6 +807,212 @@ body {
 <script>
   const WA = '2347060988973';
   const PACK_PRICE = 400;
+
+  /* ── Supabase Config ────────────────────────────────────────────────────────
+   * 1. Create a free project at https://supabase.com
+   * 2. Run supabase-schema.sql in your project's SQL Editor
+   * 3. Go to Settings → API and replace the values below
+   * ─────────────────────────────────────────────────────────────────────────*/
+  const SUPABASE_URL  = 'https://YOUR_PROJECT_ID.supabase.co';
+  const SUPABASE_ANON = 'YOUR_ANON_KEY';
+  const SUPABASE_CONFIGURED = SUPABASE_URL.indexOf('YOUR_PROJECT_ID') === -1;
+
+  /* ── Static fallback — used when Supabase is not yet configured ─────────── */
+  const FALLBACK_MENU = [
+    // Chef's Specials
+    {id:'s1',name:"Ofada \u00d7 Ayamase & Egg",price:3500,section:'specials',tab:'food',available:true,category_type:'regular',promo_expires_at:null,combo:false,sub_label:null,is_free:false,sort_order:1,has_variants:false,variants:null},
+    {id:'s2',name:'Continental Rice \u00d7 Shredded Chicken',price:4000,section:'specials',tab:'food',available:true,category_type:'regular',promo_expires_at:null,combo:false,sub_label:null,is_free:false,sort_order:2,has_variants:false,variants:null},
+    {id:'s3',name:'Stir-Fried Basmati \u00d7 Shredded Chicken',price:4000,section:'specials',tab:'food',available:true,category_type:'regular',promo_expires_at:null,combo:false,sub_label:null,is_free:false,sort_order:3,has_variants:false,variants:null},
+    {id:'s4',name:'Singapore Noodles \u00d7 Shredded Chicken',price:4000,section:'specials',tab:'food',available:true,category_type:'regular',promo_expires_at:null,combo:false,sub_label:null,is_free:false,sort_order:4,has_variants:false,variants:null},
+    {id:'s5',name:'Spaghetti Jollof \u00d7 Shredded Chicken',price:3500,section:'specials',tab:'food',available:true,category_type:'regular',promo_expires_at:null,combo:false,sub_label:null,is_free:false,sort_order:5,has_variants:false,variants:null},
+    // Mains
+    {id:'m1',name:'Asun Rice',price:3500,section:'mains',tab:'food',available:true,category_type:'regular',promo_expires_at:null,combo:false,sub_label:null,is_free:false,sort_order:1,has_variants:false,variants:null},
+    {id:'m2',name:'Smoky Jollof Rice',price:500,section:'mains',tab:'food',available:true,category_type:'regular',promo_expires_at:null,combo:false,sub_label:null,is_free:false,sort_order:2,has_variants:false,variants:null},
+    {id:'m3',name:'Fried Rice',price:500,section:'mains',tab:'food',available:true,category_type:'regular',promo_expires_at:null,combo:false,sub_label:null,is_free:false,sort_order:3,has_variants:false,variants:null},
+    {id:'m4',name:'Steamed White Rice',price:500,section:'mains',tab:'food',available:true,category_type:'regular',promo_expires_at:null,combo:false,sub_label:null,is_free:false,sort_order:4,has_variants:false,variants:null},
+    {id:'m5',name:'Porridge',price:2000,section:'mains',tab:'food',available:true,category_type:'regular',promo_expires_at:null,combo:false,sub_label:'House favourite',is_free:false,sort_order:5,has_variants:false,variants:null},
+    {id:'m6',name:'Village Rice',price:2500,section:'mains',tab:'food',available:true,category_type:'regular',promo_expires_at:null,combo:false,sub_label:null,is_free:false,sort_order:6,has_variants:false,variants:null},
+    // Proteins
+    {id:'p1',name:'Assorted',price:1200,section:'proteins',tab:'food',available:true,category_type:'regular',promo_expires_at:null,combo:false,sub_label:null,is_free:false,sort_order:1,has_variants:false,variants:null},
+    {id:'p2',name:'Beef',price:1200,section:'proteins',tab:'food',available:true,category_type:'regular',promo_expires_at:null,combo:false,sub_label:null,is_free:false,sort_order:2,has_variants:false,variants:null},
+    {id:'p3',name:'Chicken',price:2000,section:'proteins',tab:'food',available:true,category_type:'regular',promo_expires_at:null,combo:false,sub_label:null,is_free:false,sort_order:3,has_variants:false,variants:null},
+    {id:'p4',name:'Big Chicken',price:3000,section:'proteins',tab:'food',available:true,category_type:'regular',promo_expires_at:null,combo:false,sub_label:null,is_free:false,sort_order:4,has_variants:false,variants:null},
+    {id:'p5',name:'BBQ Chicken',price:3500,section:'proteins',tab:'food',available:true,category_type:'regular',promo_expires_at:null,combo:false,sub_label:null,is_free:false,sort_order:5,has_variants:false,variants:null},
+    {id:'p6',name:'Fish \u2014 Titus',price:2000,section:'proteins',tab:'food',available:true,category_type:'regular',promo_expires_at:null,combo:false,sub_label:null,is_free:false,sort_order:6,has_variants:false,variants:null},
+    {id:'p7',name:'Panla',price:1500,section:'proteins',tab:'food',available:true,category_type:'regular',promo_expires_at:null,combo:false,sub_label:null,is_free:false,sort_order:7,has_variants:false,variants:null},
+    {id:'p8',name:'Goat Meat',price:2500,section:'proteins',tab:'food',available:true,category_type:'regular',promo_expires_at:null,combo:false,sub_label:'House favourite',is_free:false,sort_order:8,has_variants:false,variants:null},
+    {id:'p9',name:'Ponmo',price:1000,section:'proteins',tab:'food',available:true,category_type:'regular',promo_expires_at:null,combo:false,sub_label:null,is_free:false,sort_order:9,has_variants:false,variants:null},
+    {id:'p10',name:'Turkey',price:4000,section:'proteins',tab:'food',available:true,category_type:'regular',promo_expires_at:null,combo:false,sub_label:null,is_free:false,sort_order:10,has_variants:false,variants:null},
+    // Grill Zone
+    {id:'g1',name:'Asun',price:3000,section:'grill',tab:'food',available:true,category_type:'regular',promo_expires_at:null,combo:false,sub_label:null,is_free:false,sort_order:1,has_variants:false,variants:null},
+    {id:'g2',name:'BBQ Catfish \u00d7 Fries',price:8000,section:'grill',tab:'food',available:true,category_type:'regular',promo_expires_at:null,combo:false,sub_label:null,is_free:false,sort_order:2,has_variants:false,variants:null},
+    {id:'g3',name:'BBQ Chicken \u00d7 Chips',price:8000,section:'grill',tab:'food',available:true,category_type:'regular',promo_expires_at:null,combo:false,sub_label:null,is_free:false,sort_order:3,has_variants:false,variants:null},
+    {id:'g4',name:'Chicken Burger',price:3500,section:'grill',tab:'food',available:true,category_type:'regular',promo_expires_at:null,combo:false,sub_label:null,is_free:false,sort_order:4,has_variants:false,variants:null},
+    {id:'g5',name:'Chicken Wings',price:2000,section:'grill',tab:'food',available:true,category_type:'regular',promo_expires_at:null,combo:false,sub_label:null,is_free:false,sort_order:5,has_variants:false,variants:null},
+    {id:'g6',name:'Sharwarma',price:3000,section:'grill',tab:'food',available:true,category_type:'regular',promo_expires_at:null,combo:false,sub_label:'House favourite',is_free:false,sort_order:6,has_variants:false,variants:null},
+    {id:'g7',name:'Sharwarma \u00d7 Combo',price:3500,section:'grill',tab:'food',available:true,category_type:'regular',promo_expires_at:null,combo:false,sub_label:null,is_free:false,sort_order:7,has_variants:false,variants:null},
+    {id:'g8',name:'GizDodo',price:3000,section:'grill',tab:'food',available:true,category_type:'regular',promo_expires_at:null,combo:false,sub_label:null,is_free:false,sort_order:8,has_variants:false,variants:null},
+    {id:'g9',name:'WngsDodo',price:3000,section:'grill',tab:'food',available:true,category_type:'regular',promo_expires_at:null,combo:false,sub_label:null,is_free:false,sort_order:9,has_variants:false,variants:null},
+    {id:'g10',name:'Isi Ewu',price:6000,section:'grill',tab:'food',available:true,category_type:'regular',promo_expires_at:null,combo:false,sub_label:null,is_free:false,sort_order:10,has_variants:false,variants:null},
+    // Swallow
+    {id:'sw1',name:'Amala',price:1000,section:'swallow',tab:'food',available:true,category_type:'regular',promo_expires_at:null,combo:false,sub_label:null,is_free:false,sort_order:1,has_variants:false,variants:null},
+    {id:'sw2',name:'Poundo',price:1000,section:'swallow',tab:'food',available:true,category_type:'regular',promo_expires_at:null,combo:false,sub_label:'House favourite',is_free:false,sort_order:2,has_variants:false,variants:null},
+    {id:'sw3',name:'Semo',price:1000,section:'swallow',tab:'food',available:true,category_type:'regular',promo_expires_at:null,combo:false,sub_label:null,is_free:false,sort_order:3,has_variants:false,variants:null},
+    {id:'sw4',name:'Fufu',price:700,section:'swallow',tab:'food',available:true,category_type:'regular',promo_expires_at:null,combo:false,sub_label:null,is_free:false,sort_order:4,has_variants:false,variants:null},
+    {id:'sw5',name:'Eba',price:0,section:'swallow',tab:'food',available:true,category_type:'regular',promo_expires_at:null,combo:false,sub_label:null,is_free:false,sort_order:5,has_variants:true,variants:[{name:'Eba (Small)',price:500},{name:'Eba (Big)',price:700}]},
+    // Soups
+    {id:'so1',name:'Efo Riro',price:1000,section:'soups',tab:'food',available:true,category_type:'regular',promo_expires_at:null,combo:false,sub_label:null,is_free:false,sort_order:1,has_variants:false,variants:null},
+    {id:'so2',name:'Egusi',price:1000,section:'soups',tab:'food',available:true,category_type:'regular',promo_expires_at:null,combo:false,sub_label:null,is_free:false,sort_order:2,has_variants:false,variants:null},
+    {id:'so3',name:'Okra',price:1000,section:'soups',tab:'food',available:true,category_type:'regular',promo_expires_at:null,combo:false,sub_label:null,is_free:false,sort_order:3,has_variants:false,variants:null},
+    {id:'so4',name:'Edikang Ikong',price:1500,section:'soups',tab:'food',available:true,category_type:'regular',promo_expires_at:null,combo:false,sub_label:'House favourite',is_free:false,sort_order:4,has_variants:false,variants:null},
+    {id:'so5',name:'Gbegiri',price:0,section:'soups',tab:'food',available:true,category_type:'regular',promo_expires_at:null,combo:false,sub_label:null,is_free:true,sort_order:5,has_variants:false,variants:null},
+    {id:'so6',name:'Ewedu',price:0,section:'soups',tab:'food',available:true,category_type:'regular',promo_expires_at:null,combo:false,sub_label:null,is_free:true,sort_order:6,has_variants:false,variants:null},
+    // Sides
+    {id:'si1',name:'Salad',price:1000,section:'sides',tab:'food',available:true,category_type:'regular',promo_expires_at:null,combo:false,sub_label:'House favourite',is_free:false,sort_order:1,has_variants:false,variants:null},
+    {id:'si2',name:'Plantain',price:1000,section:'sides',tab:'food',available:true,category_type:'regular',promo_expires_at:null,combo:false,sub_label:null,is_free:false,sort_order:2,has_variants:false,variants:null},
+    {id:'si3',name:'Beans',price:500,section:'sides',tab:'food',available:true,category_type:'regular',promo_expires_at:null,combo:false,sub_label:null,is_free:false,sort_order:3,has_variants:false,variants:null},
+    // Drinks
+    {id:'d1',name:'Water',price:400,section:'drinks',tab:'drinks',available:true,category_type:'regular',promo_expires_at:null,combo:false,sub_label:null,is_free:false,sort_order:1,has_variants:false,variants:null},
+    {id:'d2',name:'Coke',price:700,section:'drinks',tab:'drinks',available:true,category_type:'regular',promo_expires_at:null,combo:false,sub_label:null,is_free:false,sort_order:2,has_variants:false,variants:null},
+    {id:'d3',name:'Fanta',price:700,section:'drinks',tab:'drinks',available:true,category_type:'regular',promo_expires_at:null,combo:false,sub_label:null,is_free:false,sort_order:3,has_variants:false,variants:null},
+    {id:'d4',name:'Sprite',price:700,section:'drinks',tab:'drinks',available:true,category_type:'regular',promo_expires_at:null,combo:false,sub_label:null,is_free:false,sort_order:4,has_variants:false,variants:null},
+    {id:'d5',name:'Pepsi',price:700,section:'drinks',tab:'drinks',available:true,category_type:'regular',promo_expires_at:null,combo:false,sub_label:null,is_free:false,sort_order:5,has_variants:false,variants:null},
+    {id:'d6',name:'Fearless',price:700,section:'drinks',tab:'drinks',available:true,category_type:'regular',promo_expires_at:null,combo:false,sub_label:null,is_free:false,sort_order:6,has_variants:false,variants:null},
+    {id:'d7',name:'Predator',price:700,section:'drinks',tab:'drinks',available:true,category_type:'regular',promo_expires_at:null,combo:false,sub_label:null,is_free:false,sort_order:7,has_variants:false,variants:null},
+    {id:'d8',name:'Zobo',price:700,section:'drinks',tab:'drinks',available:true,category_type:'regular',promo_expires_at:null,combo:false,sub_label:null,is_free:false,sort_order:8,has_variants:false,variants:null},
+    {id:'d9',name:'Malt',price:800,section:'drinks',tab:'drinks',available:true,category_type:'regular',promo_expires_at:null,combo:false,sub_label:null,is_free:false,sort_order:9,has_variants:false,variants:null},
+    {id:'d10',name:'Fayrouz',price:1000,section:'drinks',tab:'drinks',available:true,category_type:'regular',promo_expires_at:null,combo:false,sub_label:null,is_free:false,sort_order:10,has_variants:false,variants:null},
+    {id:'d11',name:'5Alive Pulpy',price:2000,section:'drinks',tab:'drinks',available:true,category_type:'regular',promo_expires_at:null,combo:false,sub_label:null,is_free:false,sort_order:11,has_variants:false,variants:null},
+    {id:'d12',name:'Schweppes',price:1000,section:'drinks',tab:'drinks',available:true,category_type:'regular',promo_expires_at:null,combo:false,sub_label:null,is_free:false,sort_order:12,has_variants:false,variants:null},
+    {id:'d13',name:'Tiger Drink',price:1200,section:'drinks',tab:'drinks',available:true,category_type:'regular',promo_expires_at:null,combo:false,sub_label:null,is_free:false,sort_order:13,has_variants:false,variants:null},
+    {id:'d14',name:'SmirnOff Ice',price:1200,section:'drinks',tab:'drinks',available:true,category_type:'regular',promo_expires_at:null,combo:false,sub_label:null,is_free:false,sort_order:14,has_variants:false,variants:null},
+    {id:'d15',name:'Hollandia Yoghurt (Big)',price:3000,section:'drinks',tab:'drinks',available:true,category_type:'regular',promo_expires_at:null,combo:false,sub_label:null,is_free:false,sort_order:15,has_variants:false,variants:null},
+    {id:'d16',name:'Hollandia Yoghurt (Med.)',price:1500,section:'drinks',tab:'drinks',available:true,category_type:'regular',promo_expires_at:null,combo:false,sub_label:null,is_free:false,sort_order:16,has_variants:false,variants:null},
+    {id:'d17',name:'Monster Energy',price:1500,section:'drinks',tab:'drinks',available:true,category_type:'regular',promo_expires_at:null,combo:false,sub_label:null,is_free:false,sort_order:17,has_variants:false,variants:null},
+    {id:'d18',name:'Chivita Active',price:2500,section:'drinks',tab:'drinks',available:true,category_type:'regular',promo_expires_at:null,combo:false,sub_label:null,is_free:false,sort_order:18,has_variants:false,variants:null},
+    {id:'d19',name:'Chivita Exotic',price:2500,section:'drinks',tab:'drinks',available:true,category_type:'regular',promo_expires_at:null,combo:false,sub_label:null,is_free:false,sort_order:19,has_variants:false,variants:null},
+    {id:'d20',name:'Chivita Red Grape',price:2800,section:'drinks',tab:'drinks',available:true,category_type:'regular',promo_expires_at:null,combo:false,sub_label:null,is_free:false,sort_order:20,has_variants:false,variants:null},
+    // Pastries
+    {id:'pa1',name:"King's Roll",price:1000,section:'pastries',tab:'pastries',available:true,category_type:'regular',promo_expires_at:null,combo:false,sub_label:null,is_free:false,sort_order:1,has_variants:false,variants:null},
+    {id:'pa2',name:'Doughnut',price:400,section:'pastries',tab:'pastries',available:true,category_type:'regular',promo_expires_at:null,combo:false,sub_label:null,is_free:false,sort_order:2,has_variants:false,variants:null},
+    {id:'pa3',name:'Chicken Pie',price:1200,section:'pastries',tab:'pastries',available:true,category_type:'regular',promo_expires_at:null,combo:false,sub_label:'House favourite',is_free:false,sort_order:3,has_variants:false,variants:null},
+    {id:'pa4',name:'Meat Pie',price:1000,section:'pastries',tab:'pastries',available:true,category_type:'regular',promo_expires_at:null,combo:false,sub_label:null,is_free:false,sort_order:4,has_variants:false,variants:null},
+    {id:'pa5',name:'Meat Pie \u2014 Small',price:400,section:'pastries',tab:'pastries',available:true,category_type:'regular',promo_expires_at:null,combo:false,sub_label:null,is_free:false,sort_order:5,has_variants:false,variants:null},
+    {id:'pa6',name:'Beef Roll',price:400,section:'pastries',tab:'pastries',available:true,category_type:'regular',promo_expires_at:null,combo:false,sub_label:null,is_free:false,sort_order:6,has_variants:false,variants:null}
+  ];
+
+  /* ── Menu Rendering ─────────────────────────────────────────────────────── */
+  async function fetchMenuFromSupabase() {
+    var res = await fetch(
+      SUPABASE_URL + '/rest/v1/menu_items?select=*&order=sort_order.asc',
+      { headers: { 'apikey': SUPABASE_ANON, 'Authorization': 'Bearer ' + SUPABASE_ANON } }
+    );
+    if (!res.ok) throw new Error('Supabase error ' + res.status);
+    return res.json();
+  }
+
+  function renderSectionItems(section, items) {
+    /* Remove previous item rows (keep structural child elements) */
+    var toRemove = [];
+    for (var c = 0; c < section.children.length; c++) {
+      var child = section.children[c];
+      if (!child.classList.contains('section-header') &&
+          !child.classList.contains('specials-note') &&
+          !child.classList.contains('promo-note')) {
+        toRemove.push(child);
+      }
+    }
+    toRemove.forEach(function(el) { section.removeChild(el); });
+
+    items.forEach(function(item) {
+      var div = document.createElement('div');
+      div.className = 'menu-item' + (item.available ? '' : ' item-unavailable');
+      var nameHtml = item.sub_label
+        ? escHtml(item.name) + '<span class="item-sub">' + escHtml(item.sub_label) + '</span>'
+        : escHtml(item.name);
+      if (item.category_type === 'promo' && item.combo) {
+        nameHtml += '<span class="combo-tag">Combo</span>';
+      }
+
+      if (item.has_variants && item.variants) {
+        var varBtns = item.variants.map(function(v) {
+          var label = v.name.replace(/^[^(]*\(/, '').replace(/\).*$/, '').trim() || v.name;
+          var dis = item.available ? '' : ' disabled';
+          return '<button class="variant-btn"' + dis + ' data-name="' + escHtml(v.name) +
+            '" data-price="' + v.price + '" onclick="addItem(this)">' +
+            escHtml(label) + ' \u00a0\u20a6' + v.price.toLocaleString() + '</button>';
+        }).join('');
+        div.innerHTML = '<div class="item-info"><div class="item-name">' + escHtml(item.name) + '</div></div>' +
+          (item.available ? '<div class="variant-group">' + varBtns + '</div>' : '<span class="oos-badge">Out of Stock</span>');
+      } else if (item.is_free) {
+        div.innerHTML = '<div class="item-info"><div class="item-name">' + nameHtml + '</div></div>' +
+          '<span class="free-label">Complimentary</span>' +
+          '<button class="add-btn" data-name="' + escHtml(item.name) + '" data-price="0" data-free="true" onclick="addItem(this)">+</button>';
+      } else if (!item.available) {
+        div.innerHTML = '<div class="item-info"><div class="item-name">' + nameHtml + '</div></div>' +
+          '<span class="oos-badge">Out of Stock</span>' +
+          '<button class="add-btn" disabled>+</button>';
+      } else {
+        div.innerHTML = '<div class="item-info"><div class="item-name">' + nameHtml + '</div></div>' +
+          '<div class="item-price"><span class="cur">\u20a6</span>' + item.price.toLocaleString() + '</div>' +
+          '<button class="add-btn" data-name="' + escHtml(item.name) + '" data-price="' + item.price + '" onclick="addItem(this)">+</button>';
+      }
+      section.appendChild(div);
+    });
+  }
+
+  function renderMenuItems(items) {
+    var today = new Date(); today.setHours(0, 0, 0, 0);
+
+    /* Group by section, filtering out expired promos */
+    var bySection = {};
+    items.forEach(function(item) {
+      if (item.category_type === 'promo' && item.promo_expires_at) {
+        var exp = new Date(item.promo_expires_at);
+        if (exp < today) return;
+      }
+      if (!bySection[item.section]) bySection[item.section] = [];
+      bySection[item.section].push(item);
+    });
+
+    /* Active promos (any category_type === 'promo' not yet expired) */
+    var promos = items.filter(function(item) {
+      if (item.category_type !== 'promo') return false;
+      if (item.promo_expires_at) { var exp = new Date(item.promo_expires_at); if (exp < today) return false; }
+      return true;
+    });
+    var offersSection = document.getElementById('offers');
+    var offersNavBtn = document.querySelector('.cat-btn[data-target="offers"]');
+    if (promos.length > 0) {
+      offersSection.style.display = '';
+      if (offersNavBtn) offersNavBtn.style.display = '';
+      renderSectionItems(offersSection, promos);
+    } else {
+      offersSection.style.display = 'none';
+      if (offersNavBtn) offersNavBtn.style.display = 'none';
+    }
+
+    /* Regular sections */
+    ['specials','mains','proteins','grill','swallow','soups','sides','drinks','pastries'].forEach(function(sid) {
+      var sec = document.getElementById(sid);
+      if (sec) renderSectionItems(sec, bySection[sid] || []);
+    });
+
+    /* Re-attach IntersectionObservers now that content is populated */
+    document.querySelectorAll('.menu-section').forEach(function(s) { fadeObserver.observe(s); });
+    document.querySelectorAll('#tabFood .menu-section').forEach(function(s) { activeObserver.observe(s); });
+  }
+
+  async function loadMenu() {
+    var items;
+    if (SUPABASE_CONFIGURED) {
+      try { items = await fetchMenuFromSupabase(); }
+      catch (e) { console.warn('Supabase unavailable, using fallback:', e.message); items = FALLBACK_MENU; }
+    } else {
+      items = FALLBACK_MENU;
+    }
+    renderMenuItems(items);
+  }
 
   /* Plates-based cart */
   let plates = [{ id: 1, items: [] }];
@@ -1263,6 +1450,9 @@ body {
 
   /* Initial render */
   renderAll();
+
+  /* Load menu from Supabase (or static fallback) */
+  loadMenu();
 </script>
 
 </body>
