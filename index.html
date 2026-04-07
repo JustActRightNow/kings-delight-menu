@@ -1009,7 +1009,7 @@ body {
   function renderCheckout() {
     const body = document.getElementById('checkoutBody');
     const tableNo = localStorage.getItem('kd_table');
-    const savedName = (localStorage.getItem('kd_customer_name') || '').replace(/"/g, '&quot;');
+    const savedName = escHtml(localStorage.getItem('kd_customer_name') || '');
 
     let html = '<p class="checkout-section-title">Order Type</p>';
     html += '<div class="order-type-toggle" style="margin-bottom:16px">';
@@ -1055,6 +1055,16 @@ body {
     });
   }
 
+  /* HTML escaping for safe attribute/content injection */
+  function escHtml(s) {
+    return String(s)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
   /* Sanitization */
   function sanitizeInput(s) {
     return s
@@ -1078,8 +1088,8 @@ body {
 
     const coNameEl = document.getElementById('coName');
     const coNoteEl = document.getElementById('coNote');
-    const customerName = sanitizeInput((coNameEl ? coNameEl.value : '').trim());
-    const note = sanitizeInput((coNoteEl ? coNoteEl.value : '').trim());
+    const customerName = sanitizeInput(coNameEl ? coNameEl.value.trim() : '');
+    const note = sanitizeInput(coNoteEl ? coNoteEl.value.trim() : '');
     const tableNo = localStorage.getItem('kd_table');
 
     let msg = "*New Order \u2014 King's Delight Eatery*\n";
