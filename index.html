@@ -1356,8 +1356,8 @@ body {
       const a = document.querySelector('.cat-btn[data-target="' + e.target.id + '"]');
       if (a) {
         a.classList.add('active');
-        var btnRect = a.getBoundingClientRect();
-        var navRect = catNav.getBoundingClientRect();
+        const btnRect = a.getBoundingClientRect();
+        const navRect = catNav.getBoundingClientRect();
         catNav.scrollTo({ left: catNav.scrollLeft + btnRect.left - navRect.left - (navRect.width - btnRect.width) / 2, behavior: 'smooth' });
       }
     }
