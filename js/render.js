@@ -1,0 +1,114 @@
+/* ── HTML helpers ───────────────────────────────────────────────────────── */
+function escHtml(s) {
+  return String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function sanitizeInput(s) {
+  return s
+    .replace(/<[^>]*>/g, '')
+    .replace(/[*_~`]/g, '')
+    .replace(/[\n\r]{3,}/g, '\n\n')
+    .replace(/https?:\/\/\S+/gi, '[link]')
+    .slice(0, 300)
+    .trim();
+}
+
+/* ── Cart bar + plate indicator ─────────────────────────────────────────── */
+function renderAll() {
+  const count = totalItemCount();
+  document.getElementById('cartCount').textContent = count;
+  document.getElementById('cartTotalBar').textContent = '\u20a6' + grandTotal().toLocaleString();
+  document.getElementById('cartBar').classList.toggle('visible', hasItems());
+
+  const activePlate = getActivePlate();
+  const plateNum = activePlateIndex + 1;
+  const preview = activePlate.items.length
+    ? activePlate.items.map(i => (i.qty > 1 ? i.qty + '\u00d7 ' : '') + i.name).join(', ')
+    : 'Your order';
+  document.getElementById('cartPreview').textContent = plates.length > 1 ? plates.length + ' plates' : preview;
+  document.getElementById('plateIndicator').textContent = hasItems() ? 'Adding to Plate ' + plateNum : '';
+  renderCartPanel();
+}
+
+/* ── Cart panel ─────────────────────────────────────────────────────────── */
+function renderCartPanel() {
+  const list = document.getElementById('cpItems');
+  if (!hasItems()) {
+    list.innerHTML = '<p class="empty-msg">No items yet \u2014 add something from the menu</p>';
+    document.getElementById('cpTotal').textContent = '\u20a6' + grandTotal().toLocaleString();
+    return;
+  }
+  let html = '';
+  plates.forEach(function(plate, pIdx) {
+    if (!plate.items.length) return;
+    const isActive = pIdx === activePlateIndex;
+    const plateTotal = plate.items.reduce((s, i) => s + (i.free ? 0 : i.price * i.qty), 0);
+    html += '<div class="plate-card' + (isActive ? ' active-plate' : '') + '">';
+    html += '<div class="plate-header">';
+    html += '<span class="plate-label">Plate ' + (pIdx + 1) + (isActive ? ' \u2714' : '') + '</span>';
+    html += '<button class="plate-action-btn" title="Edit plate" onclick="editPlate(' + pIdx + ')"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:block"><path d="M11.013 1.427a1.75 1.75 0 012.474 2.474L4.93 12.458l-3.215.358a.75.75 0 01-.831-.831l.358-3.215L11.013 1.427z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M9.5 3.5l3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button>';
+    html += '<button class="plate-action-btn" title="Duplicate plate" onclick="duplicatePlate(' + pIdx + ')">\u29c9</button>';
+    html += '<button class="plate-action-btn del" title="Delete plate" onclick="deletePlate(' + pIdx + ')">\u2715</button>';
+    html += '</div><div class="plate-items">';
+    plate.items.forEach(function(item, iIdx) {
+      if (item.free) {
+        html += '<div class="cp-item"><div class="cp-item-name">' + item.name + '</div>';
+        html += '<div class="cp-item-price" style="color:rgba(120,210,120,0.75);font-style:italic">Free</div>';
+        html += '<button class="qty-btn" style="margin-left:8px" onclick="changePlateItemQty(' + pIdx + ',' + iIdx + ',-1)">\u2715</button></div>';
+      } else {
+        html += '<div class="cp-item"><div class="cp-item-name">' + item.name + '</div>';
+        html += '<div class="qty-ctrl">';
+        html += '<button class="qty-btn" onclick="changePlateItemQty(' + pIdx + ',' + iIdx + ',-1)">\u2212</button>';
+        html += '<span class="qty-num">' + item.qty + '</span>';
+        html += '<button class="qty-btn" onclick="changePlateItemQty(' + pIdx + ',' + iIdx + ',1)">+</button></div>';
+        html += '<div class="cp-item-price">\u20a6' + (item.price * item.qty).toLocaleString() + '</div></div>';
+      }
+    });
+    html += '<div class="plate-sub-total"><span>Plate total</span><span>\u20a6' + plateTotal.toLocaleString() + '</span></div>';
+    html += '</div></div>';
+  });
+  html += '<button class="add-plate-btn" onclick="addNewPlate()">+ Add another plate</button>';
+  if (orderType === 'take-out') {
+    const n = nonEmptyPlateCount();
+    html += '<div class="pack-row"><span>Packaging \u00d7 ' + n + ' plate' + (n > 1 ? 's' : '') + '</span><span>\u20a6' + (PACK_PRICE * n).toLocaleString() + '</span></div>';
+  }
+  list.innerHTML = html;
+  document.getElementById('cpTotal').textContent = '\u20a6' + grandTotal().toLocaleString();
+}
+
+/* ── Panel open / close ─────────────────────────────────────────────────── */
+function openCart() { document.getElementById('cartPanel').classList.add('open'); }
+function closeCart() { document.getElementById('cartPanel').classList.remove('open'); }
+
+function openCheckout() {
+  if (!hasItems()) return;
+  renderCheckout();
+  document.getElementById('checkoutPanel').classList.add('open');
+}
+function closeCheckout() { document.getElementById('checkoutPanel').classList.remove('open'); }
+
+/* ── Checkout summary ───────────────────────────────────────────────────── */
+function renderCheckout() {
+  let html = '<p class="checkout-section-title">Order Summary</p>';
+  plates.forEach(function(plate, pIdx) {
+    if (!plate.items.length) return;
+    const hasMulti = plates.filter(p => p.items.length).length > 1;
+    if (hasMulti) html += '<p class="checkout-plate-label">Plate ' + (pIdx + 1) + '</p>';
+    plate.items.forEach(function(item) {
+      const label = (item.qty > 1 ? item.qty + '\u00d7 ' : '') + item.name;
+      const amt = item.free ? 'Free' : '\u20a6' + (item.price * item.qty).toLocaleString();
+      html += '<div class="checkout-summary-item"><span>' + escHtml(label) + '</span><span class="item-amt">' + escHtml(amt) + '</span></div>';
+    });
+  });
+  if (orderType === 'take-out') {
+    const n = nonEmptyPlateCount();
+    html += '<div class="checkout-summary-item" style="margin-top:6px"><span>📦 Packaging \u00d7 ' + n + ' plate' + (n > 1 ? 's' : '') + '</span><span class="item-amt">\u20a6' + (PACK_PRICE * n).toLocaleString() + '</span></div>';
+  }
+  html += '<div class="co-total-row"><span class="co-total-label">Total</span><span class="co-total-amt">\u20a6' + grandTotal().toLocaleString() + '</span></div>';
+  document.getElementById('checkoutBody').innerHTML = html;
+}
