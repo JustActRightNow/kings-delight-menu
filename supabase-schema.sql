@@ -181,3 +181,6 @@ CREATE TABLE IF NOT EXISTS orders (
 ALTER TABLE orders ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "auth_read_orders"  ON orders FOR SELECT TO authenticated USING (true);
 CREATE POLICY "anon_insert_order" ON orders FOR INSERT TO anon        WITH CHECK (true);
+
+-- ── FIX 12: image support ──────────────────────────────────────────────────
+ALTER TABLE menu_items ADD COLUMN IF NOT EXISTS image_url TEXT;
