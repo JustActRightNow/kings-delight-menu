@@ -42,6 +42,11 @@ The database schema is maintained as numbered migration files in the `migrations
 
 `supabase-schema.sql` at the root is kept as a lightweight index file pointing to these migrations.
 
+## Tests
+
+Run `node cart.test.js` to verify cart logic.
+No dependencies required.
+
 ## Fallback
 
 If Supabase is not yet configured, `index.html` renders using the built-in `STATIC_MENU` data so the site always works.
