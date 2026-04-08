@@ -27,7 +27,12 @@ function subtotal() {
   return plates.reduce((s, p) => s + p.items.reduce((ss, i) => ss + (i.free ? 0 : i.price * i.qty), 0), 0);
 }
 function nonEmptyPlateCount() { return plates.filter(p => p.items.length > 0).length; }
-function packagingCost() { return orderType === 'take-out' ? PACK_PRICE * nonEmptyPlateCount() : 0; }
+function packagingCost() { return orderType === 'take-out' ? PACK_PRICE * packablePlateCount() : 0; }
+function packablePlateCount() {
+  return plates.filter(function(p) {
+    return p.items.length > 0 && p.items.some(function(i) { return i.needsPack; });
+  }).length;
+}
 function grandTotal() { return subtotal() + packagingCost(); }
 function totalItemCount() {
   return plates.reduce((s, p) => s + p.items.reduce((ss, i) => ss + i.qty, 0), 0);
@@ -37,11 +42,19 @@ function totalItemCount() {
 function addItem(btn) {
   const name = btn.dataset.name, price = parseInt(btn.dataset.price);
   const isFree = btn.dataset.free === 'true';
+  const needsPack = btn.dataset.needsPack === 'true';
   const plate = getActivePlate();
   const ex = plate.items.find(i => i.name === name);
   if (ex) { if (!isFree) ex.qty++; }
-  else { plate.items.push({ name, price, qty: 1, free: isFree }); }
+  else { plate.items.push({ name, price, qty: 1, free: isFree, needsPack }); }
   renderAll();
+}
+
+function removeMenuItem(name) {
+  const plate = getActivePlate();
+  const iIdx = plate.items.findIndex(i => i.name === name);
+  if (iIdx === -1) return;
+  changePlateItemQty(activePlateIndex, iIdx, -1);
 }
 
 function changePlateItemQty(pIdx, iIdx, d) {

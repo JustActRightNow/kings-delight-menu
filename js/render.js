@@ -34,6 +34,36 @@ function renderAll() {
   document.getElementById('cartPreview').textContent = plates.length > 1 ? plates.length + ' plates' : preview;
   document.getElementById('plateIndicator').textContent = hasItems() ? 'Adding to Plate ' + plateNum : '';
   renderCartPanel();
+  updateMenuItemQtys();
+}
+
+/* ── Menu-page inline quantity controls ─────────────────────────────────── */
+function updateMenuItemQtys() {
+  var plate = getActivePlate();
+  document.querySelectorAll('.item-qty-wrap').forEach(function(wrap) {
+    var name = wrap.dataset.itemName;
+    var price = wrap.dataset.price;
+    var needsPack = wrap.dataset.needsPack;
+    var isFree = wrap.dataset.free === 'true';
+    var item = plate.items.find(function(i) { return i.name === name; });
+    var qty = item ? item.qty : 0;
+
+    if (isFree) return; /* free items keep their X-remove button from renderCartPanel */
+
+    if (qty > 0) {
+      wrap.innerHTML =
+        '<div class="qty-ctrl">' +
+        '<button class="qty-btn" data-remove-name="' + escHtml(name) + '" onclick="removeMenuItem(this.dataset.removeName)">\u2212</button>' +
+        '<span class="qty-num">' + qty + '</span>' +
+        '<button class="qty-btn" data-name="' + escHtml(name) + '" data-price="' + escHtml(price) +
+        '" data-needs-pack="' + escHtml(needsPack) + '" onclick="addItem(this)">+</button>' +
+        '</div>';
+    } else {
+      wrap.innerHTML =
+        '<button class="add-btn" data-name="' + escHtml(name) + '" data-price="' + escHtml(price) +
+        '" data-needs-pack="' + escHtml(needsPack) + '" onclick="addItem(this)">+</button>';
+    }
+  });
 }
 
 /* ── Cart panel ─────────────────────────────────────────────────────────── */
@@ -75,8 +105,10 @@ function renderCartPanel() {
   });
   html += '<button class="add-plate-btn" onclick="addNewPlate()">+ Add another plate</button>';
   if (orderType === 'take-out') {
-    const n = nonEmptyPlateCount();
-    html += '<div class="pack-row"><span>Packaging \u00d7 ' + n + ' plate' + (n > 1 ? 's' : '') + '</span><span>\u20a6' + (PACK_PRICE * n).toLocaleString() + '</span></div>';
+    const n = packablePlateCount();
+    if (n > 0) {
+      html += '<div class="pack-row"><span>Packaging \u00d7 ' + n + ' plate' + (n > 1 ? 's' : '') + '</span><span>\u20a6' + (PACK_PRICE * n).toLocaleString() + '</span></div>';
+    }
   }
   list.innerHTML = html;
   document.getElementById('cpTotal').textContent = '\u20a6' + grandTotal().toLocaleString();
@@ -107,8 +139,10 @@ function renderCheckout() {
     });
   });
   if (orderType === 'take-out') {
-    const n = nonEmptyPlateCount();
-    html += '<div class="checkout-summary-item" style="margin-top:6px"><span>📦 Packaging \u00d7 ' + n + ' plate' + (n > 1 ? 's' : '') + '</span><span class="item-amt">\u20a6' + (PACK_PRICE * n).toLocaleString() + '</span></div>';
+    const n = packablePlateCount();
+    if (n > 0) {
+      html += '<div class="checkout-summary-item" style="margin-top:6px"><span>📦 Packaging \u00d7 ' + n + ' plate' + (n > 1 ? 's' : '') + '</span><span class="item-amt">\u20a6' + (PACK_PRICE * n).toLocaleString() + '</span></div>';
+    }
   }
   html += '<div class="co-total-row"><span class="co-total-label">Total</span><span class="co-total-amt">\u20a6' + grandTotal().toLocaleString() + '</span></div>';
   document.getElementById('checkoutBody').innerHTML = html;
