@@ -16,7 +16,7 @@ const src = tableNum ? ('table-' + tableNum) : (params.get('src') || 'direct');
 
 function fmtSrc(s) {
   if (s.startsWith('table-')) return 'Table ' + s.replace('table-', '');
-  const map = { packaging: 'Takeaway Packaging', instagram: 'Instagram', flyer: 'Flyer / Ad', direct: 'Walk-in' };
+  const map = { counter: 'Counter', packaging: 'Takeaway Packaging', instagram: 'Instagram', flyer: 'Flyer / Ad', direct: 'Walk-in' };
   return map[s] || s.replace(/-/g, ' ').replace(/\S+/g, w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase());
 }
 
