@@ -26,7 +26,7 @@ const SUPABASE_CONFIGURED = SUPABASE_URL.indexOf('YOUR_PROJECT_ID') === -1;
 const SHEET_WEBHOOK = ''; /* <-- paste your Apps Script URL here */
 
 /* ── Static fallback — used when Supabase is not yet configured ─────────── */
-const FALLBACK_MENU = [
+const STATIC_MENU = [
   // Chef's Specials
   {id:'s1',name:"Ofada \u00d7 Ayamase & Egg",price:3500,section:'specials',tab:'food',available:true,category_type:'regular',promo_expires_at:null,combo:false,sub_label:null,is_free:false,sort_order:1,has_variants:false,variants:null},
   {id:'s2',name:'Continental Rice \u00d7 Shredded Chicken',price:4000,section:'specials',tab:'food',available:true,category_type:'regular',promo_expires_at:null,combo:false,sub_label:null,is_free:false,sort_order:2,has_variants:false,variants:null},

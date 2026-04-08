@@ -1,10 +1,4 @@
 
-  /* ── Supabase Config ─────────────────────────────────────────────────────
-   * Use the same values you put in index.html
-   * ────────────────────────────────────────────────────────────────────── */
-  const SUPABASE_URL  = 'https://prutxziffstjugltzpfq.supabase.co';
-  const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBydXR4emlmZnN0anVnbHR6cGZxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU1NzA4OTQsImV4cCI6MjA5MTE0Njg5NH0.IffutYFwi1lQySpf3Wp9LqFpB4WtGKkHW-uz3m2q9EY';
-
   var authToken = null;
   var allItems  = [];
   var currentFilter = 'all';

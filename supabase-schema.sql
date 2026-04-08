@@ -1,3 +1,7 @@
+-- IMPORTANT: This schema uses Row Level Security.
+-- Anon key (used in index.html) can only SELECT.
+-- Authenticated users (admin.html login) can INSERT, UPDATE, DELETE.
+
 -- ============================================================
 -- King's Delight Menu — Supabase Database Schema
 -- ============================================================
@@ -153,3 +157,12 @@ insert into menu_items (name, price, section, tab, sub_label, is_free, has_varia
   ('Meat Pie',                                   1000, 'pastries', 'pastries', null,         false, false, null, 4),
   ('Meat Pie — Small',                            400, 'pastries', 'pastries', null,         false, false, null, 5),
   ('Beef Roll',                                   400, 'pastries', 'pastries', null,         false, false, null, 6);
+
+ALTER TABLE menu_items  ENABLE ROW LEVEL SECURITY;
+ALTER TABLE promo_items ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "anon_read_menu"  ON menu_items  FOR SELECT TO anon  USING (true);
+CREATE POLICY "auth_write_menu" ON menu_items  FOR ALL   TO authenticated USING (true);
+
+CREATE POLICY "anon_read_promo"  ON promo_items FOR SELECT TO anon  USING (true);
+CREATE POLICY "auth_write_promo" ON promo_items FOR ALL   TO authenticated USING (true);
