@@ -1,13 +1,13 @@
 /* ── Toast notification ─────────────────────────────────────────────────── */
-var _toastTimer;
+var toastTimer;
 function showToast(msg, isError) {
   var el = document.getElementById('toast');
   if (!el) return;
-  clearTimeout(_toastTimer);
+  clearTimeout(toastTimer);
   el.textContent = msg;
   el.classList.toggle('error', !!isError);
   el.classList.add('show');
-  _toastTimer = setTimeout(function() { el.classList.remove('show'); }, 3500);
+  toastTimer = setTimeout(function() { el.classList.remove('show'); }, 3500);
 }
 
 /* ── Tab switching ──────────────────────────────────────────────────────── */
