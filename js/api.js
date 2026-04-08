@@ -1,4 +1,11 @@
 /* ── Supabase API ───────────────────────────────────────────────────────── */
+
+/**
+ * Fetches all menu items from Supabase, ordered by sort_order ascending.
+ * @async
+ * @returns {Promise<Array<Object>>} Resolves with the array of menu item objects.
+ * @throws {Error} If the Supabase response is not OK.
+ */
 async function fetchMenuFromSupabase() {
   var res = await fetch(
     SUPABASE_URL + '/rest/v1/menu_items?select=*&order=sort_order.asc',
@@ -9,6 +16,14 @@ async function fetchMenuFromSupabase() {
 }
 
 /* ── Menu rendering ─────────────────────────────────────────────────────── */
+
+/**
+ * Renders a list of menu items into a section DOM element,
+ * replacing any previously rendered item rows while preserving
+ * structural children (section-header, specials-note, promo-note).
+ * @param {HTMLElement} section - The section element to render into.
+ * @param {Array<Object>} items - Menu item objects to render.
+ */
 function renderSectionItems(section, items) {
   /* Remove previous item rows (keep structural child elements) */
   var elementsToRemove = [];
@@ -86,6 +101,12 @@ function renderSectionItems(section, items) {
   });
 }
 
+/**
+ * Groups menu items by section, filters out expired promos,
+ * shows/hides the Offers section, and renders every section.
+ * Re-attaches IntersectionObservers after content is populated.
+ * @param {Array<Object>} items - Full list of menu item objects from Supabase or STATIC_MENU.
+ */
 function renderMenuItems(items) {
   var today = new Date(); today.setHours(0, 0, 0, 0);
 
@@ -128,6 +149,13 @@ function renderMenuItems(items) {
   document.querySelectorAll('#tabFood .menu-section').forEach(function(s) { activeObserver.observe(s); });
 }
 
+/**
+ * Loads menu items from Supabase when configured, falling back to
+ * STATIC_MENU if Supabase is unavailable or not yet set up.
+ * Shows a toast notification on Supabase fetch failure.
+ * @async
+ * @returns {Promise<void>}
+ */
 async function loadMenu() {
   var items;
   if (SUPABASE_CONFIGURED) {

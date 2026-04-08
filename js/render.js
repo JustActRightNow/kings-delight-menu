@@ -1,4 +1,11 @@
 /* ── HTML helpers ───────────────────────────────────────────────────────── */
+
+/**
+ * Escapes a string for safe insertion into HTML, converting special
+ * characters to their HTML entity equivalents.
+ * @param {string|*} s - Value to escape (coerced to string if not already).
+ * @returns {string} HTML-safe string.
+ */
 function escHtml(s) {
   return String(s)
     .replace(/&/g, '&amp;')
@@ -8,6 +15,14 @@ function escHtml(s) {
     .replace(/'/g, '&#39;');
 }
 
+/**
+ * Sanitizes free-text user input by stripping HTML tags (iteratively to
+ * catch nested tags), removing Markdown-style formatting characters,
+ * collapsing excessive newlines, replacing URLs with '[link]',
+ * and truncating to 300 characters.
+ * @param {string} s - Raw user input string.
+ * @returns {string} Sanitized string safe for inclusion in a WhatsApp message.
+ */
 function sanitizeInput(s) {
   var previousValue;
   do { previousValue = s; s = s.replace(/<[^>]*>/g, ''); } while (s !== previousValue);
@@ -20,6 +35,12 @@ function sanitizeInput(s) {
 }
 
 /* ── Cart bar + plate indicator ─────────────────────────────────────────── */
+
+/**
+ * Master re-render: updates the cart bar badge, total, visibility,
+ * cart preview text, plate indicator label, cart panel contents,
+ * and inline quantity controls on the menu page.
+ */
 function renderAll() {
   const count = totalItemCount();
   document.getElementById('cartCount').textContent = count;
@@ -38,6 +59,13 @@ function renderAll() {
 }
 
 /* ── Menu-page inline quantity controls ─────────────────────────────────── */
+
+/**
+ * Syncs every `.item-qty-wrap` element on the menu page with the
+ * current active plate. Shows a quantity stepper when the item is in
+ * the cart, or falls back to a plain '+' add button when qty is 0.
+ * Complimentary (free) items are skipped as they use a remove-only control.
+ */
 function updateMenuItemQtys() {
   var plate = getActivePlate();
   document.querySelectorAll('.item-qty-wrap').forEach(function(wrap) {
@@ -67,6 +95,13 @@ function updateMenuItemQtys() {
 }
 
 /* ── Cart panel ─────────────────────────────────────────────────────────── */
+
+/**
+ * Renders the full contents of the cart panel, including all plates,
+ * their items with quantity steppers, per-plate subtotals, a packaging
+ * row for take-out orders, and the grand total. Shows an empty-state
+ * message when no items have been added.
+ */
 function renderCartPanel() {
   const list = document.getElementById('cpItems');
   if (!hasItems()) {
@@ -115,10 +150,24 @@ function renderCartPanel() {
 }
 
 /* ── Panel open / close ─────────────────────────────────────────────────── */
+
+/** Opens the cart panel. */
 function openCart() { document.getElementById('cartPanel').classList.add('open'); }
+
+/** Closes the cart panel. */
 function closeCart() { document.getElementById('cartPanel').classList.remove('open'); }
 
 /* ── Item preview overlay ───────────────────────────────────────────────── */
+
+/**
+ * Opens the item preview overlay, populating it with the item's name,
+ * price, sub-label, and image. Falls back to a placeholder emoji when
+ * no image URL is provided or when the image fails to load.
+ * @param {string} name - Display name of the menu item.
+ * @param {string} price - Formatted price string (e.g. '₦3,500' or 'Complimentary').
+ * @param {string} subLabel - Optional sub-label text (e.g. 'House favourite').
+ * @param {string} imageUrl - URL of the item image, or empty string if none.
+ */
 function openItemOverlay(name, price, subLabel, imageUrl) {
   var overlay = document.getElementById('itemOverlay');
   var img = document.getElementById('itemOverlayImg');
@@ -143,27 +192,50 @@ function openItemOverlay(name, price, subLabel, imageUrl) {
   document.addEventListener('keydown', overlayKeyHandler);
 }
 
+/** Closes the item preview overlay and removes the Escape key listener. */
 function closeItemOverlay() {
   document.getElementById('itemOverlay').classList.remove('open');
   document.removeEventListener('keydown', overlayKeyHandler);
 }
 
+/**
+ * Closes the item overlay when the user clicks directly on the backdrop
+ * (i.e. outside the overlay box).
+ * @param {MouseEvent} e - The click event on the overlay element.
+ */
 function handleOverlayBackdrop(e) {
   if (e.target === document.getElementById('itemOverlay')) closeItemOverlay();
 }
 
+/**
+ * Keyboard handler attached while the item overlay is open.
+ * Closes the overlay when the Escape key is pressed.
+ * @param {KeyboardEvent} e - The keydown event.
+ */
 function overlayKeyHandler(e) {
   if (e.key === 'Escape') closeItemOverlay();
 }
 
+/**
+ * Opens the checkout panel. Does nothing if the cart is empty.
+ * Renders the checkout summary before making the panel visible.
+ */
 function openCheckout() {
   if (!hasItems()) return;
   renderCheckout();
   document.getElementById('checkoutPanel').classList.add('open');
 }
+
+/** Closes the checkout panel. */
 function closeCheckout() { document.getElementById('checkoutPanel').classList.remove('open'); }
 
 /* ── Checkout summary ───────────────────────────────────────────────────── */
+
+/**
+ * Renders the order summary inside the checkout panel, listing all plates,
+ * their items with quantities and amounts, a packaging line for take-out
+ * orders, and the grand total.
+ */
 function renderCheckout() {
   let html = '<p class="checkout-section-title">Order Summary</p>';
   state.plates.forEach(function(plate, pIdx) {

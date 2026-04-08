@@ -1,9 +1,25 @@
 /* ── WhatsApp order dispatch ────────────────────────────────────────────── */
+
+/**
+ * Generates a deterministic 6-digit numeric order reference code based on
+ * the order total and item count. Not cryptographically secure — used only
+ * as a lightweight local fallback when the Supabase ref_code is unavailable.
+ * @param {number} total - Grand total of the order in Naira.
+ * @param {number} itemCount - Total number of paid item units.
+ * @returns {string} Zero-padded 6-digit string (e.g. '042731').
+ */
 function orderCode(total, itemCount) {
   const raw = ((total * 37 + itemCount * 7919) ^ 0xABCD) % 1000000;
   return String(raw).padStart(6, '0');
 }
 
+/**
+ * Sends order data to the configured Google Sheets webhook (fire-and-forget).
+ * Silently swallows any errors so a logging failure never blocks checkout.
+ * Does nothing when SHEET_WEBHOOK is not configured.
+ * @param {Object} payload - Order data to log (time, code, customer, type,
+ *   source, table, items, total, note).
+ */
 function logOrderToSheet(payload) {
   if (!SHEET_WEBHOOK) return;
   try {
@@ -16,6 +32,15 @@ function logOrderToSheet(payload) {
   } catch (e) { /* silent — order still goes through WhatsApp */ }
 }
 
+/**
+ * Persists the current order to the Supabase `orders` table and returns
+ * the server-generated ref_code. Returns null if Supabase is not configured
+ * or if the request fails (allowing checkout to continue via WhatsApp anyway).
+ * @async
+ * @param {string} customerName - Customer's name (may be empty).
+ * @param {string} note - Special requests or notes (may be empty).
+ * @returns {Promise<string|null>} The ref_code from Supabase, or null on failure.
+ */
 async function saveOrderToSupabase(customerName, note) {
   if (!SUPABASE_CONFIGURED) return null;
   try {
@@ -53,6 +78,14 @@ async function saveOrderToSupabase(customerName, note) {
   }
 }
 
+/**
+ * Composes a formatted WhatsApp order message and opens it in a new tab.
+ * Saves the order to Supabase (non-blocking) to obtain a ref_code, falling
+ * back to a locally generated code on failure. Also fires the Google Sheets
+ * logging webhook. Does nothing if the cart is empty.
+ * @async
+ * @returns {Promise<void>}
+ */
 async function sendToWhatsApp() {
   if (!hasItems()) return;
   const total = grandTotal();

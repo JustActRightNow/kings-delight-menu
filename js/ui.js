@@ -1,4 +1,11 @@
 /* ── Toast notification ─────────────────────────────────────────────────── */
+
+/**
+ * Displays a transient toast notification for 3.5 seconds.
+ * Resets the timer if called while a toast is already visible.
+ * @param {string} msg - Message text to display.
+ * @param {boolean} [isError=false] - When true, styles the toast as an error.
+ */
 var toastTimer;
 function showToast(msg, isError) {
   var el = document.getElementById('toast');
@@ -32,6 +39,15 @@ tabBtns.forEach(function(btn) {
 });
 
 /* ── Search — searches across all tabs when a query is active ───────────── */
+
+/**
+ * Filters menu items across all tab panes by a search query.
+ * When the query is non-empty, all panes are shown simultaneously and
+ * items are hidden/shown based on whether their name contains the query.
+ * Sections with no visible items are also hidden. Restores the normal
+ * single-active-pane layout when the query is cleared.
+ * @param {string} q - The search query string (case-insensitive).
+ */
 function doSearch(q) {
   const qLower = q.toLowerCase().trim();
   if (!qLower) {

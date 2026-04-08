@@ -14,6 +14,8 @@
 <meta name="twitter:description" content="Browse our full menu and send your order via WhatsApp. Every Bite Matters.">
 <meta name="twitter:image" content="https://kings-delight-menu.vercel.app/assets/logo.png">
 <title>King's Delight Eatery — Menu</title>
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#FFBF00">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%231C1C1C'/%3E%3Ctext x='16' y='23' font-size='20' text-anchor='middle' fill='%23FFBF00'%3E%F0%9F%91%91%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Cormorant+Garamond:wght@300;400;500;600&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -239,6 +241,14 @@
 <script src="js/order.js"></script>
 <script src="js/api.js"></script>
 <script src="js/ui.js"></script>
+
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+      navigator.serviceWorker.register('/sw.js');
+    });
+  }
+</script>
 
 </body>
 </html>

@@ -29,6 +29,24 @@ Visit `/admin.html` on your deployed site. Sign in with the email/password you c
 - Add seasonal promo items (King's Meal combos etc.) with an optional expiry date — they auto-hide when expired
 - Delete promo items
 
+## Database Migrations
+
+The database schema is maintained as numbered migration files in the `migrations/` folder. Run each file **in order** in the Supabase SQL Editor when setting up a new project or applying updates to an existing one.
+
+| File | Description |
+|------|-------------|
+| `migrations/001_initial_schema.sql` | Creates the `menu_items` table, trigger, RLS, and seeds all menu data |
+| `migrations/002_add_rls_policies.sql` | Adds named RLS policies for `menu_items` and `promo_items` |
+| `migrations/003_add_orders_table.sql` | Creates the `orders` table with RLS policies |
+| `migrations/004_add_image_url.sql` | Adds the `image_url` column to `menu_items` |
+
+`supabase-schema.sql` at the root is kept as a lightweight index file pointing to these migrations.
+
+## Tests
+
+Run `node cart.test.js` to verify cart logic.
+No dependencies required.
+
 ## Fallback
 
 If Supabase is not yet configured, `index.html` renders using the built-in `STATIC_MENU` data so the site always works.
