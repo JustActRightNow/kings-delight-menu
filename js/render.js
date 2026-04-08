@@ -9,8 +9,9 @@ function escHtml(s) {
 }
 
 function sanitizeInput(s) {
+  var prev;
+  do { prev = s; s = s.replace(/<[^>]*>/g, ''); } while (s !== prev);
   return s
-    .replace(/<[^>]*>/g, '')
     .replace(/[*_~`]/g, '')
     .replace(/[\n\r]{3,}/g, '\n\n')
     .replace(/https?:\/\/\S+/gi, '[link]')
