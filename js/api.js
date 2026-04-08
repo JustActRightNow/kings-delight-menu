@@ -119,9 +119,9 @@ async function loadMenu() {
   var items;
   if (SUPABASE_CONFIGURED) {
     try { items = await fetchMenuFromSupabase(); }
-    catch (e) { console.warn('Supabase unavailable, using fallback:', e.message); items = FALLBACK_MENU; }
+    catch (e) { console.warn('Supabase unavailable, using fallback:', e.message); items = STATIC_MENU; }
   } else {
-    items = FALLBACK_MENU;
+    items = STATIC_MENU;
   }
   renderMenuItems(items);
 }
