@@ -19,7 +19,7 @@ function logOrderToSheet(payload) {
 function sendToWhatsApp() {
   if (!hasItems()) return;
   const total = grandTotal();
-  const itemCount = plates.reduce((s, p) => s + p.items.reduce((ss, i) => ss + (i.free ? 0 : i.qty), 0), 0);
+  const itemCount = state.plates.reduce((s, p) => s + p.items.reduce((ss, i) => ss + (i.free ? 0 : i.qty), 0), 0);
   const code = orderCode(total, itemCount);
 
   const coNameEl = document.getElementById('coName');
@@ -27,7 +27,7 @@ function sendToWhatsApp() {
   const customerName = sanitizeInput(coNameEl ? coNameEl.value.trim() : '');
   const note = sanitizeInput(coNoteEl ? coNoteEl.value.trim() : '');
   const tableNo = localStorage.getItem('kd_table');
-  const typeLabel = orderType === 'take-out' ? '\uD83E\uDD61 Take Out' : '\uD83C\uDF7D\uFE0F Eat In';
+  const typeLabel = state.orderType === 'take-out' ? '\uD83E\uDD61 Take Out' : '\uD83C\uDF7D\uFE0F Eat In';
 
   /* ── Header ── */
   let msg = "\uD83C\uDF1F *King\u2019s Delight Eatery \u2014 New Order*\n";
@@ -44,9 +44,9 @@ function sendToWhatsApp() {
 
   /* ── Items by plate ── */
   const allItemLines = [];
-  plates.forEach(function(plate, pIdx) {
+  state.plates.forEach(function(plate, pIdx) {
     if (!plate.items.length) return;
-    const hasMultiplePlates = plates.filter(p => p.items.length).length > 1;
+    const hasMultiplePlates = state.plates.filter(p => p.items.length).length > 1;
     if (hasMultiplePlates) msg += "*Plate " + (pIdx + 1) + "*\n";
     plate.items.forEach(function(i) {
       const line = i.free
@@ -57,7 +57,7 @@ function sendToWhatsApp() {
     });
   });
 
-  if (orderType === 'take-out') {
+  if (state.orderType === 'take-out') {
     const n = nonEmptyPlateCount();
     msg += '\u2022 Packaging (' + n + ' plate' + (n > 1 ? 's' : '') + ') \u2014 \u20A6' + (PACK_PRICE * n).toLocaleString() + "\n";
   }
@@ -73,7 +73,7 @@ function sendToWhatsApp() {
     time: new Date().toISOString(),
     code: 'KD-' + code,
     customer: customerName || '(unnamed)',
-    type: orderType,
+    type: state.orderType,
     source: fmtSrc(src),
     table: tableNo || '',
     items: allItemLines.join('; '),

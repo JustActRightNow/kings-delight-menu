@@ -2,13 +2,12 @@
 const tabBtns = document.querySelectorAll('.tab-btn');
 const catNav = document.getElementById('catNav');
 const searchWrap = document.getElementById('searchWrap');
-let activeTabPane = 'tabFood';
 
 tabBtns.forEach(function(btn) {
   btn.addEventListener('click', function() {
     tabBtns.forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
-    activeTabPane = btn.dataset.pane;
+    state.activeTabPane = btn.dataset.pane;
     document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
     document.getElementById(btn.dataset.pane).classList.add('active');
     const isFood = btn.dataset.tab === 'food';
@@ -26,11 +25,11 @@ function doSearch(q) {
   if (!qLower) {
     /* Restore: show only the active tab pane, hide others */
     document.querySelectorAll('.tab-pane').forEach(function(pane) {
-      pane.classList.toggle('active', pane.id === activeTabPane);
+      pane.classList.toggle('active', pane.id === state.activeTabPane);
       pane.querySelectorAll('.menu-item').forEach(function(item) { item.style.display = ''; });
       pane.querySelectorAll('.menu-section').forEach(function(sec) { sec.style.display = ''; });
     });
-    catNav.classList.toggle('hidden', activeTabPane !== 'tabFood');
+    catNav.classList.toggle('hidden', state.activeTabPane !== 'tabFood');
     return;
   }
   /* Show all panes while searching */
