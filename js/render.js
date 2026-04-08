@@ -53,7 +53,7 @@ function updateMenuItemQtys() {
     if (qty > 0) {
       wrap.innerHTML =
         '<div class="qty-ctrl">' +
-        '<button class="qty-btn" onclick="removeMenuItem(' + JSON.stringify(name) + ')">\u2212</button>' +
+        '<button class="qty-btn" data-remove-name="' + escHtml(name) + '" onclick="removeMenuItem(this.dataset.removeName)">\u2212</button>' +
         '<span class="qty-num">' + qty + '</span>' +
         '<button class="qty-btn" data-name="' + escHtml(name) + '" data-price="' + escHtml(price) +
         '" data-needs-pack="' + escHtml(needsPack) + '" onclick="addItem(this)">+</button>' +

@@ -42,7 +42,7 @@ function totalItemCount() {
 function addItem(btn) {
   const name = btn.dataset.name, price = parseInt(btn.dataset.price);
   const isFree = btn.dataset.free === 'true';
-  const needsPack = btn.dataset.needsPack !== 'false';
+  const needsPack = btn.dataset.needsPack === 'true';
   const plate = getActivePlate();
   const ex = plate.items.find(i => i.name === name);
   if (ex) { if (!isFree) ex.qty++; }
