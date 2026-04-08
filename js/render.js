@@ -27,11 +27,11 @@ function renderAll() {
   document.getElementById('cartBar').classList.toggle('visible', hasItems());
 
   const activePlate = getActivePlate();
-  const plateNum = activePlateIndex + 1;
+  const plateNum = state.activePlateIndex + 1;
   const preview = activePlate.items.length
     ? activePlate.items.map(i => (i.qty > 1 ? i.qty + '\u00d7 ' : '') + i.name).join(', ')
     : 'Your order';
-  document.getElementById('cartPreview').textContent = plates.length > 1 ? plates.length + ' plates' : preview;
+  document.getElementById('cartPreview').textContent = state.plates.length > 1 ? state.plates.length + ' plates' : preview;
   document.getElementById('plateIndicator').textContent = hasItems() ? 'Adding to Plate ' + plateNum : '';
   renderCartPanel();
   updateMenuItemQtys();
@@ -75,9 +75,9 @@ function renderCartPanel() {
     return;
   }
   let html = '';
-  plates.forEach(function(plate, pIdx) {
+  state.plates.forEach(function(plate, pIdx) {
     if (!plate.items.length) return;
-    const isActive = pIdx === activePlateIndex;
+    const isActive = pIdx === state.activePlateIndex;
     const plateTotal = plate.items.reduce((s, i) => s + (i.free ? 0 : i.price * i.qty), 0);
     html += '<div class="plate-card' + (isActive ? ' active-plate' : '') + '">';
     html += '<div class="plate-header">';
@@ -104,7 +104,7 @@ function renderCartPanel() {
     html += '</div></div>';
   });
   html += '<button class="add-plate-btn" onclick="addNewPlate()">+ Add another plate</button>';
-  if (orderType === 'take-out') {
+  if (state.orderType === 'take-out') {
     const n = packablePlateCount();
     if (n > 0) {
       html += '<div class="pack-row"><span>Packaging \u00d7 ' + n + ' plate' + (n > 1 ? 's' : '') + '</span><span>\u20a6' + (PACK_PRICE * n).toLocaleString() + '</span></div>';
@@ -128,9 +128,9 @@ function closeCheckout() { document.getElementById('checkoutPanel').classList.re
 /* ── Checkout summary ───────────────────────────────────────────────────── */
 function renderCheckout() {
   let html = '<p class="checkout-section-title">Order Summary</p>';
-  plates.forEach(function(plate, pIdx) {
+  state.plates.forEach(function(plate, pIdx) {
     if (!plate.items.length) return;
-    const hasMulti = plates.filter(p => p.items.length).length > 1;
+    const hasMulti = state.plates.filter(p => p.items.length).length > 1;
     if (hasMulti) html += '<p class="checkout-plate-label">Plate ' + (pIdx + 1) + '</p>';
     plate.items.forEach(function(item) {
       const label = (item.qty > 1 ? item.qty + '\u00d7 ' : '') + item.name;
@@ -138,7 +138,7 @@ function renderCheckout() {
       html += '<div class="checkout-summary-item"><span>' + escHtml(label) + '</span><span class="item-amt">' + escHtml(amt) + '</span></div>';
     });
   });
-  if (orderType === 'take-out') {
+  if (state.orderType === 'take-out') {
     const n = packablePlateCount();
     if (n > 0) {
       html += '<div class="checkout-summary-item" style="margin-top:6px"><span>📦 Packaging \u00d7 ' + n + ' plate' + (n > 1 ? 's' : '') + '</span><span class="item-amt">\u20a6' + (PACK_PRICE * n).toLocaleString() + '</span></div>';
