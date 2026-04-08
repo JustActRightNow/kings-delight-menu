@@ -140,13 +140,13 @@ body {
   flex: 1; height: 1px;
   background: linear-gradient(90deg, rgba(255,191,0,0.2), transparent);
 }
-.specials-section .section-title { color: #e05555; }
+.specials-section .section-title { color: #FF3333; }
 .specials-section .section-icon {
-  background: rgba(178,34,34,0.12);
-  border-color: rgba(178,34,34,0.25);
+  background: rgba(255,51,51,0.12);
+  border-color: rgba(255,51,51,0.25);
 }
 .specials-section .section-rule {
-  background: linear-gradient(90deg, rgba(178,34,34,0.3), transparent);
+  background: linear-gradient(90deg, rgba(255,51,51,0.3), transparent);
 }
 .specials-note {
   font-family: 'Cormorant Garamond', serif;
@@ -167,7 +167,7 @@ body {
   transition: border-color 0.18s, background 0.18s;
 }
 .menu-item:hover { border-color: var(--gold-border); background: var(--charcoal-hover); }
-.specials-section .menu-item:hover { border-color: rgba(178,34,34,0.3); background: rgba(178,34,34,0.05); }
+.specials-section .menu-item:hover { border-color: rgba(255,51,51,0.3); background: rgba(255,51,51,0.05); }
 .item-info { flex: 1; min-width: 0; }
 .item-name {
   font-family: 'Jost', sans-serif;
@@ -187,7 +187,7 @@ body {
   font-size: 15px; font-weight: 600;
   color: var(--gold); white-space: nowrap; flex-shrink: 0;
 }
-.specials-section .item-price { color: #e05555; }
+.specials-section .item-price { color: #FF3333; }
 .item-price .cur { font-size: 11px; font-weight: 400; opacity: 0.7; margin-right: 1px; }
 .item-price.ask { font-style: italic; font-size: 12px; color: var(--cream-20); font-weight: 300; }
 .price-dual { text-align: right; flex-shrink: 0; }
@@ -208,6 +208,9 @@ body {
 .add-btn:hover { background: var(--gold-dim); border-color: var(--gold); }
 .add-btn:active { transform: scale(0.9); }
 .add-btn:disabled { opacity: 0.25; cursor: default; }
+
+/* INLINE QTY WRAP — menu page quantity controls */
+.item-qty-wrap { flex-shrink: 0; display: flex; align-items: center; }
 
 /* CART BAR */
 .cart-bar {
@@ -363,7 +366,7 @@ body {
 }
 .footer-note {
   font-family: 'Cormorant Garamond', serif;
-  font-style: italic; font-size: 11px; color: var(--cream-20);
+  font-style: italic; font-size: 11px; color: var(--cream-60);
 }
 
 /* MAIN TABS */

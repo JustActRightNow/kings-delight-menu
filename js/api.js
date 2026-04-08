@@ -32,20 +32,33 @@ function renderSectionItems(section, items) {
       nameHtml += '<span class="combo-tag">Combo</span>';
     }
 
+    /* Determine if this item requires a take-out packaging charge:
+       Drinks, pastries, asun (grill), and promo combo offers are exempt. */
+    var needsPack = !(
+      item.tab === 'drinks' ||
+      item.tab === 'pastries' ||
+      (item.section === 'grill' && item.name === 'Asun') ||
+      item.category_type === 'promo'
+    );
+    var npAttr = ' data-needs-pack="' + needsPack + '"';
+
     if (item.has_variants && item.variants) {
       var varBtns = item.variants.map(function(v) {
         var label = v.name.replace(/^[^(]*\(/, '').replace(/\).*$/, '').trim() || v.name;
         var dis = item.available ? '' : ' disabled';
-        return '<button class="variant-btn"' + dis + ' data-name="' + escHtml(v.name) +
-          '" data-price="' + v.price + '" onclick="addItem(this)">' +
-          escHtml(label) + ' \u00a0\u20a6' + v.price.toLocaleString() + '</button>';
+        return '<div class="item-qty-wrap" data-item-name="' + escHtml(v.name) +
+          '" data-price="' + v.price + '" data-needs-pack="' + needsPack + '">' +
+          '<button class="variant-btn"' + dis + ' data-name="' + escHtml(v.name) +
+          '" data-price="' + v.price + '"' + npAttr + ' onclick="addItem(this)">' +
+          escHtml(label) + ' \u00a0\u20a6' + v.price.toLocaleString() + '</button></div>';
       }).join('');
       div.innerHTML = '<div class="item-info"><div class="item-name">' + escHtml(item.name) + '</div></div>' +
         (item.available ? '<div class="variant-group">' + varBtns + '</div>' : '<span class="oos-badge">Out of Stock</span>');
     } else if (item.is_free) {
       div.innerHTML = '<div class="item-info"><div class="item-name">' + nameHtml + '</div></div>' +
         '<span class="free-label">Complimentary</span>' +
-        '<button class="add-btn" data-name="' + escHtml(item.name) + '" data-price="0" data-free="true" onclick="addItem(this)">+</button>';
+        '<div class="item-qty-wrap" data-item-name="' + escHtml(item.name) + '" data-price="0" data-needs-pack="' + needsPack + '" data-free="true">' +
+        '<button class="add-btn" data-name="' + escHtml(item.name) + '" data-price="0" data-free="true"' + npAttr + ' onclick="addItem(this)">+</button></div>';
     } else if (!item.available) {
       div.innerHTML = '<div class="item-info"><div class="item-name">' + nameHtml + '</div></div>' +
         '<span class="oos-badge">Out of Stock</span>' +
@@ -53,7 +66,8 @@ function renderSectionItems(section, items) {
     } else {
       div.innerHTML = '<div class="item-info"><div class="item-name">' + nameHtml + '</div></div>' +
         '<div class="item-price"><span class="cur">\u20a6</span>' + item.price.toLocaleString() + '</div>' +
-        '<button class="add-btn" data-name="' + escHtml(item.name) + '" data-price="' + item.price + '" onclick="addItem(this)">+</button>';
+        '<div class="item-qty-wrap" data-item-name="' + escHtml(item.name) + '" data-price="' + item.price + '" data-needs-pack="' + needsPack + '">' +
+        '<button class="add-btn" data-name="' + escHtml(item.name) + '" data-price="' + item.price + '"' + npAttr + ' onclick="addItem(this)">+</button></div>';
     }
     section.appendChild(div);
   });
