@@ -16,7 +16,44 @@ function logOrderToSheet(payload) {
   } catch (e) { /* silent — order still goes through WhatsApp */ }
 }
 
-function sendToWhatsApp() {
+async function saveOrderToSupabase(customerName, note) {
+  if (!SUPABASE_CONFIGURED) return null;
+  try {
+    const allItems = [];
+    state.plates.forEach(function(plate) {
+      plate.items.forEach(function(i) {
+        allItems.push({ name: i.name, qty: i.qty, price: i.price, free: !!i.free });
+      });
+    });
+    const payload = {
+      customer: customerName || 'Guest',
+      items: allItems,
+      total: grandTotal(),
+      note: note || '',
+    };
+    const res = await fetch(
+      SUPABASE_URL + '/rest/v1/orders?select=ref_code',
+      {
+        method: 'POST',
+        headers: {
+          'apikey': SUPABASE_ANON,
+          'Authorization': 'Bearer ' + SUPABASE_ANON,
+          'Content-Type': 'application/json',
+          'Prefer': 'return=representation',
+        },
+        body: JSON.stringify(payload),
+      }
+    );
+    if (!res.ok) return null;
+    const rows = await res.json();
+    return (rows && rows[0] && rows[0].ref_code) ? rows[0].ref_code : null;
+  } catch (e) {
+    console.warn('Order save failed, continuing to WhatsApp anyway', e);
+    return null;
+  }
+}
+
+async function sendToWhatsApp() {
   if (!hasItems()) return;
   const total = grandTotal();
   const itemCount = state.plates.reduce((s, p) => s + p.items.reduce((ss, i) => ss + (i.free ? 0 : i.qty), 0), 0);
@@ -28,6 +65,10 @@ function sendToWhatsApp() {
   const note = sanitizeInput(coNoteEl ? coNoteEl.value.trim() : '');
   const tableNo = localStorage.getItem('kd_table');
   const typeLabel = state.orderType === 'take-out' ? '\uD83E\uDD61 Take Out' : '\uD83C\uDF7D\uFE0F Eat In';
+
+  /* ── Save to Supabase (non-blocking; fallback to local code on failure) ── */
+  const dbRef = await saveOrderToSupabase(customerName, note);
+  const refCode = dbRef ?? ('KD-' + code);
 
   /* ── Header ── */
   let msg = "\uD83C\uDF1F *King\u2019s Delight Eatery \u2014 New Order*\n";
@@ -66,12 +107,12 @@ function sendToWhatsApp() {
   msg += "\u2015\u2015\u2015\u2015\u2015\u2015\u2015\u2015\u2015\u2015\u2015\u2015\u2015\u2015\u2015\n";
   msg += "*Total: \u20A6" + total.toLocaleString() + "*\n";
   if (note) msg += "\n\uD83D\uDCDD " + note + "\n";
-  msg += "\n_Ref: #KD-" + code + "_";
+  msg += "\n_Ref: #" + refCode + "_";
 
   /* ── Log to Google Sheets ── */
   logOrderToSheet({
     time: new Date().toISOString(),
-    code: 'KD-' + code,
+    code: refCode,
     customer: customerName || '(unnamed)',
     type: state.orderType,
     source: fmtSrc(src),

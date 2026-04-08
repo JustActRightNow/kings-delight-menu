@@ -30,22 +30,22 @@
 
 <nav class="tab-nav" id="tabNav">
   <div class="tab-nav-inner">
-    <button class="tab-btn active" data-tab="food" data-pane="tabFood">🍽️ Food</button>
-    <button class="tab-btn" data-tab="drinks" data-pane="tabDrinks">🥤 Drinks</button>
-    <button class="tab-btn" data-tab="pastries" data-pane="tabPastries">🥐 Pastries</button>
+    <button class="tab-btn active" data-tab="food" data-pane="tabFood" aria-label="Food menu">🍽️ Food</button>
+    <button class="tab-btn" data-tab="drinks" data-pane="tabDrinks" aria-label="Drinks menu">🥤 Drinks</button>
+    <button class="tab-btn" data-tab="pastries" data-pane="tabPastries" aria-label="Pastries menu">🥐 Pastries</button>
   </div>
 </nav>
 
 <nav class="cat-nav" id="catNav">
   <div class="cat-nav-inner">
-    <button class="cat-btn" data-target="offers" style="display:none">🎉 Offers</button>
-    <button class="cat-btn active" data-target="specials">✦ Specials</button>
-    <button class="cat-btn" data-target="mains">🍚 Mains</button>
-    <button class="cat-btn" data-target="proteins">🥩 Proteins</button>
-    <button class="cat-btn" data-target="grill">🔥 Grill</button>
-    <button class="cat-btn" data-target="swallow">🍲 Swallow</button>
-    <button class="cat-btn" data-target="soups">🥣 Soups</button>
-    <button class="cat-btn" data-target="sides">🥗 Sides</button>
+    <button class="cat-btn" data-target="offers" style="display:none" aria-label="Offers">🎉 Offers</button>
+    <button class="cat-btn active" data-target="specials" aria-label="Chef's Specials">✦ Specials</button>
+    <button class="cat-btn" data-target="mains" aria-label="Mains">🍚 Mains</button>
+    <button class="cat-btn" data-target="proteins" aria-label="Proteins">🥩 Proteins</button>
+    <button class="cat-btn" data-target="grill" aria-label="Grill">🔥 Grill</button>
+    <button class="cat-btn" data-target="swallow" aria-label="Swallow">🍲 Swallow</button>
+    <button class="cat-btn" data-target="soups" aria-label="Soups">🥣 Soups</button>
+    <button class="cat-btn" data-target="sides" aria-label="Sides">🥗 Sides</button>
   </div>
 </nav>
 
@@ -53,7 +53,7 @@
 <div class="search-wrap food-active" id="searchWrap">
   <div class="search-inner">
     <span class="search-icon">🔍</span>
-    <input type="search" id="searchInput" placeholder="Search food, drinks, pastries…" class="search-input" autocomplete="off">
+    <input type="search" id="searchInput" placeholder="Search food, drinks, pastries…" class="search-input" autocomplete="off" aria-label="Search menu">
   </div>
 </div>
 
@@ -129,7 +129,7 @@
   <div class="footer-logo"><img src="assets/logo.png" alt="King's Delight"></div>
   <p class="footer-name">King's Delight Eatery</p>
   <p class="footer-note">52. Awolowo Road, Bodija, Ibadan &nbsp;·&nbsp; All prices in Nigerian Naira</p>
-  <a href="https://www.instagram.com/kingsdelighteatery" target="_blank" rel="noopener noreferrer" class="footer-ig">
+  <a href="https://www.instagram.com/kingsdelighteatery" target="_blank" rel="noopener noreferrer" class="footer-ig" aria-label="Follow King's Delight on Instagram">
     <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
     @kingsdelighteatery
   </a>
@@ -144,7 +144,7 @@
       <div class="plate-indicator" id="plateIndicator"></div>
     </div>
     <div class="cart-total-bar" id="cartTotalBar">₦0</div>
-    <button class="view-order-btn" onclick="openCart()">View Order</button>
+    <button class="view-order-btn" onclick="openCart()" aria-label="View your order">View Order</button>
   </div>
 </div>
 
@@ -152,34 +152,34 @@
 <div class="cart-panel" id="cartPanel">
   <div class="cp-head">
     <span class="cp-title">Your Order</span>
-    <button class="cp-close" onclick="closeCart()">&#x2715;</button>
+    <button class="cp-close" onclick="closeCart()" aria-label="Close order panel">&#x2715;</button>
   </div>
   <div class="cp-items" id="cpItems"></div>
   <div class="cp-footer">
     <div class="order-type-toggle">
-      <button class="ot-btn active" id="otEatIn" onclick="setOrderType('eat-in')">🍽️ Eat In</button>
-      <button class="ot-btn" id="otTakeOut" onclick="setOrderType('take-out')">🥡 Take Out</button>
+      <button class="ot-btn active" id="otEatIn" onclick="setOrderType('eat-in')" aria-label="Eat in">🍽️ Eat In</button>
+      <button class="ot-btn" id="otTakeOut" onclick="setOrderType('take-out')" aria-label="Take out">🥡 Take Out</button>
     </div>
     <div class="cp-total-row">
       <span class="cp-total-label">Total</span>
       <span class="cp-total-amt" id="cpTotal">₦0</span>
     </div>
-    <button class="proceed-btn" onclick="openCheckout()">Proceed to Checkout →</button>
+    <button class="proceed-btn" onclick="openCheckout()" aria-label="Proceed to checkout">Proceed to Checkout →</button>
   </div>
 </div>
 
 <!-- CHECKOUT PANEL -->
 <div class="checkout-panel" id="checkoutPanel">
   <div class="cp-head">
-    <button class="cp-close" style="margin-right:8px" onclick="closeCheckout()">&#x2190;</button>
+    <button class="cp-close" style="margin-right:8px" onclick="closeCheckout()" aria-label="Back to order">&#x2190;</button>
     <span class="cp-title">Checkout</span>
-    <button class="cp-close" onclick="closeCheckout()">&#x2715;</button>
+    <button class="cp-close" onclick="closeCheckout()" aria-label="Close checkout panel">&#x2715;</button>
   </div>
   <div class="checkout-body" id="checkoutBody"></div>
   <div class="checkout-footer">
-    <input type="text" class="name-input" id="coName" placeholder="Your name (optional)" autocomplete="name">
-    <textarea class="note-input" id="coNote" placeholder="Any special requests? (optional)"></textarea>
-    <button class="wa-btn" onclick="sendToWhatsApp()">
+    <input type="text" class="name-input" id="coName" placeholder="Your name (optional)" autocomplete="name" aria-label="Your name">
+    <textarea class="note-input" id="coNote" placeholder="Any special requests? (optional)" aria-label="Special requests"></textarea>
+    <button class="wa-btn" onclick="sendToWhatsApp()" aria-label="Send order via WhatsApp">
       <svg class="wa-svg" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
       Send Order via WhatsApp
     </button>
