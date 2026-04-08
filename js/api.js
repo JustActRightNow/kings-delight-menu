@@ -132,7 +132,7 @@ async function loadMenu() {
   var items;
   if (SUPABASE_CONFIGURED) {
     try { items = await fetchMenuFromSupabase(); }
-    catch (e) { console.warn('Supabase unavailable, using fallback:', e.message); items = STATIC_MENU; }
+    catch (e) { console.warn('Supabase unavailable, using fallback:', e.message); showToast('Could not load live menu — showing saved menu', true); items = STATIC_MENU; }
   } else {
     items = STATIC_MENU;
   }
