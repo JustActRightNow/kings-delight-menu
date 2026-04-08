@@ -118,6 +118,44 @@ function renderCartPanel() {
 function openCart() { document.getElementById('cartPanel').classList.add('open'); }
 function closeCart() { document.getElementById('cartPanel').classList.remove('open'); }
 
+/* ── Item preview overlay ───────────────────────────────────────────────── */
+function openItemOverlay(name, price, subLabel, imageUrl) {
+  var overlay = document.getElementById('itemOverlay');
+  var img = document.getElementById('itemOverlayImg');
+  var noImg = document.getElementById('itemOverlayNoImg');
+  document.getElementById('itemOverlayName').textContent = name;
+  document.getElementById('itemOverlayPrice').textContent = price;
+  document.getElementById('itemOverlaySub').textContent = subLabel;
+  img.classList.remove('loaded');
+  img.onload = null;
+  img.onerror = null;
+  if (imageUrl) {
+    img.alt = name;
+    img.onload = function() { img.classList.add('loaded'); noImg.style.display = 'none'; };
+    img.onerror = function() { img.classList.remove('loaded'); noImg.style.display = ''; };
+    img.src = imageUrl;
+    noImg.style.display = 'none';
+  } else {
+    img.src = '';
+    noImg.style.display = '';
+  }
+  overlay.classList.add('open');
+  document.addEventListener('keydown', overlayKeyHandler);
+}
+
+function closeItemOverlay() {
+  document.getElementById('itemOverlay').classList.remove('open');
+  document.removeEventListener('keydown', overlayKeyHandler);
+}
+
+function handleOverlayBackdrop(e) {
+  if (e.target === document.getElementById('itemOverlay')) closeItemOverlay();
+}
+
+function overlayKeyHandler(e) {
+  if (e.key === 'Escape') closeItemOverlay();
+}
+
 function openCheckout() {
   if (!hasItems()) return;
   renderCheckout();

@@ -135,6 +135,22 @@
   </a>
 </footer>
 
+<!-- ITEM PREVIEW OVERLAY -->
+<div id="itemOverlay" class="item-overlay" role="dialog" aria-modal="true" aria-label="Item preview" onclick="handleOverlayBackdrop(event)">
+  <div class="item-overlay-box">
+    <button class="item-overlay-close" onclick="closeItemOverlay()" aria-label="Close preview">&#x2715;</button>
+    <div class="item-overlay-img-wrap">
+      <img id="itemOverlayImg" class="item-overlay-img" src="" alt="">
+      <div class="item-overlay-no-img" id="itemOverlayNoImg">🍽️</div>
+    </div>
+    <div class="item-overlay-body">
+      <div class="item-overlay-name" id="itemOverlayName"></div>
+      <div class="item-overlay-price" id="itemOverlayPrice"></div>
+      <div class="item-overlay-sub" id="itemOverlaySub"></div>
+    </div>
+  </div>
+</div>
+
 <!-- CART BAR -->
 <div class="cart-bar" id="cartBar">
   <div class="cart-bar-inner">

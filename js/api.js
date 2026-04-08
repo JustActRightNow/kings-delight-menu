@@ -25,6 +25,19 @@ function renderSectionItems(section, items) {
   items.forEach(function(item) {
     var div = document.createElement('div');
     div.className = 'menu-item' + (item.available ? '' : ' item-unavailable');
+    div.dataset.imageUrl = item.image_url || '';
+    div.dataset.displayName = item.name;
+    div.dataset.subLabel = item.sub_label || '';
+    /* Store display price as formatted string for overlay */
+    var dispPrice = item.is_free ? 'Complimentary'
+      : item.has_variants ? 'Select a size'
+      : !item.available ? 'Unavailable'
+      : '\u20a6' + item.price.toLocaleString();
+    div.dataset.displayPrice = dispPrice;
+    div.addEventListener('click', function(e) {
+      if (e.target.closest('button') || e.target.closest('.item-qty-wrap')) return;
+      openItemOverlay(div.dataset.displayName, div.dataset.displayPrice, div.dataset.subLabel, div.dataset.imageUrl);
+    });
     var nameHtml = item.sub_label
       ? escHtml(item.name) + '<span class="item-sub">' + escHtml(item.sub_label) + '</span>'
       : escHtml(item.name);
