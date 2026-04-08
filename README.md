@@ -6,6 +6,8 @@ A static web menu for King's Delight Eatery, Ibadan. Customers browse items and 
 
 To enable the admin panel and live menu management:
 
+Run `node extract-logo.js` once to generate logo.png after cloning.
+
 1. Create a free project at [supabase.com](https://supabase.com)
 2. Open **SQL Editor** in your Supabase dashboard and run the full contents of `supabase-schema.sql`
 3. Go to **Settings → API** and copy your **Project URL** and **anon / public key**
