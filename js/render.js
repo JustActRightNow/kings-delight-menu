@@ -9,8 +9,8 @@ function escHtml(s) {
 }
 
 function sanitizeInput(s) {
-  var prev;
-  do { prev = s; s = s.replace(/<[^>]*>/g, ''); } while (s !== prev);
+  var previousValue;
+  do { previousValue = s; s = s.replace(/<[^>]*>/g, ''); } while (s !== previousValue);
   return s
     .replace(/[*_~`]/g, '')
     .replace(/[\n\r]{3,}/g, '\n\n')

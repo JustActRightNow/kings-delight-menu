@@ -11,16 +11,16 @@ async function fetchMenuFromSupabase() {
 /* ── Menu rendering ─────────────────────────────────────────────────────── */
 function renderSectionItems(section, items) {
   /* Remove previous item rows (keep structural child elements) */
-  var toRemove = [];
+  var elementsToRemove = [];
   for (var c = 0; c < section.children.length; c++) {
     var child = section.children[c];
     if (!child.classList.contains('section-header') &&
         !child.classList.contains('specials-note') &&
         !child.classList.contains('promo-note')) {
-      toRemove.push(child);
+      elementsToRemove.push(child);
     }
   }
-  toRemove.forEach(function(el) { section.removeChild(el); });
+  elementsToRemove.forEach(function(el) { section.removeChild(el); });
 
   items.forEach(function(item) {
     var div = document.createElement('div');
