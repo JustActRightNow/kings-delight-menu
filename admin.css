@@ -228,12 +228,19 @@ body {
 .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 @media (max-width: 520px) { .form-grid { grid-template-columns: 1fr; } }
 .form-field label { display: block; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--cream-35); margin-bottom: 5px; }
-.form-field input, .form-field select {
+.form-field input, .form-field select, .form-field textarea {
   width: 100%; background: var(--charcoal-mid);
   border: 1px solid var(--border); border-radius: 7px;
   padding: 9px 12px; color: var(--cream);
   font-family: 'Jost', sans-serif; font-size: 13px; font-weight: 300;
   outline: none; transition: border-color 0.2s;
+}
+.form-field input[type=file] {
+  padding: 7px 10px; cursor: pointer; color: var(--cream-60);
+}
+.form-field input[type=file]::file-selector-button {
+  background: var(--gold); color: #111; border: none; border-radius: 4px;
+  padding: 3px 10px; font-size: 12px; font-weight: 600; cursor: pointer; margin-right: 8px;
 }
 .form-field input::placeholder { color: var(--cream-20); }
 .form-field input:focus, .form-field select:focus { border-color: var(--gold-border); }
@@ -270,5 +277,31 @@ body {
 /* EMPTY */
 .empty-msg { text-align: center; padding: 32px 20px; color: var(--cream-35); font-style: italic; font-size: 13px; }
 
-/* SECTION DIVIDER */
+/* IMAGE CELL in item rows */
+.img-cell { flex-shrink: 0; width: 44px; }
+.img-thumb {
+  width: 44px; height: 44px; object-fit: cover; border-radius: 6px;
+  border: 1px solid var(--border); cursor: pointer; display: block;
+  transition: border-color 0.15s;
+}
+.img-thumb:hover { border-color: var(--gold-border); }
+.img-add-btn {
+  width: 44px; height: 44px; background: rgba(255,255,255,0.04);
+  border: 1px dashed var(--border); border-radius: 6px;
+  cursor: pointer; font-size: 18px; color: var(--cream-35);
+  display: flex; align-items: center; justify-content: center;
+  transition: border-color 0.15s, color 0.15s;
+}
+.img-add-btn:hover { border-color: var(--gold-border); color: var(--gold); }
+.img-edit-form { width: 160px; }
+.img-edit-actions { display: flex; gap: 4px; margin-top: 5px; flex-wrap: wrap; }
+.img-remove-btn { background: none !important; border: 1px solid rgba(178,34,34,0.4) !important; color: #e05555 !important; }
+.img-remove-btn:hover { background: rgba(178,34,34,0.1) !important; }
+.img-cancel-btn { background: none !important; border: 1px solid var(--border) !important; color: var(--cream-35) !important; }
+.img-cancel-btn:hover { border-color: rgba(255,255,255,0.2) !important; color: var(--cream-60) !important; }
+
+/* FULL-WIDTH form field (spans both grid columns) */
+.form-field--full { grid-column: 1 / -1; }
+
+ */
 .section-divider { font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--cream-35); margin: 20px 0 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }

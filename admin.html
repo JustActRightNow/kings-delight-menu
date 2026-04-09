@@ -106,6 +106,12 @@
             <label for="promoIsCombo">Combo / meal deal</label>
           </div>
         </div>
+        <div class="form-field form-field--full">
+          <label for="promoImageFile">Product Image (optional)</label>
+          <input type="file" id="promoImageFile" accept="image/jpeg,image/png,image/webp,image/gif" style="margin-bottom:6px">
+          <div style="font-size:11px;color:var(--cream-35);margin-bottom:4px">or paste an image URL instead:</div>
+          <input type="text" id="promoImageUrl" placeholder="https://example.com/image.jpg">
+        </div>
       </div>
       <button class="add-promo-btn" id="addPromoBtn" onclick="addPromoItem()">Add Product</button>
     </div>

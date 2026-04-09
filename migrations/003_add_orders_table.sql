@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS orders (
   id         UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
   created_at TIMESTAMPTZ DEFAULT now(),
   customer   TEXT,
+  order_type TEXT        NOT NULL DEFAULT 'eat-in',
   items      JSONB       NOT NULL,
   total      INTEGER     NOT NULL,
   note       TEXT,
