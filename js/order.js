@@ -34,16 +34,22 @@ function logOrderToSheet(payload) {
 
 /**
  * Persists the current order to the Supabase `orders` table and returns
- * the server-generated ref_code. Returns null if Supabase is not configured
- * or if the request fails (allowing checkout to continue via WhatsApp anyway).
+ * a ref_code derived from a client-generated UUID. Returns null if Supabase
+ * is not configured or if the request fails (checkout continues via WhatsApp).
+ *
+ * Uses `Prefer: return=minimal` so the insert succeeds even though the anon
+ * role only has INSERT (not SELECT) permission on the orders table.  The
+ * ref_code is the first 6 characters of the UUID, uppercased — identical to
+ * the server-side generated column `upper(substr(id::text, 1, 6))`.
  * @async
  * @param {string} customerName - Customer's name (may be empty).
  * @param {string} note - Special requests or notes (may be empty).
- * @returns {Promise<string|null>} The ref_code from Supabase, or null on failure.
+ * @returns {Promise<string|null>} A 6-char uppercase ref code, or null on failure.
  */
 async function saveOrderToSupabase(customerName, note) {
   if (!SUPABASE_CONFIGURED) return null;
   try {
+    const orderId = crypto.randomUUID();
     const allItems = [];
     state.plates.forEach(function(plate) {
       plate.items.forEach(function(i) {
@@ -51,27 +57,33 @@ async function saveOrderToSupabase(customerName, note) {
       });
     });
     const payload = {
+      id: orderId,
       customer: customerName || 'Guest',
+      order_type: state.orderType,
       items: allItems,
       total: grandTotal(),
       note: note || '',
     };
     const res = await fetch(
-      SUPABASE_URL + '/rest/v1/orders?select=ref_code',
+      SUPABASE_URL + '/rest/v1/orders',
       {
         method: 'POST',
         headers: {
           'apikey': SUPABASE_ANON,
           'Authorization': 'Bearer ' + SUPABASE_ANON,
           'Content-Type': 'application/json',
-          'Prefer': 'return=representation',
+          'Prefer': 'return=minimal',
         },
         body: JSON.stringify(payload),
       }
     );
-    if (!res.ok) return null;
-    const rows = await res.json();
-    return (rows && rows[0] && rows[0].ref_code) ? rows[0].ref_code : null;
+    if (!res.ok) {
+      const errText = await res.text().catch(function() { return ''; });
+      console.warn('Order save failed (' + res.status + '):', errText);
+      return null;
+    }
+    /* Derive the same ref_code the DB generates: upper(substr(id::text, 1, 6)) */
+    return orderId.substring(0, 6).toUpperCase();
   } catch (e) {
     console.warn('Order save failed, continuing to WhatsApp anyway', e);
     return null;
@@ -169,4 +181,14 @@ async function sendToWhatsApp() {
        (e.g. some iOS Safari configurations). */
     window.open(url, '_blank');
   }
+
+  /* ── Clear cart and return to home after order is dispatched ── */
+  state.plates = [{ id: 1, items: [] }];
+  state.activePlateIndex = 0;
+  state.nextPlateId = 2;
+  renderAll();
+  closeCheckout();
+  closeCart();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  showToast('Order sent! 🎉 Your cart has been cleared.');
 }

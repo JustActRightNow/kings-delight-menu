@@ -123,6 +123,8 @@
     var expiry   = document.getElementById('promoExpiry').value || null;
     var sublabel = document.getElementById('promoSublabel').value.trim() || null;
     var isCombo  = document.getElementById('promoIsCombo').checked;
+    var imageUrlInput = document.getElementById('promoImageUrl').value.trim() || null;
+    var imageFile = document.getElementById('promoImageFile').files[0] || null;
 
     if (!name) { showToast('Item name is required', true); return; }
     if (isNaN(price) || price < 0) { showToast('Enter a valid price', true); return; }
@@ -136,16 +138,31 @@
         available: true, category_type: isPromo ? 'promo' : 'regular',
         promo_expires_at: isPromo ? expiry : null, combo: isCombo,
         sub_label: sublabel, is_free: false, sort_order: 0,
-        has_variants: false, variants: null
+        has_variants: false, variants: null, image_url: imageUrlInput
       });
-      allItems.push(Array.isArray(newItem) ? newItem[0] : newItem);
+      var item = Array.isArray(newItem) ? newItem[0] : newItem;
+      allItems.push(item);
+
+      /* Upload image file if provided (uses the new item's UUID as filename) */
+      if (imageFile && item && item.id) {
+        btn.textContent = 'Uploading image…';
+        try {
+          var uploadedUrl = await uploadImageToStorage(imageFile, item.id);
+          await apiCall('PATCH', '/rest/v1/menu_items?id=eq.' + encodeURIComponent(item.id), { image_url: uploadedUrl });
+          item.image_url = uploadedUrl;
+        } catch (imgErr) {
+          showToast('Product added but image upload failed: ' + imgErr.message, true);
+        }
+      }
+
       updateStats();
       renderList();
       /* Clear form */
-      ['promoName','promoPrice','promoExpiry','promoSublabel'].forEach(function(id) {
+      ['promoName','promoPrice','promoExpiry','promoSublabel','promoImageUrl'].forEach(function(id) {
         document.getElementById(id).value = '';
       });
       document.getElementById('promoIsCombo').checked = false;
+      document.getElementById('promoImageFile').value = '';
       showToast('Product added!');
     } catch (e) {
       showToast(e.message, true);
@@ -240,6 +257,13 @@
             + '</span></div>';
 
         html += '<div class="item-row' + (item.available ? '' : ' unavailable') + '" id="row_' + safeId + '">';
+        html += '<div class="img-cell" id="imgCell_' + safeId + '">';
+        if (item.image_url) {
+          html += '<img src="' + escHtml(item.image_url) + '" alt="" class="img-thumb" title="Click to change image" data-id="' + safeId + '" onclick="startImageEdit(this.dataset.id)">';
+        } else {
+          html += '<button class="img-add-btn" title="Add image" data-id="' + safeId + '" onclick="startImageEdit(this.dataset.id)">📷</button>';
+        }
+        html += '</div>';
         html += '<div class="item-row-info">';
         html += '<div class="item-row-name">' + safeName;
         if (isPromo) html += ' <span class="promo-badge">PROMO' + (item.combo ? ' · COMBO' : '') + '</span>';
@@ -290,6 +314,92 @@
     var val = parseInt(inp.value, 10);
     if (isNaN(val) || val < 0) { showToast('Enter a valid price', true); return; }
     savePrice(id, val);
+  }
+
+  /* ── Image upload / management ──────────────────────────────────────── */
+
+  /**
+   * Uploads an image file to Supabase Storage (bucket: menu-images).
+   * Uses the item UUID as the filename base to allow overwriting.
+   * @param {File} file - The image file to upload.
+   * @param {string} itemId - The menu item UUID used as filename base.
+   * @returns {Promise<string>} The public URL of the uploaded image.
+   */
+  async function uploadImageToStorage(file, itemId) {
+    var ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
+    var filename = itemId + '.' + ext;
+    var res = await fetch(SUPABASE_URL + '/storage/v1/object/menu-images/' + filename, {
+      method: 'POST',
+      headers: {
+        'apikey': SUPABASE_ANON,
+        'Authorization': 'Bearer ' + authToken,
+        'Content-Type': file.type || 'image/jpeg',
+        'x-upsert': 'true'
+      },
+      body: file
+    });
+    if (!res.ok) {
+      var errData = await res.json().catch(function() { return {}; });
+      throw new Error(errData.message || errData.error || 'Upload failed (' + res.status + ')');
+    }
+    return SUPABASE_URL + '/storage/v1/object/public/menu-images/' + filename;
+  }
+
+  async function saveImageUrl(id, imageUrl) {
+    try {
+      await apiCall('PATCH', '/rest/v1/menu_items?id=eq.' + encodeURIComponent(id), { image_url: imageUrl || null });
+      var item = allItems.find(function(i) { return i.id === id; });
+      if (item) item.image_url = imageUrl || null;
+      renderList();
+      showToast(imageUrl ? 'Image saved' : 'Image removed');
+    } catch (e) {
+      showToast(e.message, true);
+    }
+  }
+
+  function startImageEdit(id) {
+    var cell = document.getElementById('imgCell_' + id);
+    if (!cell) return;
+    var item = allItems.find(function(i) { return i.id === id; });
+    var safeId = escHtml(id);
+    var currentUrl = escHtml((item && item.image_url) || '');
+    cell.innerHTML =
+      '<div class="img-edit-form">' +
+        '<input type="file" id="imgFile_' + safeId + '" accept="image/jpeg,image/png,image/webp,image/gif" style="width:100%;font-size:11px;margin-bottom:4px">' +
+        '<div style="font-size:10px;color:var(--cream-35);margin-bottom:3px">or paste image URL:</div>' +
+        '<input type="text" id="imgUrl_' + safeId + '" placeholder="https://…" value="' + currentUrl + '" ' +
+          'style="width:100%;padding:3px 6px;font-size:11px;background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:4px;color:var(--cream)">' +
+        '<div class="img-edit-actions">' +
+          '<button id="imgSaveBtn_' + safeId + '" class="price-save-btn" data-id="' + safeId + '" onclick="commitImage(this.dataset.id)">Save</button>' +
+          (currentUrl ? '<button class="price-save-btn img-remove-btn" data-id="' + safeId + '" onclick="removeImage(this.dataset.id)">Remove</button>' : '') +
+          '<button class="price-save-btn img-cancel-btn" onclick="renderList()">Cancel</button>' +
+        '</div>' +
+      '</div>';
+  }
+
+  async function commitImage(id) {
+    var fileInput = document.getElementById('imgFile_' + id);
+    var urlInput  = document.getElementById('imgUrl_' + id);
+    var saveBtn   = document.getElementById('imgSaveBtn_' + id);
+
+    if (fileInput && fileInput.files.length > 0) {
+      saveBtn.disabled = true; saveBtn.textContent = 'Uploading…';
+      try {
+        var url = await uploadImageToStorage(fileInput.files[0], id);
+        await saveImageUrl(id, url);
+      } catch (e) {
+        showToast(e.message, true);
+        saveBtn.disabled = false; saveBtn.textContent = 'Save';
+      }
+    } else {
+      var url = urlInput ? urlInput.value.trim() : '';
+      await saveImageUrl(id, url || null);
+    }
+  }
+
+  async function removeImage(id) {
+    if (!confirm('Remove image from this item?')) return;
+    await saveImageUrl(id, null);
   }
 
   /* ── Utilities ───────────────────────────────────────────────────────── */
