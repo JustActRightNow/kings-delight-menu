@@ -9,6 +9,7 @@
 -- 003 = orders table (with order_type)
 -- 004 = image_url column
 -- 005 = order_type column + storage bucket for menu images
+-- 006 = fix ref_code (replace GENERATED ALWAYS AS with trigger)
 -- ============================================================
 
 -- IMPORTANT: This schema uses Row Level Security.
@@ -78,8 +79,24 @@ CREATE TABLE IF NOT EXISTS orders (
   items      JSONB       NOT NULL,
   total      INTEGER     NOT NULL,
   note       TEXT,
-  ref_code   TEXT        GENERATED ALWAYS AS (upper(substr(id::text, 1, 6))) STORED
+  ref_code   TEXT
 );
+
+-- Trigger function: derive ref_code from the first 6 chars of the UUID.
+-- Using a trigger instead of GENERATED ALWAYS AS avoids a PostgREST
+-- compatibility bug that causes INSERT operations to be rejected.
+CREATE OR REPLACE FUNCTION set_order_ref_code()
+RETURNS TRIGGER LANGUAGE plpgsql AS $$
+BEGIN
+  NEW.ref_code := upper(substr(NEW.id::text, 1, 6));
+  RETURN NEW;
+END;
+$$;
+
+DROP TRIGGER IF EXISTS orders_set_ref_code ON orders;
+CREATE TRIGGER orders_set_ref_code
+  BEFORE INSERT ON orders
+  FOR EACH ROW EXECUTE FUNCTION set_order_ref_code();
 
 ALTER TABLE orders ENABLE ROW LEVEL SECURITY;
 
