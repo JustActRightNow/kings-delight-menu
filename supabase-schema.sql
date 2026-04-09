@@ -108,6 +108,13 @@ CREATE POLICY "auth_read_orders"  ON orders FOR SELECT TO authenticated USING (t
 DROP POLICY IF EXISTS "anon_insert_order" ON orders;
 CREATE POLICY "anon_insert_order" ON orders FOR INSERT TO anon WITH CHECK (true);
 
+-- Grant the underlying PostgreSQL privileges that RLS policies layer on top of.
+-- Tables created via the SQL Editor do not receive Supabase's automatic grants,
+-- so these must be stated explicitly or anon inserts and authenticated reads will
+-- fail with "permission denied" even though the RLS policies allow them.
+GRANT INSERT ON TABLE orders TO anon;
+GRANT SELECT ON TABLE orders TO authenticated;
+
 -- ============================================================
 -- Supabase Storage bucket: menu-images
 -- ============================================================
