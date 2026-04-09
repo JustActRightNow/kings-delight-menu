@@ -42,7 +42,16 @@
   function showAdmin() {
     document.getElementById('loginScreen').style.display = 'none';
     document.getElementById('adminPanel').style.display = 'block';
-    loadItems();
+    switchAdminTab('menu');
+  }
+
+  function switchAdminTab(tab) {
+    document.getElementById('menuPanel').style.display   = tab === 'menu'   ? '' : 'none';
+    document.getElementById('ordersPanel').style.display = tab === 'orders' ? '' : 'none';
+    document.getElementById('tabMenu').classList.toggle('active',   tab === 'menu');
+    document.getElementById('tabOrders').classList.toggle('active', tab === 'orders');
+    if (tab === 'menu' && allItems.length === 0) loadItems();
+    if (tab === 'orders') loadOrders();
   }
 
   /* ── API Helpers ─────────────────────────────────────────────────────── */
@@ -400,6 +409,66 @@
   async function removeImage(id) {
     if (!confirm('Remove image from this item?')) return;
     await saveImageUrl(id, null);
+  }
+
+  /* ── Orders Inbox ────────────────────────────────────────────────────── */
+
+  async function loadOrders() {
+    document.getElementById('orderList').innerHTML = '<div class="loading-msg">Loading orders…</div>';
+    try {
+      var res = await fetch(SUPABASE_URL + '/rest/v1/orders?select=*&order=created_at.desc&limit=100', {
+        headers: { 'apikey': SUPABASE_ANON, 'Authorization': 'Bearer ' + authToken }
+      });
+      if (!res.ok) {
+        var err = await res.json().catch(function() { return {}; });
+        throw new Error(err.message || err.msg || 'Failed to load orders (' + res.status + ')');
+      }
+      var orders = await res.json();
+      renderOrders(orders || []);
+    } catch (e) {
+      document.getElementById('orderList').innerHTML = '<div class="empty-msg" style="color:#e05555">' + escHtml(e.message) + '</div>';
+    }
+  }
+
+  function renderOrders(orders) {
+    if (orders.length === 0) {
+      document.getElementById('orderList').innerHTML = '<div class="empty-msg">No orders yet.</div>';
+      return;
+    }
+
+    var typeLabel = { 'eat-in': 'Eat-in', 'take-out': 'Take-out', 'delivery': 'Delivery' };
+
+    var html = '';
+    orders.forEach(function(o) {
+      var items = [];
+      if (Array.isArray(o.items)) {
+        o.items.forEach(function(i) {
+          items.push((i.free ? '🔸 ' : '') + escHtml(i.name) + (i.qty > 1 ? ' ×' + i.qty : ''));
+        });
+      }
+      var dt = o.created_at ? new Date(o.created_at) : null;
+      var dtStr = dt ? dt.toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' }) : '—';
+      var tLabel = typeLabel[o.order_type] || escHtml(o.order_type || '—');
+      var typeClass = o.order_type === 'take-out' ? 'order-badge-takeout' : o.order_type === 'delivery' ? 'order-badge-delivery' : 'order-badge-eatin';
+
+      html += '<div class="order-card">';
+      html += '<div class="order-card-header">';
+      html += '<span class="order-ref">' + escHtml(o.ref_code || '——') + '</span>';
+      html += '<span class="order-badge ' + typeClass + '">' + tLabel + '</span>';
+      html += '<span class="order-customer">' + escHtml(o.customer || 'Guest') + '</span>';
+      html += '<span class="order-total">₦' + (o.total || 0).toLocaleString() + '</span>';
+      html += '<span class="order-time">' + dtStr + '</span>';
+      html += '</div>';
+      if (items.length) {
+        html += '<div class="order-items">' + items.join(' · ') + '</div>';
+      }
+      if (o.note) {
+        html += '<div class="order-note">📝 ' + escHtml(o.note) + '</div>';
+      }
+      html += '</div>';
+    });
+
+    document.getElementById('orderList').innerHTML = html;
   }
 
   /* ── Utilities ───────────────────────────────────────────────────────── */

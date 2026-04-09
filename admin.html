@@ -45,6 +45,15 @@
 
   <div class="admin-body">
 
+    <!-- Tab navigation -->
+    <div class="admin-tabs" id="adminTabs">
+      <button class="admin-tab active" id="tabMenu" onclick="switchAdminTab('menu')">📋 Menu</button>
+      <button class="admin-tab" id="tabOrders" onclick="switchAdminTab('orders')">🧾 Orders</button>
+    </div>
+
+    <!-- ── MENU PANEL ── -->
+    <div id="menuPanel">
+
     <!-- Stats -->
     <div class="stats-row" id="statsRow">
       <div class="stat-card">
@@ -133,7 +142,17 @@
 
     <!-- Item List -->
     <div id="itemList"><div class="loading-msg">Loading menu…</div></div>
-  </div>
+
+    </div><!-- end #menuPanel -->
+
+    <!-- ── ORDERS PANEL ── -->
+    <div id="ordersPanel" style="display:none">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+        <div style="font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--cream-35)">Recent Orders</div>
+        <button class="filter-btn" onclick="loadOrders()">↻ Refresh</button>
+      </div>
+      <div id="orderList"><div class="loading-msg">Loading orders…</div></div>
+    </div><!-- end #ordersPanel -->
 </div>
 
 <!-- Toast -->

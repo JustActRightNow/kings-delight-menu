@@ -152,7 +152,7 @@ async function sendToWhatsApp() {
   });
 
   if (state.orderType === 'take-out') {
-    const n = nonEmptyPlateCount();
+    const n = packablePlateCount();
     msg += '\uD83D\uDD38 Packaging (' + n + ' plate' + (n > 1 ? 's' : '') + ') | \u20A6' + (PACK_PRICE * n).toLocaleString() + '\n';
   }
 

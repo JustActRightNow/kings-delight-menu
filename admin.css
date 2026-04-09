@@ -305,3 +305,46 @@ body {
 
  */
 .section-divider { font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--cream-35); margin: 20px 0 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
+
+/* ADMIN TABS */
+.admin-tabs { display: flex; gap: 6px; margin-bottom: 24px; }
+.admin-tab {
+  padding: 8px 18px; border-radius: 20px;
+  border: 1px solid var(--border); background: transparent;
+  color: var(--cream-35); font-family: 'Jost', sans-serif;
+  font-size: 13px; cursor: pointer; transition: all 0.15s;
+}
+.admin-tab:hover { color: var(--cream-60); }
+.admin-tab.active { background: var(--gold); border-color: var(--gold); color: #111; font-weight: 600; }
+
+/* ORDER CARDS */
+.order-card {
+  background: var(--charcoal-card); border: 1px solid var(--border);
+  border-radius: 9px; padding: 12px 14px; margin-bottom: 8px;
+  transition: border-color 0.18s;
+}
+.order-card:hover { border-color: rgba(255,255,255,0.12); }
+.order-card-header {
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+}
+.order-ref {
+  font-family: 'Jost', sans-serif; font-size: 13px; font-weight: 600;
+  color: var(--gold); letter-spacing: 0.06em; min-width: 54px;
+}
+.order-badge {
+  font-size: 10px; padding: 2px 7px; border-radius: 3px;
+  border: 1px solid; letter-spacing: 0.05em; white-space: nowrap;
+}
+.order-badge-eatin    { border-color: rgba(42,157,92,0.4);   color: #2a9d5c; }
+.order-badge-takeout  { border-color: var(--gold-border);     color: var(--gold); }
+.order-badge-delivery { border-color: rgba(100,149,237,0.4); color: #6495ed; }
+.order-customer { font-size: 13px; color: var(--cream); flex: 1; min-width: 80px; }
+.order-total { font-size: 13px; font-weight: 600; color: var(--cream); white-space: nowrap; }
+.order-time { font-size: 11px; color: var(--cream-35); white-space: nowrap; margin-left: auto; }
+.order-items {
+  font-size: 11px; color: var(--cream-35); margin-top: 7px;
+  line-height: 1.5; border-top: 1px solid var(--border); padding-top: 6px;
+}
+.order-note {
+  font-size: 11px; color: var(--cream-60); margin-top: 5px; font-style: italic;
+}
