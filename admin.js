@@ -413,6 +413,31 @@
 
   /* ── Orders Inbox ────────────────────────────────────────────────────── */
 
+  async function toggleOrderPaid(id, newVal) {
+    try {
+      var res = await fetch(SUPABASE_URL + '/rest/v1/orders?id=eq.' + encodeURIComponent(id), {
+        method: 'PATCH',
+        headers: {
+          'apikey': SUPABASE_ANON,
+          'Authorization': 'Bearer ' + authToken,
+          'Content-Type': 'application/json',
+          'Prefer': 'return=minimal'
+        },
+        body: JSON.stringify({ paid: newVal })
+      });
+      if (!res.ok) {
+        var err = await res.json().catch(function() { return {}; });
+        throw new Error(err.message || err.msg || 'Update failed (' + res.status + ')');
+      }
+      showToast(newVal ? 'Order marked as paid ✓' : 'Payment mark removed');
+      /* Refresh label without full reload */
+      loadOrders();
+    } catch (e) {
+      showToast(e.message, true);
+      loadOrders();
+    }
+  }
+
   async function loadOrders() {
     document.getElementById('orderList').innerHTML = '<div class="loading-msg">Loading orders…</div>';
     try {
@@ -467,13 +492,17 @@
       var tLabel = typeLabel[o.order_type] || escHtml(o.order_type || '—');
       var typeClass = o.order_type === 'take-out' ? 'order-badge-takeout' : o.order_type === 'delivery' ? 'order-badge-delivery' : 'order-badge-eatin';
 
-      html += '<div class="order-card">';
+      html += '<div class="order-card' + (o.paid ? ' order-paid' : '') + '">';
       html += '<div class="order-card-header">';
       html += '<span class="order-ref">' + escHtml(o.ref_code || '——') + '</span>';
       html += '<span class="order-badge ' + typeClass + '">' + tLabel + '</span>';
       html += '<span class="order-customer">' + escHtml(o.customer || 'Guest') + '</span>';
       html += '<span class="order-total">₦' + (o.total || 0).toLocaleString() + '</span>';
       html += '<span class="order-time">' + dtStr + '</span>';
+      html += '<label class="paid-toggle" title="Mark as paid">';
+      html += '<input type="checkbox"' + (o.paid ? ' checked' : '') + ' data-id="' + escHtml(o.id) + '" onchange="toggleOrderPaid(this.dataset.id, this.checked)">';
+      html += '<span class="paid-toggle-label">' + (o.paid ? '✓ Paid' : 'Paid?') + '</span>';
+      html += '</label>';
       html += '</div>';
       if (items.length) {
         html += '<div class="order-items">' + items.join(' · ') + '</div>';

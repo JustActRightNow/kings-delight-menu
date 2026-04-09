@@ -154,7 +154,7 @@ async function sendToWhatsApp() {
 
   if (state.orderType === 'take-out') {
     const n = packablePlateCount();
-    msg += '\uD83D\uDD38 Packaging (' + n + ' plate' + (n > 1 ? 's' : '') + ') | \u20A6' + (PACK_PRICE * n).toLocaleString() + '\n';
+    msg += '\uD83D\uDD38 Takeaway pack (' + n + ' plate' + (n > 1 ? 's' : '') + ') | \u20A6' + (PACK_PRICE * n).toLocaleString() + '\n';
   }
 
   /* ── Total ── */

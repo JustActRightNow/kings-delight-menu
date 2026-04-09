@@ -348,3 +348,19 @@ body {
 .order-note {
   font-size: 11px; color: var(--cream-60); margin-top: 5px; font-style: italic;
 }
+.paid-toggle {
+  display: inline-flex; align-items: center; gap: 5px; cursor: pointer;
+  margin-left: auto; flex-shrink: 0;
+}
+.paid-toggle input[type="checkbox"] { display: none; }
+.paid-toggle-label {
+  font-size: 10px; padding: 2px 8px; border-radius: 3px;
+  border: 1px solid rgba(42,157,92,0.4); color: rgba(42,157,92,0.65);
+  letter-spacing: 0.05em; white-space: nowrap; transition: background 0.15s, color 0.15s;
+  cursor: pointer;
+}
+.paid-toggle input:checked + .paid-toggle-label {
+  background: rgba(42,157,92,0.15); color: #2a9d5c;
+  border-color: rgba(42,157,92,0.6);
+}
+.order-paid { border-color: rgba(42,157,92,0.3); }
