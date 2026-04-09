@@ -31,5 +31,7 @@ CREATE TRIGGER orders_set_ref_code
   FOR EACH ROW EXECUTE FUNCTION set_order_ref_code();
 
 ALTER TABLE orders ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "auth_read_orders"  ON orders;
+DROP POLICY IF EXISTS "anon_insert_order" ON orders;
 CREATE POLICY "auth_read_orders"  ON orders FOR SELECT TO authenticated USING (true);
 CREATE POLICY "anon_insert_order" ON orders FOR INSERT TO anon        WITH CHECK (true);

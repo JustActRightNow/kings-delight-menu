@@ -119,6 +119,7 @@ async function sendToWhatsApp() {
   /* ── Save to Supabase (non-blocking; fallback to local code on failure) ── */
   const dbRef = await saveOrderToSupabase(customerName, note);
   const refCode = 'KD-' + (dbRef ?? code);
+  const dbSaved = dbRef !== null;
 
   const HR = '\u2501'.repeat(14); /* ━━━━━━━━━━━━━━ */
 
@@ -191,5 +192,9 @@ async function sendToWhatsApp() {
   closeCheckout();
   closeCart();
   window.scrollTo({ top: 0, behavior: 'smooth' });
-  showToast('Order sent! 🎉 Your cart has been cleared.');
+  if (dbSaved) {
+    showToast('Order sent! 🎉 Your cart has been cleared.');
+  } else {
+    showToast('Order sent via WhatsApp ✓  —  Order history unavailable (check Supabase setup)', true);
+  }
 }

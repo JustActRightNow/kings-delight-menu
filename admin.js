@@ -426,13 +426,25 @@
       var orders = await res.json();
       renderOrders(orders || []);
     } catch (e) {
-      document.getElementById('orderList').innerHTML = '<div class="empty-msg" style="color:#e05555">' + escHtml(e.message) + '</div>';
+      document.getElementById('orderList').innerHTML =
+        '<div class="empty-msg" style="color:#e05555">' + escHtml(e.message) +
+        '<br><span style="font-size:11px;opacity:0.7">If the orders table is missing, run ' +
+        '<code>supabase-schema.sql</code> (new project) or ' +
+        '<code>migrations/003_add_orders_table.sql</code> (existing project) ' +
+        'in the Supabase SQL Editor.</span></div>';
     }
   }
 
   function renderOrders(orders) {
     if (orders.length === 0) {
-      document.getElementById('orderList').innerHTML = '<div class="empty-msg">No orders yet.</div>';
+      document.getElementById('orderList').innerHTML =
+        '<div class="empty-msg">No orders yet.</div>' +
+        '<div class="empty-msg" style="font-size:11px;margin-top:8px;color:var(--cream-35)">' +
+        'Expecting orders? To set up the orders table, run <code>supabase-schema.sql</code> ' +
+        'in your Supabase SQL Editor (new projects), or run ' +
+        '<code>migrations/003_add_orders_table.sql</code> if you already have the menu table ' +
+        'and only need to add orders.' +
+        '</div>';
       return;
     }
 
