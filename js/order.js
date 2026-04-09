@@ -62,7 +62,7 @@ async function saveOrderToSupabase(customerName, note) {
       order_type: state.orderType,
       items: allItems,
       total: grandTotal(),
-      note: note || '',
+      note: note || null,
     };
     const res = await fetch(
       SUPABASE_URL + '/rest/v1/orders',
@@ -109,7 +109,6 @@ async function sendToWhatsApp() {
   const customerName = sanitizeInput(coNameEl ? coNameEl.value.trim() : '');
   const note = sanitizeInput(coNoteEl ? coNoteEl.value.trim() : '');
   const tableNo = localStorage.getItem('kd_table');
-  const typeLabel = state.orderType === 'take-out' ? '\uD83E\uDD61 Take Out' : '\uD83C\uDF7D\uFE0F Eat In';
 
   /* ── Open a blank window NOW, while still inside the synchronous part of
      the click handler, so the browser's popup blocker treats it as a direct
@@ -119,46 +118,48 @@ async function sendToWhatsApp() {
 
   /* ── Save to Supabase (non-blocking; fallback to local code on failure) ── */
   const dbRef = await saveOrderToSupabase(customerName, note);
-  const refCode = dbRef ?? ('KD-' + code);
+  const refCode = 'KD-' + (dbRef ?? code);
+
+  const HR = '\u2501'.repeat(14); /* ━━━━━━━━━━━━━━ */
 
   /* ── Header ── */
-  let msg = "\uD83C\uDF1F *King\u2019s Delight Eatery \u2014 New Order*\n";
-  msg += "\u2015\u2015\u2015\u2015\u2015\u2015\u2015\u2015\u2015\u2015\u2015\u2015\u2015\u2015\u2015\n";
+  let msg = '\uD83C\uDF1F KING\u2019S DELIGHT EATERY\n';
+  msg += 'New Order\n';
 
-  /* ── Details row ── */
-  const details = [];
-  if (customerName) details.push('\uD83D\uDC64 ' + customerName);
-  if (tableNo) details.push('\uD83E\uDE91 Table ' + tableNo);
-  details.push(typeLabel);
-  msg += details.join('   ') + "\n";
-  msg += "\uD83D\uDCCD Source: " + fmtSrc(src) + "\n";
-  msg += "\u2015\u2015\u2015\u2015\u2015\u2015\u2015\u2015\u2015\u2015\u2015\u2015\u2015\u2015\u2015\n";
+  /* ── Details ── */
+  msg += '\nDETAILS\n';
+  msg += HR + '\n';
+  if (customerName) msg += '\uD83D\uDC64 ' + customerName + '\n';
+  msg += '\uD83C\uDF7D\uFE0F Mode: ' + (state.orderType === 'take-out' ? 'Take Out' : 'Eat In') + '\n';
+  msg += '\uD83D\uDCCD Source: ' + fmtSrc(src) + '\n';
+  msg += '\uD83C\uDD94 Ref: #' + refCode + '\n';
 
-  /* ── Items by plate ── */
+  /* ── Order Summary ── */
+  msg += '\nORDER SUMMARY\n';
+  msg += HR + '\n';
   const allItemLines = [];
   state.plates.forEach(function(plate, pIdx) {
     if (!plate.items.length) return;
     const hasMultiplePlates = state.plates.filter(p => p.items.length).length > 1;
-    if (hasMultiplePlates) msg += "*Plate " + (pIdx + 1) + "*\n";
+    if (hasMultiplePlates) msg += '_Plate ' + (pIdx + 1) + '_\n';
     plate.items.forEach(function(i) {
       const line = i.free
-        ? '\u2022 ' + i.name + ' \u2014 Free'
-        : '\u2022 ' + (i.qty > 1 ? i.qty + '\u00D7 ' : '') + i.name + ' \u2014 \u20A6' + (i.price * i.qty).toLocaleString();
-      msg += line + "\n";
+        ? '\uD83D\uDD38 ' + i.name + ' | Complimentary'
+        : '\uD83D\uDD38 ' + i.name + (i.qty > 1 ? ' \u00D7' + i.qty : '') + ' | \u20A6' + (i.price * i.qty).toLocaleString();
+      msg += line + '\n';
       allItemLines.push(line);
     });
   });
 
   if (state.orderType === 'take-out') {
     const n = nonEmptyPlateCount();
-    msg += '\u2022 Packaging (' + n + ' plate' + (n > 1 ? 's' : '') + ') \u2014 \u20A6' + (PACK_PRICE * n).toLocaleString() + "\n";
+    msg += '\uD83D\uDD38 Packaging (' + n + ' plate' + (n > 1 ? 's' : '') + ') | \u20A6' + (PACK_PRICE * n).toLocaleString() + '\n';
   }
 
   /* ── Total ── */
-  msg += "\u2015\u2015\u2015\u2015\u2015\u2015\u2015\u2015\u2015\u2015\u2015\u2015\u2015\u2015\u2015\n";
-  msg += "*Total: \u20A6" + total.toLocaleString() + "*\n";
-  if (note) msg += "\n\uD83D\uDCDD " + note + "\n";
-  msg += "\n_Ref: #" + refCode + "_";
+  msg += HR + '\n';
+  msg += '\uD83D\uDCB0 TOTAL AMOUNT: \u20A6' + total.toLocaleString() + '\n';
+  if (note) msg += '\n\uD83D\uDCDD ' + note + '\n';
 
   /* ── Log to Google Sheets ── */
   logOrderToSheet({
