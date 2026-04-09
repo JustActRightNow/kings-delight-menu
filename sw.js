@@ -1,4 +1,4 @@
-const CACHE = 'kings-delight-v1';
+const CACHE = 'kings-delight-v2';
 const PRECACHE = [
   '/',
   '/styles.css',
