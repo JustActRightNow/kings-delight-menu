@@ -79,7 +79,8 @@ CREATE TABLE IF NOT EXISTS orders (
   items      JSONB       NOT NULL,
   total      INTEGER     NOT NULL,
   note       TEXT,
-  ref_code   TEXT
+  ref_code   TEXT,
+  paid       BOOLEAN     NOT NULL DEFAULT false
 );
 
 -- Trigger function: derive ref_code from the first 6 chars of the UUID.
@@ -104,6 +105,10 @@ ALTER TABLE orders ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "auth_read_orders" ON orders;
 CREATE POLICY "auth_read_orders"  ON orders FOR SELECT TO authenticated USING (true);
 
+-- Admin can update orders (e.g. mark as paid)
+DROP POLICY IF EXISTS "auth_update_orders" ON orders;
+CREATE POLICY "auth_update_orders" ON orders FOR UPDATE TO authenticated USING (true) WITH CHECK (true);
+
 -- Customers (anon) can place orders
 DROP POLICY IF EXISTS "anon_insert_order" ON orders;
 CREATE POLICY "anon_insert_order" ON orders FOR INSERT TO anon WITH CHECK (true);
@@ -113,7 +118,7 @@ CREATE POLICY "anon_insert_order" ON orders FOR INSERT TO anon WITH CHECK (true)
 -- so these must be stated explicitly or anon inserts and authenticated reads will
 -- fail with "permission denied" even though the RLS policies allow them.
 GRANT INSERT ON TABLE orders TO anon;
-GRANT SELECT ON TABLE orders TO authenticated;
+GRANT SELECT, UPDATE ON TABLE orders TO authenticated;
 
 -- ============================================================
 -- Supabase Storage bucket: menu-images

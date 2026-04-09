@@ -142,7 +142,7 @@ function renderCartPanel() {
   if (state.orderType === 'take-out') {
     const n = packablePlateCount();
     if (n > 0) {
-      html += '<div class="pack-row"><span>Packaging \u00d7 ' + n + ' plate' + (n > 1 ? 's' : '') + '</span><span>\u20a6' + (PACK_PRICE * n).toLocaleString() + '</span></div>';
+      html += '<div class="pack-row"><span>Takeaway pack \u00d7 ' + n + ' plate' + (n > 1 ? 's' : '') + '</span><span>\u20a6' + (PACK_PRICE * n).toLocaleString() + '</span></div>';
     }
   }
   list.innerHTML = html;
@@ -251,7 +251,7 @@ function renderCheckout() {
   if (state.orderType === 'take-out') {
     const n = packablePlateCount();
     if (n > 0) {
-      html += '<div class="checkout-summary-item" style="margin-top:6px"><span>📦 Packaging \u00d7 ' + n + ' plate' + (n > 1 ? 's' : '') + '</span><span class="item-amt">\u20a6' + (PACK_PRICE * n).toLocaleString() + '</span></div>';
+      html += '<div class="checkout-summary-item" style="margin-top:6px"><span>📦 Takeaway pack \u00d7 ' + n + ' plate' + (n > 1 ? 's' : '') + '</span><span class="item-amt">\u20a6' + (PACK_PRICE * n).toLocaleString() + '</span></div>';
     }
   }
   html += '<div class="co-total-row"><span class="co-total-label">Total</span><span class="co-total-amt">\u20a6' + grandTotal().toLocaleString() + '</span></div>';
