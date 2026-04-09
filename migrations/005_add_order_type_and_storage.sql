@@ -22,12 +22,14 @@ VALUES (
 ON CONFLICT (id) DO NOTHING;
 
 -- Allow authenticated admins to upload, update, and delete images
+DROP POLICY IF EXISTS "auth_manage_images" ON storage.objects;
 CREATE POLICY "auth_manage_images"
   ON storage.objects FOR ALL TO authenticated
   USING (bucket_id = 'menu-images')
   WITH CHECK (bucket_id = 'menu-images');
 
 -- Allow public (anon) to read/view images
+DROP POLICY IF EXISTS "public_read_images" ON storage.objects;
 CREATE POLICY "public_read_images"
   ON storage.objects FOR SELECT TO anon
   USING (bucket_id = 'menu-images');
