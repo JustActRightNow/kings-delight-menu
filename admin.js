@@ -426,12 +426,16 @@
       var orders = await res.json();
       renderOrders(orders || []);
     } catch (e) {
+      var isPermErr = /permission denied|42501/i.test(e.message);
       document.getElementById('orderList').innerHTML =
         '<div class="empty-msg" style="color:#e05555">' + escHtml(e.message) +
-        '<br><span style="font-size:11px;opacity:0.7">If the orders table is missing, run ' +
-        '<code>supabase-schema.sql</code> (new project) or ' +
-        '<code>migrations/003_add_orders_table.sql</code> (existing project) ' +
-        'in the Supabase SQL Editor.</span></div>';
+        '<br><span style="font-size:11px;opacity:0.7">' +
+        (isPermErr
+          ? 'Permission error — re-run <code>supabase-schema.sql</code> (or <code>migrations/003_add_orders_table.sql</code>) ' +
+            'in the Supabase SQL Editor. The script now includes the required <code>GRANT</code> statements.'
+          : 'If the orders table is missing, run <code>supabase-schema.sql</code> (new project) or ' +
+            '<code>migrations/003_add_orders_table.sql</code> (existing project) in the Supabase SQL Editor.') +
+        '</span></div>';
     }
   }
 
