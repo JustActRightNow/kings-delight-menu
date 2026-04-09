@@ -99,6 +99,12 @@ async function sendToWhatsApp() {
   const tableNo = localStorage.getItem('kd_table');
   const typeLabel = state.orderType === 'take-out' ? '\uD83E\uDD61 Take Out' : '\uD83C\uDF7D\uFE0F Eat In';
 
+  /* ── Open a blank window NOW, while still inside the synchronous part of
+     the click handler, so the browser's popup blocker treats it as a direct
+     user-initiated navigation. The final WhatsApp URL is set below once the
+     async Supabase save has finished. ── */
+  const waWindow = window.open('', '_blank');
+
   /* ── Save to Supabase (non-blocking; fallback to local code on failure) ── */
   const dbRef = await saveOrderToSupabase(customerName, note);
   const refCode = dbRef ?? ('KD-' + code);
@@ -155,5 +161,12 @@ async function sendToWhatsApp() {
     note: note
   });
 
-  window.open('https://wa.me/' + WA + '?text=' + encodeURIComponent(msg), '_blank');
+  const url = 'https://wa.me/' + WA + '?text=' + encodeURIComponent(msg);
+  if (waWindow) {
+    waWindow.location.href = url;
+  } else {
+    /* Fallback for browsers that returned null from the pre-opened window
+       (e.g. some iOS Safari configurations). */
+    window.open(url, '_blank');
+  }
 }
