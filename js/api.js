@@ -61,12 +61,14 @@ function renderSectionItems(section, items) {
     }
 
     /* Determine if this item requires a take-out packaging charge:
-       Drinks, pastries, asun (grill), and promo combo offers are exempt. */
+       Drinks, pastries, asun (grill), promo/combo/offers items are exempt. */
     var needsPack = !(
       item.tab === 'drinks' ||
       item.tab === 'pastries' ||
       (item.section === 'grill' && item.name === 'Asun') ||
-      item.category_type === 'promo'
+      item.category_type === 'promo' ||
+      item.combo === true ||
+      item.section === 'promos'
     );
     var npAttr = ' data-needs-pack="' + needsPack + '"';
 
@@ -108,7 +110,7 @@ function renderSectionItems(section, items) {
  * @param {Array<Object>} items - Full list of menu item objects from Supabase or STATIC_MENU.
  */
 function renderMenuItems(items) {
-  var today = new Date(); today.setHours(0, 0, 0, 0);
+  var today = new Date(); today.setUTCHours(0, 0, 0, 0);
 
   /* Group by section, filtering out expired promos */
   var bySection = {};

@@ -56,7 +56,7 @@ function packagingCost() { return state.orderType === 'take-out' ? PACK_PRICE * 
 
 /**
  * Returns the number of non-empty plates that contain at least one
- * item requiring packaging (i.e. not drinks, pastries, or promo items).
+ * item requiring packaging (i.e. not drinks, pastries, promo, combo, or offers items).
  * @returns {number} Count of plates that incur a packaging charge.
  */
 function packablePlateCount() {
