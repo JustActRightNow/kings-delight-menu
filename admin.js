@@ -438,8 +438,37 @@
     }
   }
 
+  async function loadOrderStats() {
+    try {
+      var res = await fetch(SUPABASE_URL + '/rest/v1/orders?select=total,created_at&paid=eq.true', {
+        headers: { 'apikey': SUPABASE_ANON, 'Authorization': 'Bearer ' + authToken }
+      });
+      if (!res.ok) return;
+      var paid = await res.json();
+
+      var todayStart = todayMidnight();
+      var allTimeRevenue = 0;
+      var todayCount = 0;
+      var todayRevenue = 0;
+      paid.forEach(function(o) {
+        var amount = o.total || 0;
+        allTimeRevenue += amount;
+        if (o.created_at && new Date(o.created_at) >= todayStart) {
+          todayCount++;
+          todayRevenue += amount;
+        }
+      });
+
+      document.getElementById('statPaidAllTime').textContent   = paid.length;
+      document.getElementById('statRevenueAllTime').textContent = '₦' + allTimeRevenue.toLocaleString();
+      document.getElementById('statPaidToday').textContent     = todayCount;
+      document.getElementById('statRevenueToday').textContent  = '₦' + todayRevenue.toLocaleString();
+    } catch (e) { /* stats are non-critical; ignore errors */ }
+  }
+
   async function loadOrders() {
     document.getElementById('orderList').innerHTML = '<div class="loading-msg">Loading orders…</div>';
+    loadOrderStats();
     try {
       var res = await fetch(SUPABASE_URL + '/rest/v1/orders?select=*&order=created_at.desc&limit=100', {
         headers: { 'apikey': SUPABASE_ANON, 'Authorization': 'Bearer ' + authToken }
