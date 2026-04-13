@@ -112,6 +112,7 @@ body {
   border-radius: 10px; padding: 14px 16px; text-align: center;
 }
 .stat-num { font-family: 'Playfair Display', serif; font-size: 24px; color: var(--gold); }
+.stat-num-sm { font-size: 17px; }
 .stat-label { font-size: 10px; letter-spacing: 0.1em; color: var(--cream-35); text-transform: uppercase; margin-top: 2px; }
 .stat-card.oos .stat-num { color: #e05555; }
 .stat-card.promo .stat-num { color: var(--gold-light); }
