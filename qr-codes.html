@@ -5,11 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>King's Delight — Table QR Codes</title>
   <style>
-    /* ── Base ── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      font-family: Georgia, 'Times New Roman', serif;
+      font-family: Arial, sans-serif;
       background: #f5f0e8;
       color: #1a1a1a;
       padding: 24px;
@@ -31,7 +30,6 @@
       margin-bottom: 24px;
     }
 
-    /* ── Print instructions (screen only) ── */
     .instructions {
       background: #fff8ee;
       border: 1px solid #d4a855;
@@ -46,151 +44,140 @@
 
     .instructions strong { color: #6b3a1f; }
 
-    /* ── Grid ── */
     .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 20px;
-      max-width: 900px;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 24px;
+      max-width: 960px;
       margin: 0 auto;
     }
 
-    /* ── Card ── */
     .card {
-      background: #fff;
-      border: 2px solid #c8a87a;
-      border-radius: 12px;
-      padding: 20px 16px 16px;
-      text-align: center;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 12px;
-      break-inside: avoid;
-      page-break-inside: avoid;
+      gap: 10px;
     }
 
-    .card-logo {
-      font-size: 0.65rem;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      color: #9e6b35;
-      font-family: Arial, sans-serif;
-    }
-
-    .card-title {
-      font-size: 1.35rem;
-      font-weight: bold;
-      color: #3b1f0a;
-      letter-spacing: 0.03em;
-    }
-
-    .qr-wrap canvas, .qr-wrap img {
+    .card canvas {
       display: block;
-      width: 160px !important;
-      height: 160px !important;
+      image-rendering: pixelated;
     }
 
-    .card-cta {
-      font-size: 0.7rem;
-      color: #777;
-      font-family: Arial, sans-serif;
+    .btn-download {
+      display: inline-block;
+      padding: 7px 18px;
+      background: #6b3a1f;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.78rem;
+      letter-spacing: 0.06em;
       text-transform: uppercase;
-      letter-spacing: 0.08em;
+      cursor: pointer;
+      text-decoration: none;
     }
 
-    /* ── Print styles ── */
+    .btn-download:hover { background: #8c4e2a; }
+
     @media print {
+      .instructions, .btn-download { display: none; }
       body { background: #fff; padding: 10px; }
-      .instructions { display: none; }
       h1, .subtitle { color: #000; }
-
-      .grid {
-        grid-template-columns: repeat(3, 1fr);
-        gap: 16px;
-        max-width: 100%;
-      }
-
-      .card {
-        border: 1.5px solid #888;
-        border-radius: 8px;
-        padding: 14px 12px 10px;
-        gap: 8px;
-      }
-
-      .card-title { font-size: 1.2rem; }
-      .qr-wrap canvas, .qr-wrap img { width: 130px !important; height: 130px !important; }
+      .grid { grid-template-columns: repeat(3, 1fr); gap: 16px; max-width: 100%; }
     }
   </style>
 </head>
 <body>
 
 <h1>King's Delight Eatery</h1>
-<p class="subtitle">Scan to Order &mdash; Table QR Codes</p>
+<p class="subtitle">Table QR Codes — click a button to download each code as a PNG</p>
 
 <div class="instructions">
-  <strong>Instructions for staff:</strong> Open this page in any browser, then use
-  <strong>File &rarr; Print</strong> (or <kbd>Ctrl+P</kbd> / <kbd>⌘P</kbd>) to print all 8 QR codes.
-  Cut each card and place it on its respective table or counter.
-  Customers scan the QR code to open the menu &mdash; their table number is automatically
-  included in every order sent to WhatsApp.
+  <strong>For the designer:</strong> Click <strong>Download PNG</strong> under each code to save a
+  clean, plain PNG file. The QR code contains a subtle table-number label in the bottom-right corner
+  of the image. Use these files freely in any layout or print design.
 </div>
 
 <div class="grid" id="grid"></div>
 
 <script src="js/qrcode.js"></script>
 <script>
-  /* ── Build URL for each location ── */
   var BASE_URL = window.location.origin;
 
   var locations = [
-    { label: 'Table 1',   url: BASE_URL + '/?table=1' },
-    { label: 'Table 2',   url: BASE_URL + '/?table=2' },
-    { label: 'Table 3',   url: BASE_URL + '/?table=3' },
-    { label: 'Table 4',   url: BASE_URL + '/?table=4' },
-    { label: 'Table 5',   url: BASE_URL + '/?table=5' },
-    { label: 'Table 6',   url: BASE_URL + '/?table=6' },
-    { label: 'Table 7',   url: BASE_URL + '/?table=7' },
-    { label: 'Counter',   url: BASE_URL + '/?src=counter' }
+    { label: 'Table 1',   file: 'table-1',   url: BASE_URL + '/?table=1' },
+    { label: 'Table 2',   file: 'table-2',   url: BASE_URL + '/?table=2' },
+    { label: 'Table 3',   file: 'table-3',   url: BASE_URL + '/?table=3' },
+    { label: 'Table 4',   file: 'table-4',   url: BASE_URL + '/?table=4' },
+    { label: 'Table 5',   file: 'table-5',   url: BASE_URL + '/?table=5' },
+    { label: 'Table 6',   file: 'table-6',   url: BASE_URL + '/?table=6' },
+    { label: 'Table 7',   file: 'table-7',   url: BASE_URL + '/?table=7' },
+    { label: 'Counter',   file: 'counter',   url: BASE_URL + '/?src=counter' }
   ];
+
+  var CELL   = 6;   /* px per QR module */
+  var MARGIN = 4;   /* quiet-zone modules */
+  var LABEL_HEIGHT = 22; /* px strip below QR for subtle label */
 
   var grid = document.getElementById('grid');
 
   locations.forEach(function(loc) {
-    /* Card skeleton */
-    var card = document.createElement('div');
-    card.className = 'card';
-
-    var logo = document.createElement('div');
-    logo.className = 'card-logo';
-    logo.textContent = "King's Delight Eatery";
-
-    var title = document.createElement('div');
-    title.className = 'card-title';
-    title.textContent = loc.label;
-
-    var qrWrap = document.createElement('div');
-    qrWrap.className = 'qr-wrap';
-
-    var cta = document.createElement('div');
-    cta.className = 'card-cta';
-    cta.textContent = 'Scan to order';
-
-    card.appendChild(logo);
-    card.appendChild(title);
-    card.appendChild(qrWrap);
-    card.appendChild(cta);
-    grid.appendChild(card);
-
-    /* Generate QR code into qrWrap */
+    /* ── Generate raw QR data ── */
     var qr = qrcode(0, 'M');
     qr.addData(loc.url);
     qr.make();
 
-    var img = document.createElement('img');
-    img.src = qr.createDataURL(4, 0);
-    img.alt = 'QR code for ' + loc.label;
-    qrWrap.appendChild(img);
+    var modules = qr.getModuleCount();
+    var qrPx    = (modules + MARGIN * 2) * CELL;
+    var canvasW = qrPx;
+    var canvasH = qrPx + LABEL_HEIGHT;
+
+    /* ── Draw onto canvas ── */
+    var canvas  = document.createElement('canvas');
+    canvas.width  = canvasW;
+    canvas.height = canvasH;
+    var ctx = canvas.getContext('2d');
+
+    /* White background */
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, canvasW, canvasH);
+
+    /* QR modules */
+    var offsetX = MARGIN * CELL;
+    var offsetY = MARGIN * CELL;
+    for (var row = 0; row < modules; row++) {
+      for (var col = 0; col < modules; col++) {
+        ctx.fillStyle = qr.isDark(row, col) ? '#000000' : '#ffffff';
+        ctx.fillRect(offsetX + col * CELL, offsetY + row * CELL, CELL, CELL);
+      }
+    }
+
+    /* Subtle table label — small grey text in bottom strip */
+    ctx.fillStyle = '#aaaaaa';
+    ctx.font = '11px Arial, sans-serif';
+    ctx.textAlign = 'right';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(loc.label, canvasW - 6, qrPx + LABEL_HEIGHT / 2);
+
+    /* ── Card wrapper ── */
+    var card = document.createElement('div');
+    card.className = 'card';
+
+    var label = document.createElement('div');
+    label.style.cssText = 'font-size:0.9rem;font-weight:bold;color:#3b1f0a;';
+    label.textContent = loc.label;
+
+    var link = document.createElement('a');
+    link.className = 'btn-download';
+    link.textContent = 'Download PNG';
+    link.download = 'qr-' + loc.file + '.png';
+    link.href = canvas.toDataURL('image/png');
+
+    card.appendChild(label);
+    card.appendChild(canvas);
+    card.appendChild(link);
+    grid.appendChild(card);
   });
 </script>
 
