@@ -2,6 +2,7 @@
   var authToken = null;
   var allItems  = [];
   var currentFilter = 'all';
+  var currentMenuScope = 'eatery';
 
   /* ── Auth ────────────────────────────────────────────────────────────── */
   async function doLogin() {
@@ -192,17 +193,33 @@
 
   function setFilter(f, btn) {
     currentFilter = f;
-    document.querySelectorAll('.filter-btn').forEach(function(b) { b.classList.remove('active'); });
+    document.querySelectorAll('#filterRow .filter-btn').forEach(function(b) { b.classList.remove('active'); });
     btn.classList.add('active');
+    renderList();
+  }
+
+  function isLoungeSection(section) {
+    var sec = String(section || '').toLowerCase();
+    return sec === 'lounge' || sec.indexOf('lounge-') === 0;
+  }
+
+  function setMenuScope(scope, btn) {
+    currentMenuScope = scope === 'lounge' ? 'lounge' : 'eatery';
+    document.querySelectorAll('#menuScopeRow .menu-scope-btn').forEach(function(b) { b.classList.remove('active'); });
+    btn.classList.add('active');
+    updateStats();
     renderList();
   }
 
   function updateStats() {
     var today = todayMidnight();
-    var total = allItems.length;
-    var avail = allItems.filter(function(i) { return i.available; }).length;
+    var scopedItems = allItems.filter(function(i) {
+      return currentMenuScope === 'lounge' ? isLoungeSection(i.section) : !isLoungeSection(i.section);
+    });
+    var total = scopedItems.length;
+    var avail = scopedItems.filter(function(i) { return i.available; }).length;
     var oos   = total - avail;
-    var promos = allItems.filter(function(i) {
+    var promos = scopedItems.filter(function(i) {
       if (i.category_type !== 'promo') return false;
       if (i.promo_expires_at) { var exp = new Date(i.promo_expires_at); if (exp < today) return false; }
       return true;
@@ -216,6 +233,8 @@
   function renderList() {
     var today = todayMidnight();
     var filtered = allItems.filter(function(item) {
+      if (currentMenuScope === 'lounge' && !isLoungeSection(item.section)) return false;
+      if (currentMenuScope !== 'lounge' && isLoungeSection(item.section)) return false;
       if (currentFilter === 'unavailable') { if (item.available) return false; }
       else if (currentFilter === 'promos') { if (item.category_type !== 'promo') return false; }
       if (currentSearch) {
@@ -448,29 +467,71 @@
 
   async function loadOrderStats() {
     try {
-      var res = await fetch(SUPABASE_URL + '/rest/v1/orders?select=total,created_at&paid=eq.true', {
+      var res = await fetch(SUPABASE_URL + '/rest/v1/orders?select=total,created_at,items&paid=eq.true', {
         headers: { 'apikey': SUPABASE_ANON, 'Authorization': 'Bearer ' + authToken }
       });
       if (!res.ok) return;
       var paid = await res.json();
 
       var todayStart = todayMidnight();
-      var allTimeRevenue = 0;
       var todayCount = 0;
-      var todayRevenue = 0;
+      var eateryAllTimeRevenue = 0;
+      var loungeAllTimeRevenue = 0;
+      var eateryTodayRevenue = 0;
+      var loungeTodayRevenue = 0;
+
+      function splitOrderRevenue(order) {
+        var eatery = 0;
+        var lounge = 0;
+        if (Array.isArray(order.items)) {
+          order.items.forEach(function(i) {
+            var qty = parseInt(i.qty, 10);
+            var price = parseInt(i.price, 10);
+            if (i.free || isNaN(qty) || isNaN(price) || qty <= 0 || price < 0) return;
+            var amount = qty * price;
+            if (isLoungeSection(i.section)) lounge += amount;
+            else eatery += amount;
+          });
+        }
+        var total = parseInt(order.total, 10);
+        var splitTotal = eatery + lounge;
+        if (!isNaN(total)) {
+          if (total > splitTotal) {
+            /* Put non-item deltas (e.g. packaging/fees) on eatery for mixed orders,
+               and on lounge for lounge-only orders. */
+            if (lounge > 0 && eatery === 0) lounge += (total - splitTotal);
+            else eatery += (total - splitTotal);
+          } else if (total < splitTotal) {
+            /* Reconcile downward deltas (e.g. discounts/adjustments) to keep
+               split revenue aligned with the stored order total. */
+            if (lounge > 0 && eatery === 0) lounge = total;
+            else if (eatery > 0 && lounge === 0) eatery = total;
+            else if (splitTotal > 0) {
+              eatery = Math.round((eatery / splitTotal) * total);
+              lounge = total - eatery;
+            }
+          }
+        }
+        return { eatery: eatery, lounge: lounge };
+      }
+
       paid.forEach(function(o) {
-        var amount = o.total || 0;
-        allTimeRevenue += amount;
+        var split = splitOrderRevenue(o);
+        eateryAllTimeRevenue += split.eatery;
+        loungeAllTimeRevenue += split.lounge;
         if (o.created_at && new Date(o.created_at) >= todayStart) {
           todayCount++;
-          todayRevenue += amount;
+          eateryTodayRevenue += split.eatery;
+          loungeTodayRevenue += split.lounge;
         }
       });
 
       document.getElementById('statPaidAllTime').textContent   = paid.length;
-      document.getElementById('statRevenueAllTime').textContent = '₦' + allTimeRevenue.toLocaleString();
       document.getElementById('statPaidToday').textContent     = todayCount;
-      document.getElementById('statRevenueToday').textContent  = '₦' + todayRevenue.toLocaleString();
+      document.getElementById('statRevenueEateryAllTime').textContent = '₦' + eateryAllTimeRevenue.toLocaleString();
+      document.getElementById('statRevenueLoungeAllTime').textContent = '₦' + loungeAllTimeRevenue.toLocaleString();
+      document.getElementById('statRevenueEateryToday').textContent   = '₦' + eateryTodayRevenue.toLocaleString();
+      document.getElementById('statRevenueLoungeToday').textContent   = '₦' + loungeTodayRevenue.toLocaleString();
     } catch (e) { /* stats are non-critical; ignore errors */ }
   }
 

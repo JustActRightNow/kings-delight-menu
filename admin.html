@@ -54,6 +54,12 @@
     <!-- ── MENU PANEL ── -->
     <div id="menuPanel">
 
+    <!-- Menu scope -->
+    <div class="filter-row" id="menuScopeRow" style="margin-bottom:12px">
+      <button class="filter-btn menu-scope-btn active" onclick="setMenuScope('eatery', this)">🍽️ Eatery Menu</button>
+      <button class="filter-btn menu-scope-btn" onclick="setMenuScope('lounge', this)">🍹 Lounge Menu</button>
+    </div>
+
     <!-- Stats -->
     <div class="stats-row" id="statsRow">
       <div class="stat-card">
@@ -164,16 +170,24 @@
           <div class="stat-label">All-time Paid</div>
         </div>
         <div class="stat-card">
-          <div class="stat-num stat-num-sm" id="statRevenueAllTime">—</div>
-          <div class="stat-label">All-time Revenue</div>
-        </div>
-        <div class="stat-card">
           <div class="stat-num" id="statPaidToday">—</div>
           <div class="stat-label">Today's Paid</div>
         </div>
         <div class="stat-card">
-          <div class="stat-num stat-num-sm" id="statRevenueToday">—</div>
-          <div class="stat-label">Today's Revenue</div>
+          <div class="stat-num stat-num-sm" id="statRevenueEateryAllTime">—</div>
+          <div class="stat-label">Eatery Revenue (All-time)</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num stat-num-sm" id="statRevenueLoungeAllTime">—</div>
+          <div class="stat-label">Lounge Revenue (All-time)</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num stat-num-sm" id="statRevenueEateryToday">—</div>
+          <div class="stat-label">Eatery Revenue (Today)</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num stat-num-sm" id="statRevenueLoungeToday">—</div>
+          <div class="stat-label">Lounge Revenue (Today)</div>
         </div>
       </div>
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
