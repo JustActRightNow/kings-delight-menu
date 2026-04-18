@@ -140,6 +140,11 @@ async function saveOrderToSupabase(customerName, note) {
  */
 async function sendToWhatsApp() {
   if (!hasItems()) return;
+  var waNumber = String(WA || '').replace(/[^\d]/g, '');
+  if (!waNumber) {
+    showToast('WhatsApp number is not configured.', true);
+    return;
+  }
   const total = grandTotal();
   const itemCount = state.plates.reduce((s, p) => s + p.items.reduce((ss, i) => ss + (i.free ? 0 : i.qty), 0), 0);
   const code = orderCode(total, itemCount);
@@ -190,26 +195,26 @@ async function sendToWhatsApp() {
       : ('Table ' + tableNo);
   }
 
-  let msg = '*New Order \u2014 King\\'s Delight*\\n';
-  msg += '*From:* ' + fromLabel + '\\n';
-  if (customerName) msg += '*Name:* ' + customerName + '\\n';
-  msg += '*Ref:* ' + refCode + '\\n';
-  msg += '*Mode:* ' + (state.orderType === 'take-out' ? 'Take Out' : 'Eat In') + '\\n';
+  let msg = '*New Order \u2014 King\'s Delight*\n';
+  msg += '*From:* ' + fromLabel + '\n';
+  if (customerName) msg += '*Name:* ' + customerName + '\n';
+  msg += '*Ref:* ' + refCode + '\n';
+  msg += '*Mode:* ' + (state.orderType === 'take-out' ? 'Take Out' : 'Eat In') + '\n';
 
   if (hasMixed) {
-    msg += '\\n\uD83C\uDF7D\uFE0F *Eatery*\\n' + grouped.eatery.join('\\n') + '\\n';
-    msg += '\uD83C\uDF79 *Lounge*\\n' + grouped.lounge.join('\\n') + '\\n';
+    msg += '\n\uD83C\uDF7D\uFE0F *Eatery*\n' + grouped.eatery.join('\n') + '\n';
+    msg += '\uD83C\uDF79 *Lounge*\n' + grouped.lounge.join('\n') + '\n';
   } else {
     const only = hasEatery ? grouped.eatery : grouped.lounge;
-    msg += '\\n' + only.join('\\n') + '\\n';
+    msg += '\n' + only.join('\n') + '\n';
   }
 
   if (state.orderType === 'take-out') {
     const n = packablePlateCount();
-    if (n > 0) msg += '- Takeaway pack \u00d7 ' + n + ' \u2014 \u20a6' + (PACK_PRICE * n).toLocaleString() + '\\n';
+    if (n > 0) msg += '- Takeaway pack \u00d7 ' + n + ' \u2014 \u20a6' + (PACK_PRICE * n).toLocaleString() + '\n';
   }
   msg += '*Total: \u20a6' + total.toLocaleString() + '*';
-  if (note) msg += '\\nNote: ' + note;
+  if (note) msg += '\nNote: ' + note;
 
   /* ── Log to Google Sheets ── */
   logOrderToSheet({
