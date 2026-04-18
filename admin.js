@@ -167,7 +167,7 @@
     if (!isSectionInCurrentScope(section)) { showToast('Select a section in the active menu scope', true); return; }
 
     var isPromo = section === 'promos';
-    var isLounge = currentMenuScope === 'lounge';
+    var isLounge = isLoungeSection(section);
     var btn = document.getElementById('addPromoBtn');
     btn.disabled = true; btn.textContent = 'Adding…';
     try {
