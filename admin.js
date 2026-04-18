@@ -199,7 +199,8 @@
   }
 
   function isLoungeSection(section) {
-    return String(section || '').indexOf('lounge-') === 0;
+    var sec = String(section || '').toLowerCase();
+    return sec === 'lounge' || sec.indexOf('lounge-') === 0;
   }
 
   function setMenuScope(scope, btn) {
@@ -488,13 +489,15 @@
             var price = parseInt(i.price, 10);
             if (i.free || isNaN(qty) || isNaN(price) || qty <= 0 || price < 0) return;
             var amount = qty * price;
-            if ((i.section || 'eatery') === 'lounge') lounge += amount;
+            if (isLoungeSection(i.section)) lounge += amount;
             else eatery += amount;
           });
         }
         var total = parseInt(order.total, 10);
         var splitTotal = eatery + lounge;
         if (!isNaN(total) && total > splitTotal) {
+          /* Put non-item deltas (e.g. packaging/fees) on eatery for mixed orders,
+             and on lounge for lounge-only orders. */
           if (lounge > 0 && eatery === 0) lounge += (total - splitTotal);
           else eatery += (total - splitTotal);
         }
