@@ -78,6 +78,8 @@
     currentAdminTab = tab === 'orders' ? 'orders' : 'menu';
     document.getElementById('menuPanel').style.display   = tab === 'menu'   ? '' : 'none';
     document.getElementById('ordersPanel').style.display = tab === 'orders' ? '' : 'none';
+    document.getElementById('menuScopeRow').style.display = tab === 'menu' ? '' : 'none';
+    document.getElementById('orderScopeRow').style.display = tab === 'orders' ? '' : 'none';
     document.getElementById('tabMenu').classList.toggle('active',   tab === 'menu');
     document.getElementById('tabOrders').classList.toggle('active', tab === 'orders');
     applyScopeAccent();

@@ -329,7 +329,7 @@ body {
 .admin-tab.active { background: var(--gold); border-color: var(--gold); color: #111; font-weight: 600; transition: background var(--accent-transition), border-color var(--accent-transition); }
 
 /* SECTION SCOPE SWITCHER */
-.admin-scope-wrap { margin-bottom: 20px; }
+.admin-scope-wrap { margin: 0 auto 14px; display: flex; justify-content: center; }
 .admin-scope-switcher {
   display: flex; gap: 6px; padding: 4px;
   border-radius: 999px; border: 1px solid var(--gold-border);
