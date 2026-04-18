@@ -161,7 +161,7 @@ async function sendToWhatsApp() {
      async Supabase save has finished. ── */
   var waWindow = null;
   try {
-    waWindow = window.open('', '_blank', 'noopener');
+    waWindow = window.open('', '_blank');
   } catch (e) {
     waWindow = null;
   }
