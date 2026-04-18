@@ -63,12 +63,20 @@ function withTimeout(promise, ms, fallbackValue) {
 }
 
 /**
+ * Normalizes configured WhatsApp number to digits only.
+ * @returns {string} Digits-only number.
+ */
+function getWhatsAppNumber() {
+  return String(WA || '').replace(/[^\d]/g, '');
+}
+
+/**
  * Creates the destination URL for WhatsApp checkout.
  * @param {string} message - Message body to send.
  * @returns {string} wa.me URL with encoded message text.
  */
 function buildWhatsAppUrl(message) {
-  var waNumber = String(WA || '').replace(/[^\d]/g, '');
+  var waNumber = getWhatsAppNumber();
   return 'https://wa.me/' + waNumber + '?text=' + encodeURIComponent(message);
 }
 
@@ -140,7 +148,7 @@ async function saveOrderToSupabase(customerName, note) {
  */
 async function sendToWhatsApp() {
   if (!hasItems()) return;
-  var waNumber = String(WA || '').replace(/[^\d]/g, '');
+  var waNumber = getWhatsAppNumber();
   if (!waNumber) {
     showToast('WhatsApp number is not configured.', true);
     return;
@@ -240,7 +248,7 @@ async function sendToWhatsApp() {
   } else {
     /* Fallback for browsers that returned null from the pre-opened window
        (e.g. some iOS Safari configurations). */
-    const popup = window.open(url, '_blank', 'noopener');
+    const popup = window.open(url, '_blank', 'noopener,noreferrer');
     if (!popup) window.location.href = url;
   }
 
