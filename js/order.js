@@ -238,7 +238,7 @@ async function sendToWhatsApp() {
   });
 
   const url = buildWhatsAppUrl(msg);
-  if (waWindow && !waWindow.closed) {
+  if (waWindow) {
     try {
       waWindow.location.href = url;
       waWindow.focus();
