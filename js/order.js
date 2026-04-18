@@ -33,6 +33,54 @@ function logOrderToSheet(payload) {
 }
 
 /**
+ * Resolves with `fallbackValue` if a promise does not settle within `ms`.
+ * @template T
+ * @param {Promise<T>} promise - Promise to observe.
+ * @param {number} ms - Timeout in milliseconds.
+ * @param {T} fallbackValue - Value returned on timeout.
+ * @returns {Promise<T>} Original promise result or fallback value on timeout.
+ */
+function withTimeout(promise, ms, fallbackValue) {
+  return new Promise(function(resolve) {
+    var settled = false;
+    var timer = setTimeout(function() {
+      if (settled) return;
+      settled = true;
+      resolve(fallbackValue);
+    }, ms);
+    promise.then(function(value) {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timer);
+      resolve(value);
+    }).catch(function() {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timer);
+      resolve(fallbackValue);
+    });
+  });
+}
+
+/**
+ * Normalizes configured WhatsApp number to digits only.
+ * @returns {string} Digits-only number.
+ */
+function getWhatsAppNumber() {
+  return String(WA || '').replace(/[^\d]/g, '');
+}
+
+/**
+ * Creates the destination URL for WhatsApp checkout.
+ * @param {string} message - Message body to send.
+ * @returns {string} wa.me URL with encoded message text.
+ */
+function buildWhatsAppUrl(message) {
+  var waNumber = getWhatsAppNumber();
+  return 'https://wa.me/' + waNumber + '?text=' + encodeURIComponent(message);
+}
+
+/**
  * Persists the current order to the Supabase `orders` table and returns
  * a ref_code derived from a client-generated UUID. Returns null if Supabase
  * is not configured or if the request fails (checkout continues via WhatsApp).
@@ -100,6 +148,11 @@ async function saveOrderToSupabase(customerName, note) {
  */
 async function sendToWhatsApp() {
   if (!hasItems()) return;
+  var waNumber = getWhatsAppNumber();
+  if (!waNumber) {
+    showToast('WhatsApp number is not configured.', true);
+    return;
+  }
   const total = grandTotal();
   const itemCount = state.plates.reduce((s, p) => s + p.items.reduce((ss, i) => ss + (i.free ? 0 : i.qty), 0), 0);
   const code = orderCode(total, itemCount);
@@ -114,10 +167,15 @@ async function sendToWhatsApp() {
      the click handler, so the browser's popup blocker treats it as a direct
      user-initiated navigation. The final WhatsApp URL is set below once the
      async Supabase save has finished. ── */
-  const waWindow = window.open('', '_blank');
+  var waWindow = null;
+  try {
+    waWindow = window.open('', '_blank');
+  } catch (e) {
+    waWindow = null;
+  }
 
   /* ── Save to Supabase (non-blocking; fallback to local code on failure) ── */
-  const dbRef = await saveOrderToSupabase(customerName, note);
+  const dbRef = await withTimeout(saveOrderToSupabase(customerName, note), 4000, null);
   const refCode = 'KD-' + (dbRef ?? code);
   const dbSaved = dbRef !== null;
 
@@ -145,26 +203,26 @@ async function sendToWhatsApp() {
       : ('Table ' + tableNo);
   }
 
-  let msg = '*New Order \u2014 King\\'s Delight*\\n';
-  msg += '*From:* ' + fromLabel + '\\n';
-  if (customerName) msg += '*Name:* ' + customerName + '\\n';
-  msg += '*Ref:* ' + refCode + '\\n';
-  msg += '*Mode:* ' + (state.orderType === 'take-out' ? 'Take Out' : 'Eat In') + '\\n';
+  let msg = '*New Order \u2014 King\'s Delight*\n';
+  msg += '*From:* ' + fromLabel + '\n';
+  if (customerName) msg += '*Name:* ' + customerName + '\n';
+  msg += '*Ref:* ' + refCode + '\n';
+  msg += '*Mode:* ' + (state.orderType === 'take-out' ? 'Take Out' : 'Eat In') + '\n';
 
   if (hasMixed) {
-    msg += '\\n\uD83C\uDF7D\uFE0F *Eatery*\\n' + grouped.eatery.join('\\n') + '\\n';
-    msg += '\uD83C\uDF79 *Lounge*\\n' + grouped.lounge.join('\\n') + '\\n';
+    msg += '\n\uD83C\uDF7D\uFE0F *Eatery*\n' + grouped.eatery.join('\n') + '\n';
+    msg += '\uD83C\uDF79 *Lounge*\n' + grouped.lounge.join('\n') + '\n';
   } else {
     const only = hasEatery ? grouped.eatery : grouped.lounge;
-    msg += '\\n' + only.join('\\n') + '\\n';
+    msg += '\n' + only.join('\n') + '\n';
   }
 
   if (state.orderType === 'take-out') {
     const n = packablePlateCount();
-    if (n > 0) msg += '- Takeaway pack \u00d7 ' + n + ' \u2014 \u20a6' + (PACK_PRICE * n).toLocaleString() + '\\n';
+    if (n > 0) msg += '- Takeaway pack \u00d7 ' + n + ' \u2014 \u20a6' + (PACK_PRICE * n).toLocaleString() + '\n';
   }
   msg += '*Total: \u20a6' + total.toLocaleString() + '*';
-  if (note) msg += '\\nNote: ' + note;
+  if (note) msg += '\nNote: ' + note;
 
   /* ── Log to Google Sheets ── */
   logOrderToSheet({
@@ -179,13 +237,19 @@ async function sendToWhatsApp() {
     note: note
   });
 
-  const url = 'https://wa.me/' + WA + '?text=' + encodeURIComponent(msg);
+  const url = buildWhatsAppUrl(msg);
   if (waWindow) {
-    waWindow.location.href = url;
+    try {
+      waWindow.location.href = url;
+      waWindow.focus();
+    } catch (e) {
+      window.location.href = url;
+    }
   } else {
     /* Fallback for browsers that returned null from the pre-opened window
        (e.g. some iOS Safari configurations). */
-    window.open(url, '_blank');
+    const popup = window.open(url, '_blank', 'noopener,noreferrer');
+    if (!popup) window.location.href = url;
   }
 
   /* ── Clear cart and return to home after order is dispatched ── */

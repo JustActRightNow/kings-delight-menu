@@ -16,6 +16,16 @@
   --cream-20: rgba(255,245,225,0.18);
   --red: #B22222;
   --green: #2a9d5c;
+  --accent-transition: 300ms ease;
+}
+body.lounge-mode {
+  --gold: #E63333;
+  --gold-light: #FF6666;
+  --gold-dim: rgba(230,51,51,0.13);
+  --gold-border: rgba(230,51,51,0.28);
+  --charcoal: #141414;
+  --charcoal-card: #272020;
+  background: var(--charcoal);
 }
 html { overflow-x: hidden; width: 100%; }
 body {
@@ -82,6 +92,7 @@ body {
   backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--gold-border);
   padding: 0 20px;
+  transition: border-color var(--accent-transition);
 }
 .admin-header-inner {
   max-width: 860px; margin: 0 auto;
@@ -111,7 +122,7 @@ body {
   background: var(--charcoal-card); border: 1px solid var(--border);
   border-radius: 10px; padding: 14px 16px; text-align: center;
 }
-.stat-num { font-family: 'Playfair Display', serif; font-size: 24px; color: var(--gold); }
+.stat-num { font-family: 'Playfair Display', serif; font-size: 24px; color: var(--gold); transition: color var(--accent-transition); }
 .stat-num-sm { font-size: 17px; }
 .stat-label { font-size: 10px; letter-spacing: 0.1em; color: var(--cream-35); text-transform: uppercase; margin-top: 2px; }
 .stat-card.oos .stat-num { color: #e05555; }
@@ -133,7 +144,7 @@ body {
   white-space: nowrap;
 }
 .filter-btn:hover { color: var(--cream-60); }
-.filter-btn.active { background: var(--gold); border-color: var(--gold); color: #111; font-weight: 600; }
+.filter-btn.active { background: var(--gold); border-color: var(--gold); color: #111; font-weight: 600; transition: background var(--accent-transition), border-color var(--accent-transition); }
 
 /* ITEM ROWS */
 .item-row {
@@ -304,7 +315,6 @@ body {
 /* FULL-WIDTH form field (spans both grid columns) */
 .form-field--full { grid-column: 1 / -1; }
 
- */
 .section-divider { font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--cream-35); margin: 20px 0 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
 
 /* ADMIN TABS */
@@ -316,7 +326,26 @@ body {
   font-size: 13px; cursor: pointer; transition: all 0.15s;
 }
 .admin-tab:hover { color: var(--cream-60); }
-.admin-tab.active { background: var(--gold); border-color: var(--gold); color: #111; font-weight: 600; }
+.admin-tab.active { background: var(--gold); border-color: var(--gold); color: #111; font-weight: 600; transition: background var(--accent-transition), border-color var(--accent-transition); }
+
+/* SECTION SCOPE SWITCHER */
+.admin-scope-wrap { margin-bottom: 20px; }
+.admin-scope-switcher {
+  display: flex; gap: 6px; padding: 4px;
+  border-radius: 999px; border: 1px solid var(--gold-border);
+  background: rgba(255,255,255,0.02); max-width: 300px;
+  transition: border-color var(--accent-transition);
+}
+.admin-scope-btn {
+  flex: 1; border: 1px solid transparent; border-radius: 999px;
+  background: transparent; color: var(--cream-35);
+  padding: 9px 18px;
+  font-family: 'Jost', sans-serif; font-size: 13px;
+  font-weight: 500; letter-spacing: 0.04em; cursor: pointer;
+  transition: background var(--accent-transition), color var(--accent-transition), border-color var(--accent-transition);
+}
+.admin-scope-btn.active { background: var(--gold); color: #111; font-weight: 600; }
+.admin-scope-btn:not(.active):hover { color: var(--cream-60); }
 
 /* ORDER CARDS */
 .order-card {
