@@ -139,11 +139,14 @@
     if (isNaN(price) || price < 0) { showToast('Enter a valid price', true); return; }
 
     var isPromo = section === 'promos';
+    var isLounge = section.indexOf('lounge-') === 0;
     var btn = document.getElementById('addPromoBtn');
     btn.disabled = true; btn.textContent = 'Adding…';
     try {
       var newItem = await apiCall('POST', '/rest/v1/menu_items', {
-        name: name, price: price, section: section, tab: 'food',
+        name: name, price: price, section: section,
+        tab: isLounge ? 'lounge' : 'food',
+        menu_group: isLounge ? 'lounge' : null,
         available: true, category_type: isPromo ? 'promo' : 'regular',
         promo_expires_at: isPromo ? expiry : null, combo: isCombo,
         sub_label: sublabel, is_free: false, sort_order: 0,
@@ -239,7 +242,13 @@
     var sectionLabels = {
       specials: "Chef's Specials", mains: 'Mains', proteins: 'Proteins',
       grill: 'Grill Zone', swallow: 'Swallow', soups: 'Soups', sides: 'Sides',
-      drinks: 'Drinks', pastries: 'Pastries', promos: 'Promos'
+      drinks: 'Drinks', pastries: 'Pastries', promos: 'Promos',
+      'lounge-beers': 'Lounge — Beers', 'lounge-beverages': 'Lounge — Beverages',
+      'lounge-shots': 'Lounge — Shots', 'lounge-spirits': 'Lounge — Spirits',
+      'lounge-champagne-whiskey': 'Lounge — Champagne & Whiskey',
+      'lounge-wine': 'Lounge — Wine', 'lounge-cocktails': 'Lounge — Cocktails',
+      'lounge-mocktails': 'Lounge — Mocktails', 'lounge-bitters': 'Lounge — Bitters',
+      'lounge-foods': 'Lounge — Foods'
     };
 
     var html = '';
