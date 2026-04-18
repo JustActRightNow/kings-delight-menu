@@ -49,9 +49,18 @@ function activeGroupEl() {
 
 function buildCategoryNav() {
   const cfg = navConfigFor(state.activeSection);
+  function safe(val) {
+    if (typeof escHtml === 'function') return escHtml(val);
+    return String(val)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
   catNavInner.innerHTML = cfg.map(function(item, idx) {
-    return '<button class="cat-btn' + (idx === 0 ? ' active' : '') + '" data-target="' + item.target + '"' +
-      (item.hiddenByDefault ? ' style="display:none"' : '') + ' aria-label="' + item.label.replace(/"/g, '&quot;') + '">' + item.label + '</button>';
+    return '<button class="cat-btn' + (idx === 0 ? ' active' : '') + '" data-target="' + safe(item.target) + '"' +
+      (item.hiddenByDefault ? ' style="display:none"' : '') + ' aria-label="' + safe(item.label) + '">' + safe(item.label) + '</button>';
   }).join('');
   if (state.activeSection === 'eatery') {
     var offersBtn = catNavInner.querySelector('.cat-btn[data-target=\"offers\"]');

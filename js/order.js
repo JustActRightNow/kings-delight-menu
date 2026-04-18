@@ -138,9 +138,12 @@ async function sendToWhatsApp() {
   const hasEatery = grouped.eatery.length > 0;
   const hasLounge = grouped.lounge.length > 0;
   const hasMixed = hasEatery && hasLounge;
-  const fromLabel = tableNo
-    ? ((state.activeSection === 'lounge' ? 'Lounge' : 'Table') + (state.activeSection === 'lounge' ? ' Table ' : ' ') + tableNo)
-    : fmtSrc(src);
+  let fromLabel = fmtSrc(src);
+  if (tableNo) {
+    fromLabel = state.activeSection === 'lounge'
+      ? ('Lounge Table ' + tableNo)
+      : ('Table ' + tableNo);
+  }
 
   let msg = '*New Order \u2014 King\\'s Delight*\\n';
   msg += '*From:* ' + fromLabel + '\\n';
