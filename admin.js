@@ -146,7 +146,6 @@
       var newItem = await apiCall('POST', '/rest/v1/menu_items', {
         name: name, price: price, section: section,
         tab: isLounge ? 'lounge' : 'food',
-        menu_group: isLounge ? 'lounge' : null,
         available: true, category_type: isPromo ? 'promo' : 'regular',
         promo_expires_at: isPromo ? expiry : null, combo: isCombo,
         sub_label: sublabel, is_free: false, sort_order: 0,
