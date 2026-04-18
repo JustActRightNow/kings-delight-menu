@@ -608,10 +608,11 @@
   }
 
   function renderOrders(orders, mixedCount) {
-    var mixedSuffix = mixedCount > 1 ? 's are' : ' is';
+    var mixedNoun = mixedCount > 1 ? 'orders' : 'order';
+    var mixedVerb = mixedCount > 1 ? 'are' : 'is';
     var mixedNotice = mixedCount > 0
       ? '<div class="empty-msg" style="font-size:11px;margin-bottom:8px;color:var(--cream-35)">' +
-        mixedCount + ' legacy mixed order' + mixedSuffix + ' excluded from scoped views.</div>'
+        mixedCount + ' legacy mixed ' + mixedNoun + ' ' + mixedVerb + ' excluded from scoped views.</div>'
       : '';
     if (orders.length === 0) {
       document.getElementById('orderList').innerHTML =
