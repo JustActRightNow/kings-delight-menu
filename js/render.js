@@ -237,10 +237,38 @@ function closeCheckout() { document.getElementById('checkoutPanel').classList.re
 /**
  * Renders the order summary inside the checkout panel, listing all plates,
  * their items with quantities and amounts, a packaging line for take-out
- * orders, and the grand total.
+ * orders, and the grand total. Plate management cards (edit, duplicate,
+ * cancel per plate and an "Add Plate" button) are shown before the summary.
  */
 function renderCheckout() {
-  let html = '<p class="checkout-section-title">Order Summary</p>';
+  let html = '';
+
+  /* ── Plate management cards ── */
+  state.plates.forEach(function(plate, pIdx) {
+    if (!plate.items.length) return;
+    const isActive = pIdx === state.activePlateIndex;
+    const plateSubtotal = plate.items.reduce(function(s, i) { return s + (i.free ? 0 : i.price * i.qty); }, 0);
+    html += '<div class="plate-card' + (isActive ? ' active-plate' : '') + '">';
+    html += '<div class="plate-header">';
+    html += '<span class="plate-label">Plate ' + (pIdx + 1) + (isActive ? ' \u00b7 Active' : '') + '</span>';
+    html += '<button class="plate-action-btn" onclick="editPlate(' + pIdx + ');closeCheckout();" title="Edit plate">\u270f\ufe0f</button>';
+    html += '<button class="plate-action-btn" onclick="duplicatePlate(' + pIdx + ');renderCheckout();" title="Duplicate plate">\u29c9</button>';
+    html += '<button class="plate-action-btn del" onclick="deletePlate(' + pIdx + ');hasItems()?renderCheckout():closeCheckout();" title="Remove plate">\u2715</button>';
+    html += '</div>';
+    html += '<div class="plate-items">';
+    plate.items.forEach(function(item) {
+      const label = (item.qty > 1 ? item.qty + '\u00d7 ' : '') + item.name;
+      const amt = item.free ? 'Free' : '\u20a6' + (item.price * item.qty).toLocaleString();
+      html += '<div class="checkout-summary-item"><span>' + escHtml(label) + '</span><span class="item-amt">' + escHtml(amt) + '</span></div>';
+    });
+    html += '<div class="plate-sub-total"><span>Plate subtotal</span><span>\u20a6' + plateSubtotal.toLocaleString() + '</span></div>';
+    html += '</div>';
+    html += '</div>';
+  });
+  html += '<button class="add-plate-btn" onclick="addNewPlate();closeCheckout();">\u2795 Add Another Plate</button>';
+
+  /* ── Order Summary ── */
+  html += '<p class="checkout-section-title">Order Summary</p>';
   state.plates.forEach(function(plate, pIdx) {
     if (!plate.items.length) return;
     const hasMulti = state.plates.filter(p => p.items.length).length > 1;
