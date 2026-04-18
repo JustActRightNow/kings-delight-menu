@@ -144,31 +144,29 @@
 
     <!-- ── ORDERS PANEL ── -->
     <div id="ordersPanel" style="display:none">
+      <div class="admin-scope-wrap" id="orderScopeRow">
+        <div class="admin-scope-switcher" role="group" aria-label="Order section">
+          <button class="admin-scope-btn active" data-scope="eatery" onclick="setOrderScope('eatery', this)" aria-label="Switch to Eatery orders">🍽️ Eatery</button>
+          <button class="admin-scope-btn" data-scope="lounge" onclick="setOrderScope('lounge', this)" aria-label="Switch to Lounge orders">🍹 Lounge</button>
+        </div>
+      </div>
       <!-- Order stats -->
       <div class="stats-row" id="orderStatsRow">
         <div class="stat-card">
           <div class="stat-num" id="statPaidAllTime">—</div>
-          <div class="stat-label">All-time Paid</div>
+          <div class="stat-label" id="statPaidAllTimeLabel">All-time Paid</div>
         </div>
         <div class="stat-card">
           <div class="stat-num" id="statPaidToday">—</div>
-          <div class="stat-label">Today's Paid</div>
+          <div class="stat-label" id="statPaidTodayLabel">Today's Paid</div>
         </div>
         <div class="stat-card">
-          <div class="stat-num stat-num-sm" id="statRevenueEateryAllTime">—</div>
-          <div class="stat-label">Eatery Revenue (All-time)</div>
+          <div class="stat-num stat-num-sm" id="statRevenueAllTime">—</div>
+          <div class="stat-label" id="statRevenueAllTimeLabel">Revenue (All-time)</div>
         </div>
         <div class="stat-card">
-          <div class="stat-num stat-num-sm" id="statRevenueLoungeAllTime">—</div>
-          <div class="stat-label">Lounge Revenue (All-time)</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-num stat-num-sm" id="statRevenueEateryToday">—</div>
-          <div class="stat-label">Eatery Revenue (Today)</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-num stat-num-sm" id="statRevenueLoungeToday">—</div>
-          <div class="stat-label">Lounge Revenue (Today)</div>
+          <div class="stat-num stat-num-sm" id="statRevenueToday">—</div>
+          <div class="stat-label" id="statRevenueTodayLabel">Revenue (Today)</div>
         </div>
       </div>
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
