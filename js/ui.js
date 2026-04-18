@@ -1,11 +1,4 @@
 /* ── Toast notification ─────────────────────────────────────────────────── */
-
-/**
- * Displays a transient toast notification for 3.5 seconds.
- * Resets the timer if called while a toast is already visible.
- * @param {string} msg - Message text to display.
- * @param {boolean} [isError=false] - When true, styles the toast as an error.
- */
 var toastTimer;
 function showToast(msg, isError) {
   var el = document.getElementById('toast');
@@ -17,86 +10,133 @@ function showToast(msg, isError) {
   toastTimer = setTimeout(function() { el.classList.remove('show'); }, 3500);
 }
 
-/* ── Tab switching ──────────────────────────────────────────────────────── */
-const tabBtns = document.querySelectorAll('.tab-btn');
 const catNav = document.getElementById('catNav');
+const catNavInner = document.getElementById('catNavInner');
 const searchWrap = document.getElementById('searchWrap');
+const sectionBtns = document.querySelectorAll('.section-switch-btn');
 
-tabBtns.forEach(function(btn) {
-  btn.addEventListener('click', function() {
-    tabBtns.forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    state.activeTabPane = btn.dataset.pane;
-    document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
-    document.getElementById(btn.dataset.pane).classList.add('active');
-    const isFood = btn.dataset.tab === 'food';
-    catNav.classList.toggle('hidden', !isFood);
-    searchWrap.classList.toggle('food-active', isFood);
-    document.getElementById('searchInput').value = '';
-    doSearch('');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  });
+const EATERY_NAV = [
+  { target: 'offers', label: '🎉 Offers', hiddenByDefault: true },
+  { target: 'specials', label: '✦ Specials' },
+  { target: 'mains', label: '🍚 Mains' },
+  { target: 'proteins', label: '🥩 Proteins' },
+  { target: 'grill', label: '🔥 Grill' },
+  { target: 'swallow', label: '🍲 Swallow' },
+  { target: 'soups', label: '🥣 Soups' },
+  { target: 'sides', label: '🥗 Sides' }
+];
+
+const LOUNGE_NAV = [
+  { target: 'lounge-beers', label: '🍺 Beers' },
+  { target: 'lounge-beverages', label: '🥤 Beverages' },
+  { target: 'lounge-shots', label: '🥃 Shots' },
+  { target: 'lounge-spirits', label: '🍾 Spirits' },
+  { target: 'lounge-champagne-whiskey', label: '🥂 Champagne & Whiskey' },
+  { target: 'lounge-wine', label: '🍷 Wine' },
+  { target: 'lounge-cocktails', label: '🍸 Cocktails' },
+  { target: 'lounge-mocktails', label: '🧉 Mocktails' },
+  { target: 'lounge-bitters', label: '🧪 Bitters' },
+  { target: 'lounge-foods', label: '🍽️ Foods' }
+];
+
+function navConfigFor(section) {
+  return section === 'lounge' ? LOUNGE_NAV : EATERY_NAV;
+}
+
+function activeGroupEl() {
+  return document.getElementById(state.activeSection === 'lounge' ? 'groupLounge' : 'groupEatery');
+}
+
+function buildCategoryNav() {
+  const cfg = navConfigFor(state.activeSection);
+  function safe(val) {
+    if (typeof escHtml === 'function') return escHtml(val);
+    return String(val)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+  catNavInner.innerHTML = cfg.map(function(item, idx) {
+    return '<button class="cat-btn' + (idx === 0 ? ' active' : '') + '" data-target="' + safe(item.target) + '"' +
+      (item.hiddenByDefault ? ' style="display:none"' : '') + ' aria-label="' + safe(item.label) + '">' + safe(item.label) + '</button>';
+  }).join('');
+  if (state.activeSection === 'eatery') {
+    var offersBtn = catNavInner.querySelector('.cat-btn[data-target=\"offers\"]');
+    var offersSec = document.getElementById('offers');
+    if (offersBtn && offersSec && offersSec.querySelector('.menu-item')) offersBtn.style.display = '';
+  }
+  catNav.classList.remove('hidden');
+}
+
+function switchSection(section) {
+  if (section !== 'eatery' && section !== 'lounge') return;
+  state.activeSection = section;
+  sectionBtns.forEach(function(btn) { btn.classList.toggle('active', btn.dataset.section === section); });
+  document.body.classList.toggle('lounge-mode', section === 'lounge');
+  document.getElementById('groupEatery').classList.toggle('active', section === 'eatery');
+  document.getElementById('groupLounge').classList.toggle('active', section === 'lounge');
+  buildCategoryNav();
+  document.getElementById('searchInput').value = '';
+  doSearch('');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+sectionBtns.forEach(function(btn) {
+  btn.addEventListener('click', function() { switchSection(btn.dataset.section); });
 });
 
-/* ── Search — searches across all tabs when a query is active ───────────── */
+catNavInner.addEventListener('click', function(e) {
+  const btn = e.target.closest('.cat-btn');
+  if (!btn) return;
+  document.querySelectorAll('.cat-btn').forEach(function(b) { b.classList.remove('active'); });
+  btn.classList.add('active');
+  const el = document.getElementById(btn.dataset.target);
+  if (!el) return;
+  const navH = catNav.offsetHeight + searchWrap.offsetHeight;
+  window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - navH - 14, behavior: 'smooth' });
+});
 
-/**
- * Filters menu items across all tab panes by a search query.
- * When the query is non-empty, all panes are shown simultaneously and
- * items are hidden/shown based on whether their name contains the query.
- * Sections with no visible items are also hidden. Restores the normal
- * single-active-pane layout when the query is cleared.
- * @param {string} q - The search query string (case-insensitive).
- */
+/* ── Search — active section only ───────────────────────────────────────── */
 function doSearch(q) {
   const qLower = q.toLowerCase().trim();
+  const group = activeGroupEl();
+  document.querySelectorAll('.menu-group').forEach(function(g) { g.classList.toggle('active', g === group); });
+
   if (!qLower) {
-    /* Restore: show only the active tab pane, hide others */
-    document.querySelectorAll('.tab-pane').forEach(function(pane) {
-      pane.classList.toggle('active', pane.id === state.activeTabPane);
-      pane.querySelectorAll('.menu-item').forEach(function(item) { item.style.display = ''; });
-      pane.querySelectorAll('.menu-section').forEach(function(sec) { sec.style.display = ''; });
+    group.querySelectorAll('.menu-item').forEach(function(item) { item.style.display = ''; });
+    group.querySelectorAll('.menu-section').forEach(function(sec) {
+      if (sec.id === 'offers' && !sec.querySelector('.menu-item')) {
+        sec.style.display = 'none';
+      } else {
+        sec.style.display = '';
+      }
     });
-    catNav.classList.toggle('hidden', state.activeTabPane !== 'tabFood');
+    catNav.classList.remove('hidden');
     return;
   }
-  /* Show all panes while searching */
-  document.querySelectorAll('.tab-pane').forEach(function(pane) {
-    pane.classList.add('active');
-    pane.querySelectorAll('.menu-item').forEach(function(item) {
-      const text = item.querySelector('.item-name').textContent.toLowerCase();
-      item.style.display = text.includes(qLower) ? '' : 'none';
-    });
-    pane.querySelectorAll('.menu-section').forEach(function(sec) {
-      const hasVisible = Array.from(sec.querySelectorAll('.menu-item')).some(i => i.style.display !== 'none');
-      sec.style.display = hasVisible ? '' : 'none';
-    });
+
+  group.querySelectorAll('.menu-item').forEach(function(item) {
+    const text = item.querySelector('.item-name').textContent.toLowerCase();
+    item.style.display = text.includes(qLower) ? '' : 'none';
+  });
+  group.querySelectorAll('.menu-section').forEach(function(sec) {
+    const hasVisible = Array.from(sec.querySelectorAll('.menu-item')).some(function(i) { return i.style.display !== 'none'; });
+    sec.style.display = hasVisible ? '' : 'none';
   });
   catNav.classList.add('hidden');
 }
 
-document.getElementById('searchInput').addEventListener('input', function() {
-  doSearch(this.value);
-});
+document.getElementById('searchInput').addEventListener('input', function() { doSearch(this.value); });
 
-/* ── Food sub-nav scroll ────────────────────────────────────────────────── */
-const foodSections = document.querySelectorAll('#tabFood .menu-section');
-const subNavBtns = document.querySelectorAll('.cat-btn');
-
-subNavBtns.forEach(b => b.addEventListener('click', function() {
-  const el = document.getElementById(b.dataset.target);
-  if (el) {
-    const catNavH = catNav.classList.contains('hidden') ? 0 : catNav.offsetHeight;
-    const searchH = searchWrap ? searchWrap.offsetHeight : 0;
-    const navH = document.getElementById('tabNav').offsetHeight + catNavH + searchH;
-    window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - navH - 14, behavior: 'smooth' });
-  }
-}));
-
-/* ── IntersectionObserver for food section active highlight ─────────────── */
-const activeObserver = new IntersectionObserver(entries => entries.forEach(e => {
-  if (e.isIntersecting) {
-    subNavBtns.forEach(b => b.classList.remove('active'));
+/* ── IntersectionObserver for active highlight ───────────────────────────── */
+const activeObserver = new IntersectionObserver(function(entries) {
+  entries.forEach(function(e) {
+    if (!e.isIntersecting) return;
+    const group = activeGroupEl();
+    if (!group.contains(e.target)) return;
+    document.querySelectorAll('.cat-btn').forEach(function(b) { b.classList.remove('active'); });
     const a = document.querySelector('.cat-btn[data-target="' + e.target.id + '"]');
     if (a) {
       a.classList.add('active');
@@ -104,18 +144,23 @@ const activeObserver = new IntersectionObserver(entries => entries.forEach(e => 
       const navRect = catNav.getBoundingClientRect();
       catNav.scrollTo({ left: catNav.scrollLeft + btnRect.left - navRect.left - (navRect.width - btnRect.width) / 2, behavior: 'smooth' });
     }
-  }
-}), { rootMargin: '-15% 0px -75% 0px' });
-foodSections.forEach(s => activeObserver.observe(s));
+  });
+}, { rootMargin: '-15% 0px -75% 0px' });
 
 /* ── Fade-in observer ───────────────────────────────────────────────────── */
-const allSections = document.querySelectorAll('.menu-section');
-const fadeObserver = new IntersectionObserver(entries => entries.forEach(e => {
-  if (e.isIntersecting) e.target.classList.add('visible');
-}), { threshold: 0.06 });
-allSections.forEach(s => fadeObserver.observe(s));
+const fadeObserver = new IntersectionObserver(function(entries) {
+  entries.forEach(function(e) {
+    if (e.isIntersecting) e.target.classList.add('visible');
+  });
+}, { threshold: 0.06 });
+
+document.querySelectorAll('.menu-section').forEach(function(s) {
+  activeObserver.observe(s);
+  fadeObserver.observe(s);
+});
 
 /* ── Initial render ─────────────────────────────────────────────────────── */
+buildCategoryNav();
 renderAll();
 
 /* ── Persist customer name ──────────────────────────────────────────────── */

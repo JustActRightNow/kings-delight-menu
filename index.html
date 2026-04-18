@@ -26,9 +26,16 @@
 <header class="hero">
   <div class="hero-logo"><img src="assets/logo.png" alt="King's Delight"></div>
   <p class="hero-eyebrow">Est. in Ibadan</p>
-  <h1 class="hero-name">King's Delight Eatery</h1>
+  <h1 class="hero-name">King's Delight</h1>
   <p class="hero-sub">Every Bite Matters</p>
 </header>
+
+<nav class="section-switcher-wrap" id="sectionSwitcherWrap" aria-label="Menu section switcher">
+  <div class="section-switcher">
+    <button class="section-switch-btn active" data-section="eatery" aria-label="Switch to Eatery menu">Eatery</button>
+    <button class="section-switch-btn" data-section="lounge" aria-label="Switch to Lounge menu">Lounge</button>
+  </div>
+</nav>
 
 <div style="max-width:660px;margin:0 auto;padding:0 16px 8px;display:flex;gap:8px;flex-wrap:wrap;">
 
@@ -53,39 +60,21 @@
 
 </div>
 
-<nav class="tab-nav" id="tabNav">
-  <div class="tab-nav-inner">
-    <button class="tab-btn active" data-tab="food" data-pane="tabFood" aria-label="Food menu">🍽️ Food</button>
-    <button class="tab-btn" data-tab="drinks" data-pane="tabDrinks" aria-label="Drinks menu">🥤 Drinks</button>
-    <button class="tab-btn" data-tab="pastries" data-pane="tabPastries" aria-label="Pastries menu">🥐 Pastries</button>
-  </div>
-</nav>
-
 <nav class="cat-nav" id="catNav">
-  <div class="cat-nav-inner">
-    <button class="cat-btn" data-target="offers" style="display:none" aria-label="Offers">🎉 Offers</button>
-    <button class="cat-btn active" data-target="specials" aria-label="Chef's Specials">✦ Specials</button>
-    <button class="cat-btn" data-target="mains" aria-label="Mains">🍚 Mains</button>
-    <button class="cat-btn" data-target="proteins" aria-label="Proteins">🥩 Proteins</button>
-    <button class="cat-btn" data-target="grill" aria-label="Grill">🔥 Grill</button>
-    <button class="cat-btn" data-target="swallow" aria-label="Swallow">🍲 Swallow</button>
-    <button class="cat-btn" data-target="soups" aria-label="Soups">🥣 Soups</button>
-    <button class="cat-btn" data-target="sides" aria-label="Sides">🥗 Sides</button>
-  </div>
+  <div class="cat-nav-inner" id="catNavInner"></div>
 </nav>
 
 <!-- SEARCH BAR -->
-<div class="search-wrap food-active" id="searchWrap">
+<div class="search-wrap" id="searchWrap">
   <div class="search-inner">
     <span class="search-icon">🔍</span>
-    <input type="search" id="searchInput" placeholder="Search food, drinks, pastries…" class="search-input" autocomplete="off" aria-label="Search menu">
+    <input type="search" id="searchInput" placeholder="Search eatery or lounge menu…" class="search-input" autocomplete="off" aria-label="Search menu">
   </div>
 </div>
 
 <main class="content">
 
-<!-- Food Tab Pane -->
-<div class="tab-pane active" id="tabFood">
+<div class="menu-group active" id="groupEatery">
   <section class="menu-section promo-section" id="offers" style="display:none">
     <div class="section-header">
       <div class="section-icon">🎉</div>
@@ -127,11 +116,7 @@
     <div class="section-header"><div class="section-icon">🥗</div><h2 class="section-title">Sides</h2><div class="section-rule"></div></div>
     <div class="menu-loading" id="skelSides"><div class="menu-skeleton"></div><div class="menu-skeleton"></div><div class="menu-skeleton"></div></div>
   </section>
-</div><!-- end #tabFood -->
-
-<!-- Drinks Tab Pane -->
-<div class="tab-pane" id="tabDrinks">
-  <section class="menu-section visible" id="drinks">
+  <section class="menu-section" id="drinks">
     <div class="section-header">
       <div class="section-icon">🥤</div>
       <h2 class="section-title">Drinks</h2>
@@ -139,15 +124,54 @@
     </div>
     <div class="menu-loading" id="skelDrinks"><div class="menu-skeleton"></div><div class="menu-skeleton"></div><div class="menu-skeleton"></div></div>
   </section>
-</div><!-- end #tabDrinks -->
-
-<!-- Pastries Tab Pane -->
-<div class="tab-pane" id="tabPastries">
   <section class="menu-section" id="pastries">
     <div class="section-header"><div class="section-icon">🥐</div><h2 class="section-title">Pastries</h2><div class="section-rule"></div></div>
     <div class="menu-loading" id="skelPastries"><div class="menu-skeleton"></div><div class="menu-skeleton"></div><div class="menu-skeleton"></div></div>
   </section>
-</div><!-- end #tabPastries -->
+</div>
+
+<div class="menu-group" id="groupLounge">
+  <section class="menu-section" id="lounge-beers">
+    <div class="section-header"><div class="section-icon">🍺</div><h2 class="section-title">Beers</h2><div class="section-rule"></div></div>
+    <div class="menu-loading"><div class="menu-skeleton"></div><div class="menu-skeleton"></div></div>
+  </section>
+  <section class="menu-section" id="lounge-beverages">
+    <div class="section-header"><div class="section-icon">🥤</div><h2 class="section-title">Beverages</h2><div class="section-rule"></div></div>
+    <div class="menu-loading"><div class="menu-skeleton"></div><div class="menu-skeleton"></div></div>
+  </section>
+  <section class="menu-section" id="lounge-shots">
+    <div class="section-header"><div class="section-icon">🥃</div><h2 class="section-title">Shots</h2><div class="section-rule"></div></div>
+    <div class="menu-loading"><div class="menu-skeleton"></div><div class="menu-skeleton"></div></div>
+  </section>
+  <section class="menu-section" id="lounge-spirits">
+    <div class="section-header"><div class="section-icon">🍾</div><h2 class="section-title">Spirits</h2><div class="section-rule"></div></div>
+    <div class="menu-loading"><div class="menu-skeleton"></div><div class="menu-skeleton"></div></div>
+  </section>
+  <section class="menu-section" id="lounge-champagne-whiskey">
+    <div class="section-header"><div class="section-icon">🥂</div><h2 class="section-title">Champagne &amp; Whiskey</h2><div class="section-rule"></div></div>
+    <div class="menu-loading"><div class="menu-skeleton"></div><div class="menu-skeleton"></div></div>
+  </section>
+  <section class="menu-section" id="lounge-wine">
+    <div class="section-header"><div class="section-icon">🍷</div><h2 class="section-title">Wine</h2><div class="section-rule"></div></div>
+    <div class="menu-loading"><div class="menu-skeleton"></div><div class="menu-skeleton"></div></div>
+  </section>
+  <section class="menu-section" id="lounge-cocktails">
+    <div class="section-header"><div class="section-icon">🍸</div><h2 class="section-title">Cocktails</h2><div class="section-rule"></div></div>
+    <div class="menu-loading"><div class="menu-skeleton"></div><div class="menu-skeleton"></div></div>
+  </section>
+  <section class="menu-section" id="lounge-mocktails">
+    <div class="section-header"><div class="section-icon">🧉</div><h2 class="section-title">Mocktails</h2><div class="section-rule"></div></div>
+    <div class="menu-loading"><div class="menu-skeleton"></div><div class="menu-skeleton"></div></div>
+  </section>
+  <section class="menu-section" id="lounge-bitters">
+    <div class="section-header"><div class="section-icon">🧪</div><h2 class="section-title">Bitters</h2><div class="section-rule"></div></div>
+    <div class="menu-loading"><div class="menu-skeleton"></div><div class="menu-skeleton"></div></div>
+  </section>
+  <section class="menu-section" id="lounge-foods">
+    <div class="section-header"><div class="section-icon">🍽️</div><h2 class="section-title">Foods</h2><div class="section-rule"></div></div>
+    <div class="menu-loading"><div class="menu-skeleton"></div><div class="menu-skeleton"></div></div>
+  </section>
+</div>
 </main>
 
 <footer class="footer">

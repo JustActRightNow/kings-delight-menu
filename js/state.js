@@ -4,5 +4,5 @@ const state = {
   activePlateIndex: 0,
   nextPlateId: 2,
   orderType: 'eat-in',
-  activeTabPane: 'tabFood'
+  activeSection: 'eatery'
 };

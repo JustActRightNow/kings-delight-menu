@@ -72,8 +72,9 @@ function updateMenuItemQtys() {
     var name = wrap.dataset.itemName;
     var price = wrap.dataset.price;
     var needsPack = wrap.dataset.needsPack;
+    var section = wrap.dataset.section || 'eatery';
     var isFree = wrap.dataset.free === 'true';
-    var item = plate.items.find(function(i) { return i.name === name; });
+    var item = plate.items.find(function(i) { return i.name === name && (i.section || 'eatery') === section; });
     var qty = item ? item.qty : 0;
 
     if (isFree) return; /* free items keep their X-remove button from renderCartPanel */
@@ -81,15 +82,15 @@ function updateMenuItemQtys() {
     if (qty > 0) {
       wrap.innerHTML =
         '<div class="qty-ctrl">' +
-        '<button class="qty-btn" data-remove-name="' + escHtml(name) + '" onclick="removeMenuItem(this.dataset.removeName)">\u2212</button>' +
+        '<button class="qty-btn" data-remove-name="' + escHtml(name) + '" data-remove-section="' + escHtml(section) + '" onclick="removeMenuItem(this.dataset.removeName,this.dataset.removeSection)">\u2212</button>' +
         '<span class="qty-num">' + qty + '</span>' +
         '<button class="qty-btn" data-name="' + escHtml(name) + '" data-price="' + escHtml(price) +
-        '" data-needs-pack="' + escHtml(needsPack) + '" onclick="addItem(this)">+</button>' +
+        '" data-needs-pack="' + escHtml(needsPack) + '" data-section="' + escHtml(section) + '" onclick="addItem(this)">+</button>' +
         '</div>';
     } else {
       wrap.innerHTML =
         '<button class="add-btn" data-name="' + escHtml(name) + '" data-price="' + escHtml(price) +
-        '" data-needs-pack="' + escHtml(needsPack) + '" onclick="addItem(this)">+</button>';
+        '" data-needs-pack="' + escHtml(needsPack) + '" data-section="' + escHtml(section) + '" onclick="addItem(this)">+</button>';
     }
   });
 }
@@ -110,35 +111,37 @@ function renderCartPanel() {
     return;
   }
   let html = '';
+  var grouped = { eatery: [], lounge: [] };
   state.plates.forEach(function(plate, pIdx) {
-    if (!plate.items.length) return;
-    const isActive = pIdx === state.activePlateIndex;
-    const plateTotal = plate.items.reduce((s, i) => s + (i.free ? 0 : i.price * i.qty), 0);
-    html += '<div class="plate-card' + (isActive ? ' active-plate' : '') + '">';
-    html += '<div class="plate-header">';
-    html += '<span class="plate-label">Plate ' + (pIdx + 1) + (isActive ? ' \u2714' : '') + '</span>';
-    html += '<button class="plate-action-btn" title="Edit plate" onclick="editPlate(' + pIdx + ')"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:block"><path d="M11.013 1.427a1.75 1.75 0 012.474 2.474L4.93 12.458l-3.215.358a.75.75 0 01-.831-.831l.358-3.215L11.013 1.427z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M9.5 3.5l3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button>';
-    html += '<button class="plate-action-btn" title="Duplicate plate" onclick="duplicatePlate(' + pIdx + ')">\u29c9</button>';
-    html += '<button class="plate-action-btn del" title="Delete plate" onclick="deletePlate(' + pIdx + ')">\u2715</button>';
-    html += '</div><div class="plate-items">';
     plate.items.forEach(function(item, iIdx) {
+      var section = item.section || 'eatery';
+      if (!grouped[section]) grouped[section] = [];
+      grouped[section].push({ item: item, pIdx: pIdx, iIdx: iIdx });
+    });
+  });
+  [['eatery', '🍽️ Eatery'], ['lounge', '🍹 Lounge']].forEach(function(def) {
+    var key = def[0];
+    var label = def[1];
+    if (!grouped[key] || grouped[key].length === 0) return;
+    html += '<div class="cart-section-group"><div class="cart-section-title">' + label + '</div>';
+    grouped[key].forEach(function(entry) {
+      var item = entry.item;
       if (item.free) {
         html += '<div class="cp-item"><div class="cp-item-name">' + item.name + '</div>';
         html += '<div class="cp-item-price" style="color:rgba(120,210,120,0.75);font-style:italic">Free</div>';
-        html += '<button class="qty-btn" style="margin-left:8px" onclick="changePlateItemQty(' + pIdx + ',' + iIdx + ',-1)">\u2715</button></div>';
+        html += '<button class="qty-btn" style="margin-left:8px" onclick="changePlateItemQty(' + entry.pIdx + ',' + entry.iIdx + ',-1)">\u2715</button></div>';
       } else {
         html += '<div class="cp-item"><div class="cp-item-name">' + item.name + '</div>';
         html += '<div class="qty-ctrl">';
-        html += '<button class="qty-btn" onclick="changePlateItemQty(' + pIdx + ',' + iIdx + ',-1)">\u2212</button>';
+        html += '<button class="qty-btn" onclick="changePlateItemQty(' + entry.pIdx + ',' + entry.iIdx + ',-1)">\u2212</button>';
         html += '<span class="qty-num">' + item.qty + '</span>';
-        html += '<button class="qty-btn" onclick="changePlateItemQty(' + pIdx + ',' + iIdx + ',1)">+</button></div>';
+        html += '<button class="qty-btn" onclick="changePlateItemQty(' + entry.pIdx + ',' + entry.iIdx + ',1)">+</button></div>';
         html += '<div class="cp-item-price">\u20a6' + (item.price * item.qty).toLocaleString() + '</div></div>';
       }
     });
-    html += '<div class="plate-sub-total"><span>Plate total</span><span>\u20a6' + plateTotal.toLocaleString() + '</span></div>';
-    html += '</div></div>';
+    html += '</div>';
   });
-  html += '<button class="add-plate-btn" onclick="addNewPlate()">+ Add another plate</button>';
+
   if (state.orderType === 'take-out') {
     const n = packablePlateCount();
     if (n > 0) {

@@ -53,7 +53,7 @@ async function saveOrderToSupabase(customerName, note) {
     const allItems = [];
     state.plates.forEach(function(plate) {
       plate.items.forEach(function(i) {
-        allItems.push({ name: i.name, qty: i.qty, price: i.price, free: !!i.free });
+        allItems.push({ name: i.name, qty: i.qty, price: i.price, free: !!i.free, section: i.section || 'eatery' });
       });
     });
     const payload = {
@@ -121,46 +121,50 @@ async function sendToWhatsApp() {
   const refCode = 'KD-' + (dbRef ?? code);
   const dbSaved = dbRef !== null;
 
-  const HR = '\u2501'.repeat(14); /* ━━━━━━━━━━━━━━ */
-
-  /* ── Header ── */
-  let msg = '\uD83C\uDF1F KING\u2019S DELIGHT EATERY\n';
-  msg += 'New Order\n';
-
-  /* ── Details ── */
-  msg += '\nDETAILS\n';
-  msg += HR + '\n';
-  if (customerName) msg += '\uD83D\uDC64 ' + customerName + '\n';
-  msg += '\uD83C\uDF7D\uFE0F Mode: ' + (state.orderType === 'take-out' ? 'Take Out' : 'Eat In') + '\n';
-  msg += '\uD83D\uDCCD Source: ' + fmtSrc(src) + '\n';
-  msg += '\uD83C\uDD94 Ref: #' + refCode + '\n';
-
-  /* ── Order Summary ── */
-  msg += '\nORDER SUMMARY\n';
-  msg += HR + '\n';
   const allItemLines = [];
-  state.plates.forEach(function(plate, pIdx) {
-    if (!plate.items.length) return;
-    const hasMultiplePlates = state.plates.filter(p => p.items.length).length > 1;
-    if (hasMultiplePlates) msg += '_Plate ' + (pIdx + 1) + '_\n';
+  const grouped = { eatery: [], lounge: [] };
+  state.plates.forEach(function(plate) {
     plate.items.forEach(function(i) {
       const line = i.free
-        ? '\uD83D\uDD38 ' + i.name + ' | Complimentary'
-        : '\uD83D\uDD38 ' + i.name + (i.qty > 1 ? ' \u00D7' + i.qty : '') + ' | \u20A6' + (i.price * i.qty).toLocaleString();
-      msg += line + '\n';
+        ? '- ' + (i.qty > 1 ? i.qty + '\u00d7 ' : '') + i.name + ' \u2014 Complimentary'
+        : '- ' + (i.qty > 1 ? i.qty + '\u00d7 ' : '1\u00d7 ') + i.name + ' \u2014 \u20a6' + (i.price * i.qty).toLocaleString();
+      const sec = i.section || 'eatery';
+      if (!grouped[sec]) grouped[sec] = [];
+      grouped[sec].push(line);
       allItemLines.push(line);
     });
   });
 
-  if (state.orderType === 'take-out') {
-    const n = packablePlateCount();
-    msg += '\uD83D\uDD38 Takeaway pack (' + n + ' plate' + (n > 1 ? 's' : '') + ') | \u20A6' + (PACK_PRICE * n).toLocaleString() + '\n';
+  const hasEatery = grouped.eatery.length > 0;
+  const hasLounge = grouped.lounge.length > 0;
+  const hasMixed = hasEatery && hasLounge;
+  let fromLabel = fmtSrc(src);
+  if (tableNo) {
+    fromLabel = state.activeSection === 'lounge'
+      ? ('Lounge Table ' + tableNo)
+      : ('Table ' + tableNo);
   }
 
-  /* ── Total ── */
-  msg += HR + '\n';
-  msg += '\uD83D\uDCB0 TOTAL AMOUNT: \u20A6' + total.toLocaleString() + '\n';
-  if (note) msg += '\n\uD83D\uDCDD ' + note + '\n';
+  let msg = '*New Order \u2014 King\\'s Delight*\\n';
+  msg += '*From:* ' + fromLabel + '\\n';
+  if (customerName) msg += '*Name:* ' + customerName + '\\n';
+  msg += '*Ref:* ' + refCode + '\\n';
+  msg += '*Mode:* ' + (state.orderType === 'take-out' ? 'Take Out' : 'Eat In') + '\\n';
+
+  if (hasMixed) {
+    msg += '\\n\uD83C\uDF7D\uFE0F *Eatery*\\n' + grouped.eatery.join('\\n') + '\\n';
+    msg += '\uD83C\uDF79 *Lounge*\\n' + grouped.lounge.join('\\n') + '\\n';
+  } else {
+    const only = hasEatery ? grouped.eatery : grouped.lounge;
+    msg += '\\n' + only.join('\\n') + '\\n';
+  }
+
+  if (state.orderType === 'take-out') {
+    const n = packablePlateCount();
+    if (n > 0) msg += '- Takeaway pack \u00d7 ' + n + ' \u2014 \u20a6' + (PACK_PRICE * n).toLocaleString() + '\\n';
+  }
+  msg += '*Total: \u20a6' + total.toLocaleString() + '*';
+  if (note) msg += '\\nNote: ' + note;
 
   /* ── Log to Google Sheets ── */
   logOrderToSheet({

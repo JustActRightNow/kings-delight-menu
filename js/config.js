@@ -106,5 +106,36 @@ const STATIC_MENU = [
   {id:'pa3',name:'Chicken Pie',price:1200,section:'pastries',tab:'pastries',available:true,category_type:'regular',promo_expires_at:null,combo:false,sub_label:'House favourite',is_free:false,sort_order:3,has_variants:false,variants:null},
   {id:'pa4',name:'Meat Pie',price:1000,section:'pastries',tab:'pastries',available:true,category_type:'regular',promo_expires_at:null,combo:false,sub_label:null,is_free:false,sort_order:4,has_variants:false,variants:null},
   {id:'pa5',name:'Meat Pie \u2014 Small',price:400,section:'pastries',tab:'pastries',available:true,category_type:'regular',promo_expires_at:null,combo:false,sub_label:null,is_free:false,sort_order:5,has_variants:false,variants:null},
-  {id:'pa6',name:'Beef Roll',price:400,section:'pastries',tab:'pastries',available:true,category_type:'regular',promo_expires_at:null,combo:false,sub_label:null,is_free:false,sort_order:6,has_variants:false,variants:null}
+  {id:'pa6',name:'Beef Roll',price:400,section:'pastries',tab:'pastries',available:true,category_type:'regular',promo_expires_at:null,combo:false,sub_label:null,is_free:false,sort_order:6,has_variants:false,variants:null},
+
+  // Lounge — Beers
+  {id:'lb1',name:'Heineken',price:1800,section:'lounge-beers',tab:'lounge',menu_group:'lounge',available:true,category_type:'regular',promo_expires_at:null,combo:false,sub_label:null,is_free:false,sort_order:1,has_variants:false,variants:null},
+  {id:'lb2',name:'Guinness Stout',price:2000,section:'lounge-beers',tab:'lounge',menu_group:'lounge',available:true,category_type:'regular',promo_expires_at:null,combo:false,sub_label:null,is_free:false,sort_order:2,has_variants:false,variants:null},
+  // Lounge — Beverages
+  {id:'lbev1',name:'Red Bull',price:2000,section:'lounge-beverages',tab:'lounge',menu_group:'lounge',available:true,category_type:'regular',promo_expires_at:null,combo:false,sub_label:null,is_free:false,sort_order:1,has_variants:false,variants:null},
+  {id:'lbev2',name:'Schweppes Tonic',price:1200,section:'lounge-beverages',tab:'lounge',menu_group:'lounge',available:true,category_type:'regular',promo_expires_at:null,combo:false,sub_label:null,is_free:false,sort_order:2,has_variants:false,variants:null},
+  // Lounge — Shots
+  {id:'ls1',name:'Tequila Shot',price:3500,section:'lounge-shots',tab:'lounge',menu_group:'lounge',available:true,category_type:'regular',promo_expires_at:null,combo:false,sub_label:null,is_free:false,sort_order:1,has_variants:false,variants:null},
+  {id:'ls2',name:'Jagermeister Shot',price:3000,section:'lounge-shots',tab:'lounge',menu_group:'lounge',available:true,category_type:'regular',promo_expires_at:null,combo:false,sub_label:null,is_free:false,sort_order:2,has_variants:false,variants:null},
+  // Lounge — Spirits
+  {id:'lsp1',name:'Hennessy VS',price:80000,section:'lounge-spirits',tab:'lounge',menu_group:'lounge',available:true,category_type:'regular',promo_expires_at:null,combo:false,sub_label:null,is_free:false,sort_order:1,has_variants:false,variants:null},
+  {id:'lsp2',name:'Jameson',price:30000,section:'lounge-spirits',tab:'lounge',menu_group:'lounge',available:true,category_type:'regular',promo_expires_at:null,combo:false,sub_label:null,is_free:false,sort_order:2,has_variants:false,variants:null},
+  // Lounge — Champagne & Whiskey
+  {id:'lcw1',name:'Moët & Chandon',price:120000,section:'lounge-champagne-whiskey',tab:'lounge',menu_group:'lounge',available:true,category_type:'regular',promo_expires_at:null,combo:false,sub_label:null,is_free:false,sort_order:1,has_variants:false,variants:null},
+  {id:'lcw2',name:'Black Label',price:60000,section:'lounge-champagne-whiskey',tab:'lounge',menu_group:'lounge',available:true,category_type:'regular',promo_expires_at:null,combo:false,sub_label:null,is_free:false,sort_order:2,has_variants:false,variants:null},
+  // Lounge — Wine
+  {id:'lw1',name:'Four Cousins',price:18000,section:'lounge-wine',tab:'lounge',menu_group:'lounge',available:true,category_type:'regular',promo_expires_at:null,combo:false,sub_label:null,is_free:false,sort_order:1,has_variants:false,variants:null},
+  {id:'lw2',name:'Andre Rose',price:22000,section:'lounge-wine',tab:'lounge',menu_group:'lounge',available:true,category_type:'regular',promo_expires_at:null,combo:false,sub_label:null,is_free:false,sort_order:2,has_variants:false,variants:null},
+  // Lounge — Cocktails
+  {id:'lc1',name:'Long Island',price:6000,section:'lounge-cocktails',tab:'lounge',menu_group:'lounge',available:true,category_type:'regular',promo_expires_at:null,combo:false,sub_label:null,is_free:false,sort_order:1,has_variants:false,variants:null},
+  {id:'lc2',name:'Mojito',price:5500,section:'lounge-cocktails',tab:'lounge',menu_group:'lounge',available:true,category_type:'regular',promo_expires_at:null,combo:false,sub_label:null,is_free:false,sort_order:2,has_variants:false,variants:null},
+  // Lounge — Mocktails
+  {id:'lm1',name:'Virgin Mojito',price:4500,section:'lounge-mocktails',tab:'lounge',menu_group:'lounge',available:true,category_type:'regular',promo_expires_at:null,combo:false,sub_label:null,is_free:false,sort_order:1,has_variants:false,variants:null},
+  {id:'lm2',name:'Sunrise Cooler',price:4000,section:'lounge-mocktails',tab:'lounge',menu_group:'lounge',available:true,category_type:'regular',promo_expires_at:null,combo:false,sub_label:null,is_free:false,sort_order:2,has_variants:false,variants:null},
+  // Lounge — Bitters
+  {id:'lbt1',name:'Origin Bitters',price:2500,section:'lounge-bitters',tab:'lounge',menu_group:'lounge',available:true,category_type:'regular',promo_expires_at:null,combo:false,sub_label:null,is_free:false,sort_order:1,has_variants:false,variants:null},
+  {id:'lbt2',name:'Small Stout & Bitters Mix',price:3200,section:'lounge-bitters',tab:'lounge',menu_group:'lounge',available:true,category_type:'regular',promo_expires_at:null,combo:false,sub_label:null,is_free:false,sort_order:2,has_variants:false,variants:null},
+  // Lounge — Foods
+  {id:'lf1',name:'Peppered Goat Meat',price:7000,section:'lounge-foods',tab:'lounge',menu_group:'lounge',available:true,category_type:'regular',promo_expires_at:null,combo:false,sub_label:null,is_free:false,sort_order:1,has_variants:false,variants:null},
+  {id:'lf2',name:'Chicken Wings Basket',price:6500,section:'lounge-foods',tab:'lounge',menu_group:'lounge',available:true,category_type:'regular',promo_expires_at:null,combo:false,sub_label:null,is_free:false,sort_order:2,has_variants:false,variants:null}
 ];

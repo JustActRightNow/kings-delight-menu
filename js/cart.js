@@ -91,10 +91,11 @@ function addItem(btn) {
   const name = btn.dataset.name, price = parseInt(btn.dataset.price);
   const isFree = btn.dataset.free === 'true';
   const needsPack = btn.dataset.needsPack === 'true';
+  const section = btn.dataset.section || state.activeSection || 'eatery';
   const plate = getActivePlate();
-  const ex = plate.items.find(i => i.name === name);
+  const ex = plate.items.find(i => i.name === name && (i.section || 'eatery') === section);
   if (ex) { if (!isFree) ex.qty++; }
-  else { plate.items.push({ name, price, qty: 1, free: isFree, needsPack }); }
+  else { plate.items.push({ name, price, qty: 1, free: isFree, needsPack, section }); }
   renderAll();
 }
 
@@ -103,9 +104,9 @@ function addItem(btn) {
  * Delegates to changePlateItemQty with a delta of -1.
  * @param {string} name - The exact item name to decrement.
  */
-function removeMenuItem(name) {
+function removeMenuItem(name, section) {
   const plate = getActivePlate();
-  const iIdx = plate.items.findIndex(i => i.name === name);
+  const iIdx = plate.items.findIndex(i => i.name === name && (i.section || 'eatery') === (section || 'eatery'));
   if (iIdx === -1) return;
   changePlateItemQty(state.activePlateIndex, iIdx, -1);
 }
