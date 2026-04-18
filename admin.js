@@ -3,6 +3,8 @@
   var allItems  = [];
   var currentFilter = 'all';
   var currentMenuScope = 'eatery';
+  var currentOrderScope = 'eatery';
+  var currentAdminTab = 'menu';
   var sectionOptionsByScope = {
     eatery: [
       { value: 'specials', label: "Chef's Specials" },
@@ -73,10 +75,12 @@
   }
 
   function switchAdminTab(tab) {
+    currentAdminTab = tab === 'orders' ? 'orders' : 'menu';
     document.getElementById('menuPanel').style.display   = tab === 'menu'   ? '' : 'none';
     document.getElementById('ordersPanel').style.display = tab === 'orders' ? '' : 'none';
     document.getElementById('tabMenu').classList.toggle('active',   tab === 'menu');
     document.getElementById('tabOrders').classList.toggle('active', tab === 'orders');
+    applyScopeAccent();
     if (tab === 'menu' && allItems.length === 0) loadItems();
     if (tab === 'orders') loadOrders();
   }
@@ -250,7 +254,7 @@
 
   function setMenuScope(scope, btn) {
     currentMenuScope = scope === 'lounge' ? 'lounge' : 'eatery';
-    document.body.classList.toggle('lounge-mode', currentMenuScope === 'lounge');
+    applyScopeAccent();
     document.querySelectorAll('#menuScopeRow .admin-scope-btn').forEach(function(b) { b.classList.remove('active'); });
     btn.classList.add('active');
     var formTitle = document.querySelector('.add-promo-title');
@@ -258,6 +262,37 @@
     syncPromoSectionOptions();
     updateStats();
     renderList();
+  }
+
+  function applyScopeAccent() {
+    var scope = currentAdminTab === 'orders' ? currentOrderScope : currentMenuScope;
+    document.body.classList.toggle('lounge-mode', scope === 'lounge');
+  }
+
+  function orderScopeFor(order) {
+    var hasLounge = false;
+    var hasEatery = false;
+    if (Array.isArray(order.items)) {
+      order.items.forEach(function(i) {
+        if (isLoungeSection(i.section)) hasLounge = true;
+        else hasEatery = true;
+      });
+    }
+    if (hasEatery && hasLounge) return 'mixed';
+    if (hasLounge) return 'lounge';
+    return 'eatery';
+  }
+
+  function filterOrdersForScope(orders) {
+    return orders.filter(function(order) { return orderScopeFor(order) === currentOrderScope; });
+  }
+
+  function setOrderScope(scope, btn) {
+    currentOrderScope = scope === 'lounge' ? 'lounge' : 'eatery';
+    applyScopeAccent();
+    document.querySelectorAll('#orderScopeRow .admin-scope-btn').forEach(function(b) { b.classList.remove('active'); });
+    if (btn) btn.classList.add('active');
+    loadOrders();
   }
 
   function updateStats() {
@@ -514,79 +549,38 @@
     }
   }
 
-  async function loadOrderStats() {
+  function loadOrderStats(orders) {
     try {
-      var res = await fetch(SUPABASE_URL + '/rest/v1/orders?select=total,created_at,items&paid=eq.true', {
-        headers: { 'apikey': SUPABASE_ANON, 'Authorization': 'Bearer ' + authToken }
-      });
-      if (!res.ok) return;
-      var paid = await res.json();
-
       var todayStart = todayMidnight();
+      var paid = filterOrdersForScope((orders || []).filter(function(o) { return !!o.paid; }));
       var todayCount = 0;
-      var eateryAllTimeRevenue = 0;
-      var loungeAllTimeRevenue = 0;
-      var eateryTodayRevenue = 0;
-      var loungeTodayRevenue = 0;
-
-      function splitOrderRevenue(order) {
-        var eatery = 0;
-        var lounge = 0;
-        if (Array.isArray(order.items)) {
-          order.items.forEach(function(i) {
-            var qty = parseInt(i.qty, 10);
-            var price = parseInt(i.price, 10);
-            if (i.free || isNaN(qty) || isNaN(price) || qty <= 0 || price < 0) return;
-            var amount = qty * price;
-            if (isLoungeSection(i.section)) lounge += amount;
-            else eatery += amount;
-          });
-        }
-        var total = parseInt(order.total, 10);
-        var splitTotal = eatery + lounge;
-        if (!isNaN(total)) {
-          if (total > splitTotal) {
-            /* Put non-item deltas (e.g. packaging/fees) on eatery for mixed orders,
-               and on lounge for lounge-only orders. */
-            if (lounge > 0 && eatery === 0) lounge += (total - splitTotal);
-            else eatery += (total - splitTotal);
-          } else if (total < splitTotal) {
-            /* Reconcile downward deltas (e.g. discounts/adjustments) to keep
-               split revenue aligned with the stored order total. */
-            if (lounge > 0 && eatery === 0) lounge = total;
-            else if (eatery > 0 && lounge === 0) eatery = total;
-            else if (splitTotal > 0) {
-              eatery = Math.round((eatery / splitTotal) * total);
-              lounge = total - eatery;
-            }
-          }
-        }
-        return { eatery: eatery, lounge: lounge };
-      }
+      var allTimeRevenue = 0;
+      var todayRevenue = 0;
 
       paid.forEach(function(o) {
-        var split = splitOrderRevenue(o);
-        eateryAllTimeRevenue += split.eatery;
-        loungeAllTimeRevenue += split.lounge;
+        var total = parseInt(o.total, 10);
+        if (isNaN(total) || total < 0) total = 0;
+        allTimeRevenue += total;
         if (o.created_at && new Date(o.created_at) >= todayStart) {
           todayCount++;
-          eateryTodayRevenue += split.eatery;
-          loungeTodayRevenue += split.lounge;
+          todayRevenue += total;
         }
       });
 
+      var scopeLabel = currentOrderScope === 'lounge' ? 'Lounge' : 'Eatery';
       document.getElementById('statPaidAllTime').textContent   = paid.length;
       document.getElementById('statPaidToday').textContent     = todayCount;
-      document.getElementById('statRevenueEateryAllTime').textContent = '₦' + eateryAllTimeRevenue.toLocaleString();
-      document.getElementById('statRevenueLoungeAllTime').textContent = '₦' + loungeAllTimeRevenue.toLocaleString();
-      document.getElementById('statRevenueEateryToday').textContent   = '₦' + eateryTodayRevenue.toLocaleString();
-      document.getElementById('statRevenueLoungeToday').textContent   = '₦' + loungeTodayRevenue.toLocaleString();
+      document.getElementById('statRevenueAllTime').textContent = '₦' + allTimeRevenue.toLocaleString();
+      document.getElementById('statRevenueToday').textContent   = '₦' + todayRevenue.toLocaleString();
+      document.getElementById('statPaidAllTimeLabel').textContent = scopeLabel + ' Paid (All-time)';
+      document.getElementById('statPaidTodayLabel').textContent   = scopeLabel + " Paid (Today)";
+      document.getElementById('statRevenueAllTimeLabel').textContent = scopeLabel + ' Revenue (All-time)';
+      document.getElementById('statRevenueTodayLabel').textContent   = scopeLabel + ' Revenue (Today)';
     } catch (e) { /* stats are non-critical; ignore errors */ }
   }
 
   async function loadOrders() {
     document.getElementById('orderList').innerHTML = '<div class="loading-msg">Loading orders…</div>';
-    loadOrderStats();
     try {
       var res = await fetch(SUPABASE_URL + '/rest/v1/orders?select=*&order=created_at.desc&limit=100', {
         headers: { 'apikey': SUPABASE_ANON, 'Authorization': 'Bearer ' + authToken }
@@ -596,7 +590,8 @@
         throw new Error(err.message || err.msg || 'Failed to load orders (' + res.status + ')');
       }
       var orders = await res.json();
-      renderOrders(orders || []);
+      loadOrderStats(orders || []);
+      renderOrders(filterOrdersForScope(orders || []));
     } catch (e) {
       var isPermErr = /permission denied|42501/i.test(e.message);
       document.getElementById('orderList').innerHTML =
@@ -614,7 +609,7 @@
   function renderOrders(orders) {
     if (orders.length === 0) {
       document.getElementById('orderList').innerHTML =
-        '<div class="empty-msg">No orders yet.</div>' +
+        '<div class="empty-msg">No ' + (currentOrderScope === 'lounge' ? 'Lounge' : 'Eatery') + ' orders yet.</div>' +
         '<div class="empty-msg" style="font-size:11px;margin-top:8px;color:var(--cream-35)">' +
         'Expecting orders? To set up the orders table, run <code>supabase-schema.sql</code> ' +
         'in your Supabase SQL Editor (new projects), or run ' +
@@ -638,11 +633,13 @@
       var dtStr = dt ? dt.toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' }) : '—';
       var tLabel = typeLabel[o.order_type] || escHtml(o.order_type || '—');
       var typeClass = o.order_type === 'take-out' ? 'order-badge-takeout' : o.order_type === 'delivery' ? 'order-badge-delivery' : 'order-badge-eatin';
+      var scopeLabel = orderScopeFor(o) === 'lounge' ? '🍹 Lounge' : '🍽️ Eatery';
 
       html += '<div class="order-card' + (o.paid ? ' order-paid' : '') + '">';
       html += '<div class="order-card-header">';
       html += '<span class="order-ref">' + escHtml(o.ref_code || '——') + '</span>';
       html += '<span class="order-badge ' + typeClass + '">' + tLabel + '</span>';
+      html += '<span class="order-badge">' + scopeLabel + '</span>';
       html += '<span class="order-customer">' + escHtml(o.customer || 'Guest') + '</span>';
       html += '<span class="order-total">₦' + (o.total || 0).toLocaleString() + '</span>';
       html += '<span class="order-time">' + dtStr + '</span>';

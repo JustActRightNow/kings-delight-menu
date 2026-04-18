@@ -92,6 +92,19 @@ function addItem(btn) {
   const isFree = btn.dataset.free === 'true';
   const needsPack = btn.dataset.needsPack === 'true';
   const section = btn.dataset.section || state.activeSection || 'eatery';
+  var orderSection = null;
+  state.plates.forEach(function(p) {
+    p.items.forEach(function(i) {
+      var itemSection = i.section || 'eatery';
+      if (!orderSection) orderSection = itemSection;
+    });
+  });
+  if (orderSection && orderSection !== section) {
+    if (typeof showToast === 'function') {
+      showToast('This order already has ' + (orderSection === 'lounge' ? 'Lounge' : 'Eatery') + ' items. Please place a separate order.', true);
+    }
+    return;
+  }
   const plate = getActivePlate();
   const ex = plate.items.find(i => i.name === name && (i.section || 'eatery') === section);
   if (ex) { if (!isFree) ex.qty++; }
