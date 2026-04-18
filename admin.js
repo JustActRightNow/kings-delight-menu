@@ -230,17 +230,21 @@
     return sec === 'lounge' || sec.indexOf('lounge-') === 0;
   }
 
+  function getCurrentScopeOptions() {
+    return sectionOptionsByScope[currentMenuScope] || sectionOptionsByScope.eatery;
+  }
+
   function syncPromoSectionOptions() {
     var select = document.getElementById('promoSection');
     if (!select) return;
-    var scopedOptions = sectionOptionsByScope[currentMenuScope] || sectionOptionsByScope.eatery;
+    var scopedOptions = getCurrentScopeOptions();
     select.innerHTML = scopedOptions.map(function(option) {
       return '<option value="' + escHtml(option.value) + '">' + escHtml(option.label) + '</option>';
     }).join('');
   }
 
   function isSectionInCurrentScope(section) {
-    var scopedOptions = sectionOptionsByScope[currentMenuScope] || sectionOptionsByScope.eatery;
+    var scopedOptions = getCurrentScopeOptions();
     return scopedOptions.some(function(option) { return option.value === section; });
   }
 
