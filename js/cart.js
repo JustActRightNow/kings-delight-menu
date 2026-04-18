@@ -92,16 +92,24 @@ function addItem(btn) {
   const isFree = btn.dataset.free === 'true';
   const needsPack = btn.dataset.needsPack === 'true';
   const section = btn.dataset.section || state.activeSection || 'eatery';
-  let orderSection = null;
+  var hasEatery = false;
+  var hasLounge = false;
   state.plates.forEach(function(p) {
     p.items.forEach(function(i) {
       var itemSection = i.section || 'eatery';
-      if (!orderSection) orderSection = itemSection;
+      if (itemSection === 'lounge') hasLounge = true;
+      else hasEatery = true;
     });
   });
-  if (orderSection && orderSection !== section) {
+  if (hasEatery && hasLounge) {
     if (typeof showToast === 'function') {
-      showToast('This order already has ' + (orderSection === 'lounge' ? 'Lounge' : 'Eatery') + ' items. Please place a separate order.', true);
+      showToast('This order already contains mixed sections. Please start a new order.', true);
+    }
+    return;
+  }
+  if ((hasEatery && section === 'lounge') || (hasLounge && section !== 'lounge')) {
+    if (typeof showToast === 'function') {
+      showToast('This order already has ' + (hasLounge ? 'Lounge' : 'Eatery') + ' items. Please place a separate order.', true);
     }
     return;
   }
