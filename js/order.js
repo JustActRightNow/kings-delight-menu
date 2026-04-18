@@ -232,7 +232,7 @@ async function sendToWhatsApp() {
   const url = buildWhatsAppUrl(msg);
   if (waWindow && !waWindow.closed) {
     try {
-      waWindow.location.replace(url);
+      waWindow.location.href = url;
       waWindow.focus();
     } catch (e) {
       window.location.href = url;
