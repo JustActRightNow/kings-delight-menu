@@ -92,14 +92,11 @@ function addItem(btn) {
   const isFree = btn.dataset.free === 'true';
   const needsPack = btn.dataset.needsPack === 'true';
   const section = btn.dataset.section || state.activeSection || 'eatery';
-  let hasEatery = false;
-  let hasLounge = false;
-  state.plates.forEach(function(p) {
-    p.items.forEach(function(i) {
-      var itemSection = i.section || 'eatery';
-      if (itemSection === 'lounge') hasLounge = true;
-      else hasEatery = true;
-    });
+  const hasEatery = state.plates.some(function(p) {
+    return p.items.some(function(i) { return (i.section || 'eatery') !== 'lounge'; });
+  });
+  const hasLounge = state.plates.some(function(p) {
+    return p.items.some(function(i) { return (i.section || 'eatery') === 'lounge'; });
   });
   if (hasEatery && hasLounge) {
     if (typeof showToast === 'function') {
