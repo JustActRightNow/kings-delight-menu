@@ -235,6 +235,16 @@ function closeCheckout() { document.getElementById('checkoutPanel').classList.re
 /* ── Checkout summary ───────────────────────────────────────────────────── */
 
 /**
+ * Deletes a plate from within the checkout panel and either re-renders
+ * the checkout (if items remain) or closes it (if the order is now empty).
+ * @param {number} idx - Index of the plate to remove.
+ */
+function checkoutDeletePlate(idx) {
+  deletePlate(idx);
+  if (hasItems()) { renderCheckout(); } else { closeCheckout(); }
+}
+
+/**
  * Renders the order summary inside the checkout panel, listing all plates,
  * their items with quantities and amounts, a packaging line for take-out
  * orders, and the grand total. Plate management cards (edit, duplicate,
@@ -247,13 +257,13 @@ function renderCheckout() {
   state.plates.forEach(function(plate, pIdx) {
     if (!plate.items.length) return;
     const isActive = pIdx === state.activePlateIndex;
-    const plateSubtotal = plate.items.reduce(function(s, i) { return s + (i.free ? 0 : i.price * i.qty); }, 0);
+    const plateSubtotal = plate.items.reduce(function(subtotal, item) { return subtotal + (item.free ? 0 : item.price * item.qty); }, 0);
     html += '<div class="plate-card' + (isActive ? ' active-plate' : '') + '">';
     html += '<div class="plate-header">';
     html += '<span class="plate-label">Plate ' + (pIdx + 1) + (isActive ? ' \u00b7 Active' : '') + '</span>';
     html += '<button class="plate-action-btn" onclick="editPlate(' + pIdx + ');closeCheckout();" title="Edit plate">\u270f\ufe0f</button>';
     html += '<button class="plate-action-btn" onclick="duplicatePlate(' + pIdx + ');renderCheckout();" title="Duplicate plate">\u29c9</button>';
-    html += '<button class="plate-action-btn del" onclick="deletePlate(' + pIdx + ');hasItems()?renderCheckout():closeCheckout();" title="Remove plate">\u2715</button>';
+    html += '<button class="plate-action-btn del" onclick="checkoutDeletePlate(' + pIdx + ');" title="Remove plate">\u2715</button>';
     html += '</div>';
     html += '<div class="plate-items">';
     plate.items.forEach(function(item) {
