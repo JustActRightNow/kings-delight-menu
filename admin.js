@@ -495,11 +495,22 @@
         }
         var total = parseInt(order.total, 10);
         var splitTotal = eatery + lounge;
-        if (!isNaN(total) && total > splitTotal) {
-          /* Put non-item deltas (e.g. packaging/fees) on eatery for mixed orders,
-             and on lounge for lounge-only orders. */
-          if (lounge > 0 && eatery === 0) lounge += (total - splitTotal);
-          else eatery += (total - splitTotal);
+        if (!isNaN(total)) {
+          if (total > splitTotal) {
+            /* Put non-item deltas (e.g. packaging/fees) on eatery for mixed orders,
+               and on lounge for lounge-only orders. */
+            if (lounge > 0 && eatery === 0) lounge += (total - splitTotal);
+            else eatery += (total - splitTotal);
+          } else if (total < splitTotal) {
+            /* Reconcile downward deltas (e.g. discounts/adjustments) to keep
+               split revenue aligned with the stored order total. */
+            if (lounge > 0 && eatery === 0) lounge = total;
+            else if (eatery > 0 && lounge === 0) eatery = total;
+            else if (splitTotal > 0) {
+              eatery = Math.round((eatery / splitTotal) * total);
+              lounge = total - eatery;
+            }
+          }
         }
         return { eatery: eatery, lounge: lounge };
       }
