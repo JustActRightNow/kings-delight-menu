@@ -591,7 +591,8 @@
       }
       var orders = await res.json();
       loadOrderStats(orders || []);
-      renderOrders(filterOrdersForScope(orders || []));
+      var mixedCount = (orders || []).filter(function(o) { return orderScopeFor(o) === 'mixed'; }).length;
+      renderOrders(filterOrdersForScope(orders || []), mixedCount);
     } catch (e) {
       var isPermErr = /permission denied|42501/i.test(e.message);
       document.getElementById('orderList').innerHTML =
@@ -606,9 +607,14 @@
     }
   }
 
-  function renderOrders(orders) {
+  function renderOrders(orders, mixedCount) {
+    var mixedNotice = mixedCount > 0
+      ? '<div class="empty-msg" style="font-size:11px;margin-bottom:8px;color:var(--cream-35)">' +
+        mixedCount + ' legacy mixed order' + (mixedCount > 1 ? 's are' : ' is') + ' excluded from scoped views.</div>'
+      : '';
     if (orders.length === 0) {
       document.getElementById('orderList').innerHTML =
+        mixedNotice +
         '<div class="empty-msg">No ' + (currentOrderScope === 'lounge' ? 'Lounge' : 'Eatery') + ' orders yet.</div>' +
         '<div class="empty-msg" style="font-size:11px;margin-top:8px;color:var(--cream-35)">' +
         'Expecting orders? To set up the orders table, run <code>supabase-schema.sql</code> ' +
@@ -633,7 +639,8 @@
       var dtStr = dt ? dt.toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' }) : '—';
       var tLabel = typeLabel[o.order_type] || escHtml(o.order_type || '—');
       var typeClass = o.order_type === 'take-out' ? 'order-badge-takeout' : o.order_type === 'delivery' ? 'order-badge-delivery' : 'order-badge-eatin';
-      var scopeLabel = orderScopeFor(o) === 'lounge' ? '🍹 Lounge' : '🍽️ Eatery';
+      var scope = orderScopeFor(o);
+      var scopeLabel = scope === 'lounge' ? '🍹 Lounge' : scope === 'mixed' ? '⚠️ Mixed' : '🍽️ Eatery';
 
       html += '<div class="order-card' + (o.paid ? ' order-paid' : '') + '">';
       html += '<div class="order-card-header">';
@@ -657,7 +664,7 @@
       html += '</div>';
     });
 
-    document.getElementById('orderList').innerHTML = html;
+    document.getElementById('orderList').innerHTML = mixedNotice + html;
   }
 
   /* ── Utilities ───────────────────────────────────────────────────────── */
