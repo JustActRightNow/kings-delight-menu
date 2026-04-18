@@ -38,6 +38,7 @@ function renderSectionItems(section, items) {
   elementsToRemove.forEach(function(el) { section.removeChild(el); });
 
   items.forEach(function(item) {
+    var sectionTag = item.menu_group === 'lounge' ? 'lounge' : 'eatery';
     var div = document.createElement('div');
     div.className = 'menu-item' + (item.available ? '' : ' item-unavailable');
     div.dataset.imageUrl = item.image_url || '';
@@ -62,24 +63,27 @@ function renderSectionItems(section, items) {
 
     /* Determine if this item requires a take-out packaging charge:
        Drinks, pastries, asun (grill), promo/combo/offers items are exempt. */
-    var needsPack = !(
-      item.tab === 'drinks' ||
-      item.tab === 'pastries' ||
-      (item.section === 'grill' && item.name === 'Asun') ||
-      item.category_type === 'promo' ||
-      item.combo === true ||
-      item.section === 'promos'
-    );
+    var needsPack = sectionTag === 'lounge'
+      ? item.section === 'lounge-foods'
+      : !(
+        item.tab === 'drinks' ||
+        item.tab === 'pastries' ||
+        (item.section === 'grill' && item.name === 'Asun') ||
+        item.category_type === 'promo' ||
+        item.combo === true ||
+        item.section === 'promos'
+      );
     var npAttr = ' data-needs-pack="' + needsPack + '"';
+    var secAttr = ' data-section="' + sectionTag + '"';
 
     if (item.has_variants && item.variants) {
       var varBtns = item.variants.map(function(v) {
         var label = v.name.replace(/^[^(]*\(/, '').replace(/\).*$/, '').trim() || v.name;
         var dis = item.available ? '' : ' disabled';
         return '<div class="item-qty-wrap" data-item-name="' + escHtml(v.name) +
-          '" data-price="' + v.price + '" data-needs-pack="' + needsPack + '">' +
+          '" data-price="' + v.price + '" data-needs-pack="' + needsPack + '" data-section="' + sectionTag + '">' +
           '<button class="variant-btn"' + dis + ' data-name="' + escHtml(v.name) +
-          '" data-price="' + v.price + '"' + npAttr + ' onclick="addItem(this)">' +
+          '" data-price="' + v.price + '"' + npAttr + secAttr + ' onclick="addItem(this)">' +
           escHtml(label) + ' \u00a0\u20a6' + v.price.toLocaleString() + '</button></div>';
       }).join('');
       div.innerHTML = '<div class="item-info"><div class="item-name">' + escHtml(item.name) + '</div></div>' +
@@ -87,8 +91,8 @@ function renderSectionItems(section, items) {
     } else if (item.is_free) {
       div.innerHTML = '<div class="item-info"><div class="item-name">' + nameHtml + '</div></div>' +
         '<span class="free-label">Complimentary</span>' +
-        '<div class="item-qty-wrap" data-item-name="' + escHtml(item.name) + '" data-price="0" data-needs-pack="' + needsPack + '" data-free="true">' +
-        '<button class="add-btn" data-name="' + escHtml(item.name) + '" data-price="0" data-free="true"' + npAttr + ' onclick="addItem(this)">+</button></div>';
+        '<div class="item-qty-wrap" data-item-name="' + escHtml(item.name) + '" data-price="0" data-needs-pack="' + needsPack + '" data-section="' + sectionTag + '" data-free="true">' +
+        '<button class="add-btn" data-name="' + escHtml(item.name) + '" data-price="0" data-free="true"' + npAttr + secAttr + ' onclick="addItem(this)">+</button></div>';
     } else if (!item.available) {
       div.innerHTML = '<div class="item-info"><div class="item-name">' + nameHtml + '</div></div>' +
         '<span class="oos-badge">Out of Stock</span>' +
@@ -96,8 +100,8 @@ function renderSectionItems(section, items) {
     } else {
       div.innerHTML = '<div class="item-info"><div class="item-name">' + nameHtml + '</div></div>' +
         '<div class="item-price"><span class="cur">\u20a6</span>' + item.price.toLocaleString() + '</div>' +
-        '<div class="item-qty-wrap" data-item-name="' + escHtml(item.name) + '" data-price="' + item.price + '" data-needs-pack="' + needsPack + '">' +
-        '<button class="add-btn" data-name="' + escHtml(item.name) + '" data-price="' + item.price + '"' + npAttr + ' onclick="addItem(this)">+</button></div>';
+        '<div class="item-qty-wrap" data-item-name="' + escHtml(item.name) + '" data-price="' + item.price + '" data-needs-pack="' + needsPack + '" data-section="' + sectionTag + '">' +
+        '<button class="add-btn" data-name="' + escHtml(item.name) + '" data-price="' + item.price + '"' + npAttr + secAttr + ' onclick="addItem(this)">+</button></div>';
     }
     section.appendChild(div);
   });
@@ -141,14 +145,16 @@ function renderMenuItems(items) {
   }
 
   /* Regular sections */
-  ['specials','mains','proteins','grill','swallow','soups','sides','drinks','pastries'].forEach(function(sid) {
+  ['specials','mains','proteins','grill','swallow','soups','sides','drinks','pastries',
+   'lounge-beers','lounge-beverages','lounge-shots','lounge-spirits','lounge-champagne-whiskey',
+   'lounge-wine','lounge-cocktails','lounge-mocktails','lounge-bitters','lounge-foods'].forEach(function(sid) {
     var sec = document.getElementById(sid);
     if (sec) renderSectionItems(sec, bySection[sid] || []);
   });
 
   /* Re-attach IntersectionObservers now that content is populated */
   document.querySelectorAll('.menu-section').forEach(function(s) { fadeObserver.observe(s); });
-  document.querySelectorAll('#tabFood .menu-section').forEach(function(s) { activeObserver.observe(s); });
+  document.querySelectorAll('#groupEatery .menu-section, #groupLounge .menu-section').forEach(function(s) { activeObserver.observe(s); });
 }
 
 /**
@@ -169,6 +175,13 @@ async function loadMenu() {
     }
   } else {
     items = STATIC_MENU;
+  }
+  if (Array.isArray(items)) {
+    var hasLounge = items.some(function(i) { return i.menu_group === 'lounge' || String(i.section || '').indexOf('lounge-') === 0; });
+    if (!hasLounge) {
+      var loungeFallback = STATIC_MENU.filter(function(i) { return i.menu_group === 'lounge'; });
+      items = items.concat(loungeFallback);
+    }
   }
   renderMenuItems(items);
 }
