@@ -30,10 +30,10 @@ body {
   transition: background-color var(--accent-transition);
 }
 body.lounge-mode {
-  --gold: #B1123A;
-  --gold-light: #D93F66;
-  --gold-dim: rgba(177,18,58,0.15);
-  --gold-border: rgba(177,18,58,0.33);
+  --gold: #FF3333;
+  --gold-light: #FF6666;
+  --gold-dim: rgba(255,51,51,0.13);
+  --gold-border: rgba(255,51,51,0.25);
   --charcoal: #141414;
   background: var(--charcoal);
 }

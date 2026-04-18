@@ -38,7 +38,7 @@ function renderSectionItems(section, items) {
   elementsToRemove.forEach(function(el) { section.removeChild(el); });
 
   items.forEach(function(item) {
-    var sectionTag = item.menu_group === 'lounge' ? 'lounge' : 'eatery';
+    var sectionTag = (item.menu_group === 'lounge' || item.tab === 'lounge' || String(item.section || '').startsWith('lounge-')) ? 'lounge' : 'eatery';
     var div = document.createElement('div');
     div.className = 'menu-item' + (item.available ? '' : ' item-unavailable');
     div.dataset.imageUrl = item.image_url || '';
