@@ -45,6 +45,20 @@
 
   <div class="admin-body">
 
+    <!-- Global scope switchers (positioned above tabs) -->
+    <div class="admin-scope-wrap" id="menuScopeRow">
+      <div class="admin-scope-switcher" role="group" aria-label="Menu section">
+        <button class="admin-scope-btn active" data-scope="eatery" onclick="setMenuScope('eatery', this)" aria-label="Switch to Eatery menu">🍽️ Eatery</button>
+        <button class="admin-scope-btn" data-scope="lounge" onclick="setMenuScope('lounge', this)" aria-label="Switch to Lounge menu">🍹 Lounge</button>
+      </div>
+    </div>
+    <div class="admin-scope-wrap" id="orderScopeRow" style="display:none">
+      <div class="admin-scope-switcher" role="group" aria-label="Order section">
+        <button class="admin-scope-btn active" data-scope="eatery" onclick="setOrderScope('eatery', this)" aria-label="Switch to Eatery orders">🍽️ Eatery</button>
+        <button class="admin-scope-btn" data-scope="lounge" onclick="setOrderScope('lounge', this)" aria-label="Switch to Lounge orders">🍹 Lounge</button>
+      </div>
+    </div>
+
     <!-- Tab navigation -->
     <div class="admin-tabs" id="adminTabs">
       <button class="admin-tab active" id="tabMenu" onclick="switchAdminTab('menu')">📋 Menu</button>
@@ -53,14 +67,6 @@
 
     <!-- ── MENU PANEL ── -->
     <div id="menuPanel">
-
-    <!-- Menu scope -->
-    <div class="admin-scope-wrap" id="menuScopeRow">
-      <div class="admin-scope-switcher" role="group" aria-label="Menu section">
-        <button class="admin-scope-btn active" data-scope="eatery" onclick="setMenuScope('eatery', this)" aria-label="Switch to Eatery menu">🍽️ Eatery</button>
-        <button class="admin-scope-btn" data-scope="lounge" onclick="setMenuScope('lounge', this)" aria-label="Switch to Lounge menu">🍹 Lounge</button>
-      </div>
-    </div>
 
     <!-- Stats -->
     <div class="stats-row" id="statsRow">
@@ -144,12 +150,6 @@
 
     <!-- ── ORDERS PANEL ── -->
     <div id="ordersPanel" style="display:none">
-      <div class="admin-scope-wrap" id="orderScopeRow">
-        <div class="admin-scope-switcher" role="group" aria-label="Order section">
-          <button class="admin-scope-btn active" data-scope="eatery" onclick="setOrderScope('eatery', this)" aria-label="Switch to Eatery orders">🍽️ Eatery</button>
-          <button class="admin-scope-btn" data-scope="lounge" onclick="setOrderScope('lounge', this)" aria-label="Switch to Lounge orders">🍹 Lounge</button>
-        </div>
-      </div>
       <!-- Order stats -->
       <div class="stats-row" id="orderStatsRow">
         <div class="stat-card">
