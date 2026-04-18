@@ -547,6 +547,11 @@ body.lounge-mode {
 }
 .plate-action-btn:hover { border-color: var(--gold-border); color: var(--gold); }
 .plate-action-btn.del:hover { border-color: rgba(178,34,34,0.4); color: #e05555; }
+.plate-action-icon {
+  width: 14px;
+  height: 14px;
+  fill: currentColor;
+}
 .plate-items { padding: 4px 12px 8px; }
 .plate-sub-total {
   display: flex; justify-content: space-between; align-items: center;

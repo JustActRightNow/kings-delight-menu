@@ -120,7 +120,7 @@ function renderCartPanel() {
     html += '<div class="plate-card' + (isActive ? ' active-plate' : '') + '">';
     html += '<div class="plate-header">';
     html += '<span class="plate-label">Plate ' + (pIdx + 1) + (isActive ? ' \u00b7 Active' : '') + '</span>';
-    html += '<button class="plate-action-btn" onclick="editPlate(' + pIdx + ');" title="Edit plate">\u270f\ufe0f</button>';
+    html += '<button class="plate-action-btn" onclick="editPlate(' + pIdx + ');" title="Edit plate" aria-label="Edit plate"><svg class="plate-action-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17.25V21h3.75L17.8 9.95l-3.75-3.75L3 17.25zm17.71-10.04a1.003 1.003 0 000-1.42L18.21 3.29a1.003 1.003 0 00-1.42 0l-1.83 1.83 3.75 3.75 2-1.66z"/></svg></button>';
     html += '<button class="plate-action-btn" onclick="duplicatePlate(' + pIdx + ');" title="Duplicate plate">\u29c9</button>';
     html += '<button class="plate-action-btn del" onclick="deletePlate(' + pIdx + ');" title="Remove plate">\u2715</button>';
     html += '</div>';

@@ -33,6 +33,46 @@ function logOrderToSheet(payload) {
 }
 
 /**
+ * Resolves with `fallbackValue` if a promise does not settle within `ms`.
+ * @template T
+ * @param {Promise<T>} promise - Promise to observe.
+ * @param {number} ms - Timeout in milliseconds.
+ * @param {T} fallbackValue - Value returned on timeout.
+ * @returns {Promise<T>} Original promise result or fallback value on timeout.
+ */
+function withTimeout(promise, ms, fallbackValue) {
+  return new Promise(function(resolve) {
+    var settled = false;
+    var timer = setTimeout(function() {
+      if (settled) return;
+      settled = true;
+      resolve(fallbackValue);
+    }, ms);
+    promise.then(function(value) {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timer);
+      resolve(value);
+    }).catch(function() {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timer);
+      resolve(fallbackValue);
+    });
+  });
+}
+
+/**
+ * Creates the destination URL for WhatsApp checkout.
+ * @param {string} message - Message body to send.
+ * @returns {string} wa.me URL with encoded message text.
+ */
+function buildWhatsAppUrl(message) {
+  var waNumber = String(WA || '').replace(/[^\d]/g, '');
+  return 'https://wa.me/' + waNumber + '?text=' + encodeURIComponent(message);
+}
+
+/**
  * Persists the current order to the Supabase `orders` table and returns
  * a ref_code derived from a client-generated UUID. Returns null if Supabase
  * is not configured or if the request fails (checkout continues via WhatsApp).
@@ -114,10 +154,15 @@ async function sendToWhatsApp() {
      the click handler, so the browser's popup blocker treats it as a direct
      user-initiated navigation. The final WhatsApp URL is set below once the
      async Supabase save has finished. ── */
-  const waWindow = window.open('', '_blank');
+  var waWindow = null;
+  try {
+    waWindow = window.open('', '_blank', 'noopener');
+  } catch (e) {
+    waWindow = null;
+  }
 
   /* ── Save to Supabase (non-blocking; fallback to local code on failure) ── */
-  const dbRef = await saveOrderToSupabase(customerName, note);
+  const dbRef = await withTimeout(saveOrderToSupabase(customerName, note), 4000, null);
   const refCode = 'KD-' + (dbRef ?? code);
   const dbSaved = dbRef !== null;
 
@@ -179,13 +224,19 @@ async function sendToWhatsApp() {
     note: note
   });
 
-  const url = 'https://wa.me/' + WA + '?text=' + encodeURIComponent(msg);
-  if (waWindow) {
-    waWindow.location.href = url;
+  const url = buildWhatsAppUrl(msg);
+  if (waWindow && !waWindow.closed) {
+    try {
+      waWindow.location.replace(url);
+      waWindow.focus();
+    } catch (e) {
+      window.location.href = url;
+    }
   } else {
     /* Fallback for browsers that returned null from the pre-opened window
        (e.g. some iOS Safari configurations). */
-    window.open(url, '_blank');
+    const popup = window.open(url, '_blank', 'noopener');
+    if (!popup) window.location.href = url;
   }
 
   /* ── Clear cart and return to home after order is dispatched ── */
