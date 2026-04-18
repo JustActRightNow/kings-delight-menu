@@ -92,8 +92,8 @@ function addItem(btn) {
   const isFree = btn.dataset.free === 'true';
   const needsPack = btn.dataset.needsPack === 'true';
   const section = btn.dataset.section || state.activeSection || 'eatery';
-  var hasEatery = false;
-  var hasLounge = false;
+  let hasEatery = false;
+  let hasLounge = false;
   state.plates.forEach(function(p) {
     p.items.forEach(function(i) {
       var itemSection = i.section || 'eatery';
