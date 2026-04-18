@@ -3,6 +3,32 @@
   var allItems  = [];
   var currentFilter = 'all';
   var currentMenuScope = 'eatery';
+  var sectionOptionsByScope = {
+    eatery: [
+      { value: 'specials', label: "Chef's Specials" },
+      { value: 'mains', label: 'Mains' },
+      { value: 'proteins', label: 'Proteins' },
+      { value: 'grill', label: 'Grill Zone' },
+      { value: 'swallow', label: 'Swallow' },
+      { value: 'soups', label: 'Soups' },
+      { value: 'sides', label: 'Sides' },
+      { value: 'drinks', label: 'Drinks' },
+      { value: 'pastries', label: 'Pastries' },
+      { value: 'promos', label: 'Promos' }
+    ],
+    lounge: [
+      { value: 'lounge-beers', label: 'Lounge — Beers' },
+      { value: 'lounge-beverages', label: 'Lounge — Beverages' },
+      { value: 'lounge-shots', label: 'Lounge — Shots' },
+      { value: 'lounge-spirits', label: 'Lounge — Spirits' },
+      { value: 'lounge-champagne-whiskey', label: 'Lounge — Champagne & Whiskey' },
+      { value: 'lounge-wine', label: 'Lounge — Wine' },
+      { value: 'lounge-cocktails', label: 'Lounge — Cocktails' },
+      { value: 'lounge-mocktails', label: 'Lounge — Mocktails' },
+      { value: 'lounge-bitters', label: 'Lounge — Bitters' },
+      { value: 'lounge-foods', label: 'Lounge — Foods' }
+    ]
+  };
 
   /* ── Auth ────────────────────────────────────────────────────────────── */
   async function doLogin() {
@@ -138,9 +164,10 @@
 
     if (!name) { showToast('Item name is required', true); return; }
     if (isNaN(price) || price < 0) { showToast('Enter a valid price', true); return; }
+    if (!isSectionInCurrentScope(section)) { showToast('Select a section in the active menu scope', true); return; }
 
     var isPromo = section === 'promos';
-    var isLounge = section.indexOf('lounge-') === 0;
+    var isLounge = isLoungeSection(section);
     var btn = document.getElementById('addPromoBtn');
     btn.disabled = true; btn.textContent = 'Adding…';
     try {
@@ -203,10 +230,29 @@
     return sec === 'lounge' || sec.indexOf('lounge-') === 0;
   }
 
+  function getCurrentScopeOptions() {
+    return sectionOptionsByScope[currentMenuScope] || sectionOptionsByScope.eatery;
+  }
+
+  function syncPromoSectionOptions() {
+    var select = document.getElementById('promoSection');
+    if (!select) return;
+    var scopedOptions = getCurrentScopeOptions();
+    select.innerHTML = scopedOptions.map(function(option) {
+      return '<option value="' + escHtml(option.value) + '">' + escHtml(option.label) + '</option>';
+    }).join('');
+  }
+
+  function isSectionInCurrentScope(section) {
+    var scopedOptions = getCurrentScopeOptions();
+    return scopedOptions.some(function(option) { return option.value === section; });
+  }
+
   function setMenuScope(scope, btn) {
     currentMenuScope = scope === 'lounge' ? 'lounge' : 'eatery';
     document.querySelectorAll('#menuScopeRow .menu-scope-btn').forEach(function(b) { b.classList.remove('active'); });
     btn.classList.add('active');
+    syncPromoSectionOptions();
     updateStats();
     renderList();
   }
@@ -636,6 +682,7 @@
 
   /* ── Init ────────────────────────────────────────────────────────────── */
   document.addEventListener('DOMContentLoaded', function() {
+    syncPromoSectionOptions();
     /* Allow Enter key to submit login */
     document.getElementById('loginPassword').addEventListener('keydown', function(e) {
       if (e.key === 'Enter') doLogin();
