@@ -55,9 +55,11 @@
     <div id="menuPanel">
 
     <!-- Menu scope -->
-    <div class="filter-row" id="menuScopeRow" style="margin-bottom:12px">
-      <button class="filter-btn menu-scope-btn active" onclick="setMenuScope('eatery', this)">🍽️ Eatery Menu</button>
-      <button class="filter-btn menu-scope-btn" onclick="setMenuScope('lounge', this)">🍹 Lounge Menu</button>
+    <div class="admin-scope-wrap" id="menuScopeRow">
+      <div class="admin-scope-switcher" role="group" aria-label="Menu section">
+        <button class="admin-scope-btn active" data-scope="eatery" onclick="setMenuScope('eatery', this)" aria-label="Switch to Eatery menu">🍽️ Eatery</button>
+        <button class="admin-scope-btn" data-scope="lounge" onclick="setMenuScope('lounge', this)" aria-label="Switch to Lounge menu">🍹 Lounge</button>
+      </div>
     </div>
 
     <!-- Stats -->

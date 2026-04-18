@@ -250,8 +250,11 @@
 
   function setMenuScope(scope, btn) {
     currentMenuScope = scope === 'lounge' ? 'lounge' : 'eatery';
-    document.querySelectorAll('#menuScopeRow .menu-scope-btn').forEach(function(b) { b.classList.remove('active'); });
+    document.body.classList.toggle('lounge-mode', currentMenuScope === 'lounge');
+    document.querySelectorAll('#menuScopeRow .admin-scope-btn').forEach(function(b) { b.classList.remove('active'); });
     btn.classList.add('active');
+    var formTitle = document.querySelector('.add-promo-title');
+    if (formTitle) formTitle.textContent = currentMenuScope === 'lounge' ? '➕ Add Lounge Item' : '➕ Add New Product';
     syncPromoSectionOptions();
     updateStats();
     renderList();
