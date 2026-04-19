@@ -451,8 +451,9 @@ body.lounge-mode .price-dual .m { color: var(--gold); }
 }
 .footer-note {
   font-family: 'Cormorant Garamond', serif;
-  font-style: italic; font-size: 11px; color: var(--cream-60);
+  font-style: italic; font-size: 11px; color: #000;
 }
+body.lounge-mode .footer-note { color: var(--gold); }
 
 /* SUB-NAV */
 .cat-nav {
@@ -641,10 +642,10 @@ body.lounge-mode .price-dual .m { color: var(--gold); }
   display: inline-flex; align-items: center; gap: 5px;
   margin-top: 10px;
   color: var(--gold);
-  font-family: 'Jost', sans-serif;
-  font-size: 12px; font-weight: 500;
+  font-family: 'Playfair Display', serif;
+  font-size: 13px; font-weight: 600;
   text-decoration: none;
-  opacity: 0.75;
+  opacity: 0.85;
   transition: opacity 0.18s;
   letter-spacing: 0.04em;
 }
