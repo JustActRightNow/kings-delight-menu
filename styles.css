@@ -5,17 +5,20 @@
   --gold-light: #FFD84D;
   --gold-dim: rgba(255,191,0,0.13);
   --gold-border: rgba(255,191,0,0.25);
-  --charcoal: #EDE8DC;
-  --charcoal-mid: #F8F5EE;
-  --charcoal-card: #F8F5EE;
-  --charcoal-hover: #E4DCC8;
+  --charcoal: #FFFFFF;
+  --charcoal-mid: #FFFFFF;
+  --charcoal-card: #FFFFFF;
+  --charcoal-hover: #F5F5F5;
   --border: rgba(28,28,28,0.09);
   --cream: #2A2317;
   --cream-60: rgba(42,35,23,0.68);
   --cream-35: rgba(42,35,23,0.48);
   --cream-20: rgba(42,35,23,0.32);
-  --sticky-bg: rgba(237,232,220,0.97);
-  --search-bg: rgba(255,255,255,0.9);
+  --sticky-bg: rgba(255,255,255,0.97);
+  --search-bg: #1C1C1C;
+  --search-text: #FFBF00;
+  --search-placeholder: rgba(255,191,0,0.72);
+  --search-icon: #FFBF00;
   --switcher-bg: rgba(42,35,23,0.04);
   --red: #B22222;
   --accent-transition: 300ms ease;
@@ -47,6 +50,9 @@ body.lounge-mode {
   --cream-20: rgba(255,245,225,0.18);
   --sticky-bg: rgba(20,20,20,0.97);
   --search-bg: rgba(255,255,255,0.05);
+  --search-text: #FFF5E1;
+  --search-placeholder: rgba(255,245,225,0.45);
+  --search-icon: rgba(255,245,225,0.55);
   --switcher-bg: rgba(255,255,255,0.03);
   --charcoal: #141414;
   background: var(--charcoal);
@@ -162,7 +168,7 @@ body.lounge-mode {
   border-radius: 20px;
   border: 1px solid transparent;
   background: transparent;
-  color: var(--cream-35);
+  color: #000;
   font-family: 'Jost', sans-serif;
   font-size: 12px; font-weight: 400;
   letter-spacing: 0.04em;
@@ -170,8 +176,10 @@ body.lounge-mode {
   transition: all var(--accent-transition);
   white-space: nowrap;
 }
-.cat-btn:hover { color: var(--cream-60); background: rgba(255,255,255,0.04); }
+.cat-btn:hover { color: #000; background: rgba(0,0,0,0.04); }
 .cat-btn.active { background: var(--gold); color: #111; font-weight: 600; }
+body.lounge-mode .cat-btn { color: var(--cream-35); }
+body.lounge-mode .cat-btn:hover { color: var(--cream-60); background: rgba(255,255,255,0.04); }
 
 /* CONTENT */
 .content { max-width: 660px; margin: 0 auto; padding: 0 16px 180px; }
@@ -198,10 +206,11 @@ body.lounge-mode {
 .section-title {
   font-family: 'Playfair Display', serif;
   font-size: clamp(17px, 4.5vw, 22px);
-  font-weight: 600; color: var(--gold);
+  font-weight: 600; color: #000;
   letter-spacing: 0.03em;
   transition: color var(--accent-transition);
 }
+body.lounge-mode .section-title { color: var(--gold); }
 .section-rule {
   flex: 1; height: 1px;
   background: linear-gradient(90deg, rgba(255,191,0,0.2), transparent);
@@ -253,15 +262,17 @@ body.lounge-mode {
 .item-price {
   font-family: 'Cormorant Garamond', serif;
   font-size: 15px; font-weight: 600;
-  color: var(--gold); white-space: nowrap; flex-shrink: 0;
+  color: #000; white-space: nowrap; flex-shrink: 0;
   transition: color var(--accent-transition);
 }
-.specials-section .item-price { color: #FF3333; }
+.specials-section .item-price { color: #000; }
 .item-price .cur { font-size: 11px; font-weight: 400; opacity: 0.7; margin-right: 1px; }
 .item-price.ask { font-style: italic; font-size: 12px; color: var(--cream-20); font-weight: 300; }
 .price-dual { text-align: right; flex-shrink: 0; }
-.price-dual .m { font-family: 'Cormorant Garamond', serif; font-size: 15px; font-weight: 600; color: var(--gold); display: block; }
+.price-dual .m { font-family: 'Cormorant Garamond', serif; font-size: 15px; font-weight: 600; color: #000; display: block; }
 .price-dual .s { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 11px; color: var(--cream-35); display: block; }
+body.lounge-mode .item-price { color: var(--gold); }
+body.lounge-mode .price-dual .m { color: var(--gold); }
 
 /* ADD BTN */
 .add-btn {
@@ -514,15 +525,15 @@ body.lounge-mode {
 .search-input {
   width: 100%; background: var(--search-bg);
   border: 1px solid var(--border); border-radius: 20px;
-  padding: 8px 16px 8px 38px; color: var(--cream);
+  padding: 8px 16px 8px 38px; color: var(--search-text);
   font-family: 'Jost', sans-serif; font-size: 13px;
   outline: none; transition: border-color 0.2s;
 }
-.search-input::placeholder { color: var(--cream-20); }
+.search-input::placeholder { color: var(--search-placeholder); }
 .search-input:focus { border-color: var(--gold-border); }
 .search-icon {
   position: absolute; left: 13px; top: 50%; transform: translateY(-50%);
-  font-size: 14px; opacity: 0.4; pointer-events: none;
+  font-size: 14px; color: var(--search-icon); opacity: 1; pointer-events: none;
 }
 
 /* ORDER TYPE TOGGLE */
