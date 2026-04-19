@@ -5,15 +5,18 @@
   --gold-light: #FFD84D;
   --gold-dim: rgba(255,191,0,0.13);
   --gold-border: rgba(255,191,0,0.25);
-  --charcoal: #1C1C1C;
-  --charcoal-mid: #232323;
-  --charcoal-card: #292929;
-  --charcoal-hover: #2F2F2F;
-  --border: rgba(255,255,255,0.07);
-  --cream: #FFF5E1;
-  --cream-60: rgba(255,245,225,0.6);
-  --cream-35: rgba(255,245,225,0.35);
-  --cream-20: rgba(255,245,225,0.18);
+  --charcoal: #EDE8DC;
+  --charcoal-mid: #F8F5EE;
+  --charcoal-card: #F8F5EE;
+  --charcoal-hover: #E4DCC8;
+  --border: rgba(28,28,28,0.09);
+  --cream: #2A2317;
+  --cream-60: rgba(42,35,23,0.68);
+  --cream-35: rgba(42,35,23,0.48);
+  --cream-20: rgba(42,35,23,0.32);
+  --sticky-bg: rgba(237,232,220,0.97);
+  --search-bg: rgba(255,255,255,0.9);
+  --switcher-bg: rgba(42,35,23,0.04);
   --red: #B22222;
   --accent-transition: 300ms ease;
 }
@@ -34,6 +37,17 @@ body.lounge-mode {
   --gold-light: #FF6666;
   --gold-dim: rgba(255,51,51,0.13);
   --gold-border: rgba(255,51,51,0.25);
+  --charcoal-mid: #232323;
+  --charcoal-card: #292929;
+  --charcoal-hover: #2F2F2F;
+  --border: rgba(255,255,255,0.07);
+  --cream: #FFF5E1;
+  --cream-60: rgba(255,245,225,0.6);
+  --cream-35: rgba(255,245,225,0.35);
+  --cream-20: rgba(255,245,225,0.18);
+  --sticky-bg: rgba(20,20,20,0.97);
+  --search-bg: rgba(255,255,255,0.05);
+  --switcher-bg: rgba(255,255,255,0.03);
   --charcoal: #141414;
   background: var(--charcoal);
 }
@@ -106,7 +120,7 @@ body.lounge-mode {
   padding: 5px;
   border-radius: 999px;
   border: 1px solid var(--gold-border);
-  background: rgba(255,255,255,0.03);
+  background: var(--switcher-bg);
   transition: border-color var(--accent-transition);
 }
 .section-switch-btn {
@@ -432,7 +446,7 @@ body.lounge-mode {
 /* SUB-NAV */
 .cat-nav {
   position: sticky; top: 0; z-index: 100;
-  background: rgba(28,28,28,0.97);
+  background: var(--sticky-bg);
   backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--border);
   overflow-x: auto; scrollbar-width: none;
@@ -491,14 +505,14 @@ body.lounge-mode {
 /* SEARCH BAR */
 .search-wrap {
   position: sticky; top: 47px; z-index: 105;
-  background: rgba(28,28,28,0.97);
+  background: var(--sticky-bg);
   backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--border);
   padding: 8px 16px;
 }
 .search-inner { position: relative; max-width: 660px; margin: 0 auto; }
 .search-input {
-  width: 100%; background: rgba(255,255,255,0.05);
+  width: 100%; background: var(--search-bg);
   border: 1px solid var(--border); border-radius: 20px;
   padding: 8px 16px 8px 38px; color: var(--cream);
   font-family: 'Jost', sans-serif; font-size: 13px;
