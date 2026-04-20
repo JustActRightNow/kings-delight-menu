@@ -42,20 +42,33 @@ function sanitizeInput(s) {
  * and inline quantity controls on the menu page.
  */
 function renderAll() {
-  const count = totalItemCount();
-  document.getElementById('cartCount').textContent = count;
-  document.getElementById('cartTotalBar').textContent = '\u20a6' + grandTotal().toLocaleString();
   document.getElementById('cartBar').classList.toggle('visible', hasItems());
-
-  const activePlate = getActivePlate();
-  const plateNum = state.activePlateIndex + 1;
-  const preview = activePlate.items.length
-    ? activePlate.items.map(i => (i.qty > 1 ? i.qty + '\u00d7 ' : '') + i.name).join(', ')
-    : 'Your order';
-  document.getElementById('cartPreview').textContent = state.plates.length > 1 ? state.plates.length + ' plates' : preview;
-  document.getElementById('plateIndicator').textContent = hasItems() ? 'Adding to Plate ' + plateNum : '';
+  renderPlateSwitcher();
   renderCartPanel();
   updateMenuItemQtys();
+}
+
+/* ── Plate switcher in cart bar ─────────────────────────────────────────── */
+
+/**
+ * Renders a row of pill buttons in the cart bar — one per existing plate —
+ * so the customer can tap a pill to make that plate active (items go there).
+ * The row is only shown when there are two or more plates.
+ */
+function renderPlateSwitcher() {
+  const el = document.getElementById('plateSwitcher');
+  if (!el) return;
+  if (state.plates.length < 2) { el.innerHTML = ''; return; }
+  let html = '';
+  state.plates.forEach(function(plate, idx) {
+    const isActive = idx === state.activePlateIndex;
+    const itemCount = plate.items.reduce(function(s, i) { return s + i.qty; }, 0);
+    const label = 'Plate ' + (idx + 1) + (itemCount > 0 ? ' \u00b7 ' + itemCount : '');
+    html += '<button class="plate-pill' + (isActive ? ' active' : '') + '"' +
+      ' onclick="editPlate(' + idx + ')" aria-label="' + escHtml('Switch to plate ' + (idx + 1)) + '">' +
+      escHtml(label) + '</button>';
+  });
+  el.innerHTML = html;
 }
 
 /* ── Menu-page inline quantity controls ─────────────────────────────────── */
