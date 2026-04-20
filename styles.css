@@ -330,7 +330,7 @@ body.lounge-mode .price-dual .m { color: var(--gold); }
 }
 .plate-pill:not(.active):hover { border-color: var(--gold-light); color: var(--gold-light); background: transparent; }
 .cart-bar-actions {
-  display: flex; align-items: center; gap: 10px;
+  display: flex; align-items: center; gap: 10px; justify-content: space-between;
 }
 .view-order-btn {
   padding: 9px 18px; background: var(--gold); color: #111;
