@@ -406,3 +406,33 @@ body {
   border-color: rgba(42,157,92,0.6);
 }
 .order-paid { border-color: rgba(42,157,92,0.3); }
+
+@media (max-width: 640px) {
+  .admin-header { padding: 0 12px; }
+  .admin-header-inner {
+    gap: 8px;
+    padding: 10px 0;
+    flex-wrap: wrap;
+  }
+  .admin-logo-text { width: 100%; flex: 0 0 100%; }
+  .admin-body { padding: 16px 12px 64px; }
+  .admin-tabs { margin-bottom: 16px; }
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .stat-card {
+    min-width: 0;
+    padding: 10px 8px;
+    border-radius: 8px;
+  }
+  .stat-num { font-size: 20px; }
+  .stat-num-sm { font-size: 14px; }
+  .stat-label {
+    font-size: 9px;
+    letter-spacing: 0.08em;
+    margin-top: 1px;
+  }
+}
