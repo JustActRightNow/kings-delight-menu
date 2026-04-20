@@ -48,20 +48,24 @@ function subtotal() {
 function nonEmptyPlateCount() { return state.plates.filter(p => p.items.length > 0).length; }
 
 /**
- * Calculates the total packaging cost for a take-out order.
- * Returns 0 for eat-in orders.
+ * Calculates the total packaging cost across all take-out plates.
  * @returns {number} Packaging cost in Naira.
  */
-function packagingCost() { return state.orderType === 'take-out' ? PACK_PRICE * packablePlateCount() : 0; }
+function packagingCost() {
+  return state.plates.reduce(function(total, plate) {
+    if ((plate.orderType || 'eat-in') !== 'take-out') return total;
+    return total + (plate.items.length > 0 && plate.items.some(function(i) { return i.needsPack; }) ? PACK_PRICE : 0);
+  }, 0);
+}
 
 /**
- * Returns the number of non-empty plates that contain at least one
- * item requiring packaging (i.e. not drinks, pastries, promo, combo, or offers items).
+ * Returns the number of take-out plates that contain at least one
+ * item requiring packaging.
  * @returns {number} Count of plates that incur a packaging charge.
  */
 function packablePlateCount() {
   return state.plates.filter(function(p) {
-    return p.items.length > 0 && p.items.some(function(i) { return i.needsPack; });
+    return (p.orderType || 'eat-in') === 'take-out' && p.items.length > 0 && p.items.some(function(i) { return i.needsPack; });
   }).length;
 }
 /**
@@ -92,7 +96,28 @@ function addItem(btn) {
   const isFree = btn.dataset.free === 'true';
   const needsPack = btn.dataset.needsPack === 'true';
   const section = btn.dataset.section || state.activeSection || 'eatery';
-  const plate = getActivePlate();
+
+  /* If the active plate already has items from a different section,
+     find an existing plate for this section or auto-create one. */
+  let plate = getActivePlate();
+  const hasConflict = plate.items.length > 0 && plate.items.some(function(i) {
+    return (i.section || 'eatery') !== section;
+  });
+  if (hasConflict) {
+    const targetIdx = state.plates.findIndex(function(p) {
+      return p.items.length > 0 && p.items.every(function(item) {
+        return (item.section || 'eatery') === section;
+      });
+    });
+    if (targetIdx !== -1) {
+      state.activePlateIndex = targetIdx;
+    } else {
+      state.plates.push({ id: state.nextPlateId++, items: [], orderType: 'eat-in' });
+      state.activePlateIndex = state.plates.length - 1;
+    }
+    plate = getActivePlate();
+  }
+
   const ex = plate.items.find(i => i.name === name && (i.section || 'eatery') === section);
   if (ex) { if (!isFree) ex.qty++; }
   else { plate.items.push({ name, price, qty: 1, free: isFree, needsPack, section }); }
@@ -133,7 +158,7 @@ function changePlateItemQty(pIdx, iIdx, d) {
  * start adding items to the new plate.
  */
 function addNewPlate() {
-  state.plates.push({ id: state.nextPlateId++, items: [] });
+  state.plates.push({ id: state.nextPlateId++, items: [], orderType: 'eat-in' });
   state.activePlateIndex = state.plates.length - 1;
   renderAll();
   closeCart();
@@ -178,20 +203,15 @@ function editPlate(idx) {
   closeCart();
 }
 
-/* ── Order type ─────────────────────────────────────────────────────────── */
+/* ── Per-plate order type ────────────────────────────────────────────────── */
 
 /**
- * Switches the order type between 'eat-in' and 'take-out', updates
- * the toggle button states, re-renders the cart panel, and refreshes
- * the displayed total to reflect any packaging charge.
- * @param {'eat-in'|'take-out'} type - The selected order type.
+ * Sets the order type for a specific plate and re-renders the UI.
+ * @param {number} pIdx - Index of the plate in state.plates.
+ * @param {'eat-in'|'take-out'} type - The selected order type for this plate.
  */
-function setOrderType(type) {
-  state.orderType = type;
-  document.getElementById('otEatIn').classList.toggle('active', type === 'eat-in');
-  document.getElementById('otTakeOut').classList.toggle('active', type === 'take-out');
-  renderCartPanel();
-  const t = '\u20a6' + grandTotal().toLocaleString();
-  document.getElementById('cpTotal').textContent = t;
-  document.getElementById('cartTotalBar').textContent = t;
+function setPlateOrderType(pIdx, type) {
+  if (!state.plates[pIdx]) return;
+  state.plates[pIdx].orderType = type;
+  renderAll();
 }

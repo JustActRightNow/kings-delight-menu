@@ -107,7 +107,7 @@ async function saveOrderToSupabase(customerName, note) {
     const payload = {
       id: orderId,
       customer: customerName || 'Guest',
-      order_type: state.orderType,
+      order_type: state.plates.filter(p => p.items.length > 0).some(p => (p.orderType || 'eat-in') === 'take-out') ? 'take-out' : 'eat-in',
       items: allItems,
       total: grandTotal(),
       note: note || null,
@@ -196,18 +196,23 @@ async function sendToWhatsApp() {
   const hasEatery = grouped.eatery.length > 0;
   const hasLounge = grouped.lounge.length > 0;
   const hasMixed = hasEatery && hasLounge;
+
+  const nonEmptyPlates = state.plates.filter(p => p.items.length > 0);
+  const allTakeOut = nonEmptyPlates.every(p => (p.orderType || 'eat-in') === 'take-out');
+  const anyTakeOut = nonEmptyPlates.some(p => (p.orderType || 'eat-in') === 'take-out');
+  const modeLabel = allTakeOut ? 'Take Out' : (anyTakeOut ? 'Mixed (Eat In + Take Out)' : 'Eat In');
+
   let fromLabel = fmtSrc(src);
   if (tableNo) {
-    fromLabel = state.activeSection === 'lounge'
-      ? ('Lounge Table ' + tableNo)
-      : ('Table ' + tableNo);
+    fromLabel = (hasEatery && hasLounge) ? ('Table ' + tableNo)
+      : (hasLounge ? ('Lounge Table ' + tableNo) : ('Table ' + tableNo));
   }
 
   let msg = '*New Order \u2014 King\'s Delight*\n';
   msg += '*From:* ' + fromLabel + '\n';
   if (customerName) msg += '*Name:* ' + customerName + '\n';
   msg += '*Ref:* ' + refCode + '\n';
-  msg += '*Mode:* ' + (state.orderType === 'take-out' ? 'Take Out' : 'Eat In') + '\n';
+  msg += '*Mode:* ' + modeLabel + '\n';
 
   if (hasMixed) {
     msg += '\n\uD83C\uDF7D\uFE0F *Eatery*\n' + grouped.eatery.join('\n') + '\n';
@@ -217,10 +222,8 @@ async function sendToWhatsApp() {
     msg += '\n' + only.join('\n') + '\n';
   }
 
-  if (state.orderType === 'take-out') {
-    const n = packablePlateCount();
-    if (n > 0) msg += '- Takeaway pack \u00d7 ' + n + ' \u2014 \u20a6' + (PACK_PRICE * n).toLocaleString() + '\n';
-  }
+  const n = packablePlateCount();
+  if (n > 0) msg += '- Takeaway pack \u00d7 ' + n + ' \u2014 \u20a6' + (PACK_PRICE * n).toLocaleString() + '\n';
   msg += '*Total: \u20a6' + total.toLocaleString() + '*';
   if (note) msg += '\nNote: ' + note;
 
@@ -229,7 +232,7 @@ async function sendToWhatsApp() {
     time: new Date().toISOString(),
     code: refCode,
     customer: customerName || '(unnamed)',
-    type: state.orderType,
+    type: modeLabel,
     source: fmtSrc(src),
     table: tableNo || '',
     items: allItemLines.join('; '),
@@ -253,7 +256,7 @@ async function sendToWhatsApp() {
   }
 
   /* ── Clear cart and return to home after order is dispatched ── */
-  state.plates = [{ id: 1, items: [] }];
+  state.plates = [{ id: 1, items: [], orderType: 'eat-in' }];
   state.activePlateIndex = 0;
   state.nextPlateId = 2;
   renderAll();
