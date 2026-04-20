@@ -334,6 +334,14 @@ body.lounge-mode .price-dual .m { color: var(--gold); }
   flex-shrink: 0; transition: opacity 0.15s, background var(--accent-transition);
 }
 .view-order-btn:hover { opacity: 0.88; }
+.add-plate-bar-btn {
+  padding: 9px 18px; background: var(--gold); color: #111;
+  border: none; border-radius: 6px;
+  font-family: 'Jost', sans-serif; font-size: 12px; font-weight: 600;
+  letter-spacing: 0.05em; cursor: pointer;
+  flex-shrink: 0; transition: opacity 0.15s, background var(--accent-transition);
+}
+.add-plate-bar-btn:hover { opacity: 0.88; }
 
 /* CART PANEL */
 .cart-panel {

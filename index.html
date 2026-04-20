@@ -40,8 +40,8 @@
 <div style="max-width:660px;margin:0 auto;padding:0 16px 8px;display:flex;gap:8px;flex-wrap:wrap;">
 
   <div style="flex:1;min-width:130px;background:#292929;border:1px solid rgba(255,255,255,0.07);border-radius:9px;padding:10px 14px;">
-    <div style="font-family:'Jost',sans-serif;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,191,0,0.7);margin-bottom:5px;">Opening Hours</div>
-    <div style="font-family:'Jost',sans-serif;font-size:12px;color:rgba(255,245,225,0.6);line-height:1.7;">
+    <div style="font-family:'Jost',sans-serif;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,191,0,0.7);margin-bottom:5px;" id="openingHoursLabel">Opening Hours</div>
+    <div style="font-family:'Jost',sans-serif;font-size:12px;color:rgba(255,245,225,0.6);line-height:1.7;" id="openingHoursText">
       Mon – Thurs: 9am – 11pm<br>Fri – Sun: 9am – 1am
     </div>
   </div>
@@ -208,6 +208,7 @@
       <div class="plate-indicator" id="plateIndicator"></div>
     </div>
     <div class="cart-total-bar" id="cartTotalBar">₦0</div>
+    <button class="add-plate-bar-btn" onclick="addNewPlate()" aria-label="Add a new plate">Add Plate</button>
     <button class="view-order-btn" onclick="openCart()" aria-label="View your order">View Order</button>
   </div>
 </div>
@@ -220,10 +221,6 @@
   </div>
   <div class="cp-items" id="cpItems"></div>
   <div class="cp-footer">
-    <div class="order-type-toggle">
-      <button class="ot-btn active" id="otEatIn" onclick="setOrderType('eat-in')" aria-label="Eat in">🍽️ Eat In</button>
-      <button class="ot-btn" id="otTakeOut" onclick="setOrderType('take-out')" aria-label="Take out">🥡 Take Out</button>
-    </div>
     <div class="cp-total-row">
       <span class="cp-total-label">Total</span>
       <span class="cp-total-amt" id="cpTotal">₦0</span>

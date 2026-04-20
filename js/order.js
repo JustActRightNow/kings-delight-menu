@@ -107,7 +107,7 @@ async function saveOrderToSupabase(customerName, note) {
     const payload = {
       id: orderId,
       customer: customerName || 'Guest',
-      order_type: state.orderType,
+      order_type: state.plates.filter(p => p.items.length > 0).some(p => (p.orderType || 'eat-in') === 'take-out') ? 'take-out' : 'eat-in',
       items: allItems,
       total: grandTotal(),
       note: note || null,
@@ -180,47 +180,46 @@ async function sendToWhatsApp() {
   const dbSaved = dbRef !== null;
 
   const allItemLines = [];
-  const grouped = { eatery: [], lounge: [] };
-  state.plates.forEach(function(plate) {
-    plate.items.forEach(function(i) {
-      const line = i.free
-        ? '- ' + (i.qty > 1 ? i.qty + '\u00d7 ' : '') + i.name + ' \u2014 Complimentary'
-        : '- ' + (i.qty > 1 ? i.qty + '\u00d7 ' : '1\u00d7 ') + i.name + ' \u2014 \u20a6' + (i.price * i.qty).toLocaleString();
-      const sec = i.section || 'eatery';
-      if (!grouped[sec]) grouped[sec] = [];
-      grouped[sec].push(line);
-      allItemLines.push(line);
-    });
-  });
+  const nonEmptyPlates = state.plates.filter(p => p.items.length > 0);
+  const allTakeOut = nonEmptyPlates.every(p => (p.orderType || 'eat-in') === 'take-out');
+  const anyTakeOut = nonEmptyPlates.some(p => (p.orderType || 'eat-in') === 'take-out');
+  const modeLabel = allTakeOut ? 'Take Out' : (anyTakeOut ? 'Mixed (Eat In + Take Out)' : 'Eat In');
 
-  const hasEatery = grouped.eatery.length > 0;
-  const hasLounge = grouped.lounge.length > 0;
-  const hasMixed = hasEatery && hasLounge;
+  const hasEatery = nonEmptyPlates.some(p => p.items.some(i => (i.section || 'eatery') === 'eatery'));
+  const hasLounge = nonEmptyPlates.some(p => p.items.some(i => (i.section || 'eatery') === 'lounge'));
+
   let fromLabel = fmtSrc(src);
   if (tableNo) {
-    fromLabel = state.activeSection === 'lounge'
-      ? ('Lounge Table ' + tableNo)
-      : ('Table ' + tableNo);
+    fromLabel = (hasEatery && hasLounge) ? ('Table ' + tableNo)
+      : (hasLounge ? ('Lounge Table ' + tableNo) : ('Table ' + tableNo));
   }
 
   let msg = '*New Order \u2014 King\'s Delight*\n';
   msg += '*From:* ' + fromLabel + '\n';
   if (customerName) msg += '*Name:* ' + customerName + '\n';
   msg += '*Ref:* ' + refCode + '\n';
-  msg += '*Mode:* ' + (state.orderType === 'take-out' ? 'Take Out' : 'Eat In') + '\n';
 
-  if (hasMixed) {
-    msg += '\n\uD83C\uDF7D\uFE0F *Eatery*\n' + grouped.eatery.join('\n') + '\n';
-    msg += '\uD83C\uDF79 *Lounge*\n' + grouped.lounge.join('\n') + '\n';
-  } else {
-    const only = hasEatery ? grouped.eatery : grouped.lounge;
-    msg += '\n' + only.join('\n') + '\n';
-  }
-
-  if (state.orderType === 'take-out') {
-    const n = packablePlateCount();
-    if (n > 0) msg += '- Takeaway pack \u00d7 ' + n + ' \u2014 \u20a6' + (PACK_PRICE * n).toLocaleString() + '\n';
-  }
+  /* ── Per-plate breakdown ── */
+  nonEmptyPlates.forEach(function(plate, idx) {
+    const plateNum = state.plates.indexOf(plate) + 1;
+    const plateType = (plate.orderType || 'eat-in') === 'take-out' ? 'Take Out' : 'Eat In';
+    const sectionKey = plate.items[0] ? (plate.items[0].section || 'eatery') : 'eatery';
+    const sectionLabel = sectionKey === 'lounge' ? '\uD83C\uDF79 Lounge' : '\uD83C\uDF7D\uFE0F Eatery';
+    const plateHeader = nonEmptyPlates.length > 1
+      ? '*Plate ' + plateNum + '* \u2014 ' + sectionLabel + ' \u00b7 ' + plateType
+      : sectionLabel + ' \u00b7 ' + plateType;
+    msg += '\n' + plateHeader + '\n';
+    plate.items.forEach(function(i) {
+      const line = i.free
+        ? '- ' + (i.qty > 1 ? i.qty + '\u00d7 ' : '') + i.name + ' \u2014 Complimentary'
+        : '- ' + (i.qty > 1 ? i.qty + '\u00d7 ' : '1\u00d7 ') + i.name + ' \u2014 \u20a6' + (i.price * i.qty).toLocaleString();
+      allItemLines.push(line);
+      msg += line + '\n';
+    });
+    if ((plate.orderType || 'eat-in') === 'take-out' && plate.items.some(function(i) { return i.needsPack; })) {
+      msg += '- \uD83D\uDCE6 Takeaway pack \u2014 \u20a6' + PACK_PRICE.toLocaleString() + '\n';
+    }
+  });
   msg += '*Total: \u20a6' + total.toLocaleString() + '*';
   if (note) msg += '\nNote: ' + note;
 
@@ -229,7 +228,7 @@ async function sendToWhatsApp() {
     time: new Date().toISOString(),
     code: refCode,
     customer: customerName || '(unnamed)',
-    type: state.orderType,
+    type: modeLabel,
     source: fmtSrc(src),
     table: tableNo || '',
     items: allItemLines.join('; '),
@@ -253,7 +252,7 @@ async function sendToWhatsApp() {
   }
 
   /* ── Clear cart and return to home after order is dispatched ── */
-  state.plates = [{ id: 1, items: [] }];
+  state.plates = [{ id: 1, items: [], orderType: 'eat-in' }];
   state.activePlateIndex = 0;
   state.nextPlateId = 2;
   renderAll();

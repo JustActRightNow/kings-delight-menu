@@ -14,6 +14,7 @@ const catNav = document.getElementById('catNav');
 const catNavInner = document.getElementById('catNavInner');
 const searchWrap = document.getElementById('searchWrap');
 const sectionBtns = document.querySelectorAll('.section-switch-btn');
+const openingHoursText = document.getElementById('openingHoursText');
 
 const EATERY_NAV = [
   { target: 'offers', label: '🎉 Offers', hiddenByDefault: true },
@@ -47,6 +48,15 @@ function activeGroupEl() {
   return document.getElementById(state.activeSection === 'lounge' ? 'groupLounge' : 'groupEatery');
 }
 
+function updateOpeningHours(section) {
+  if (!openingHoursText) return;
+  if (section === 'lounge') {
+    openingHoursText.innerHTML = 'Mon – Thurs: 2pm – 2am<br>Fri – Sun: 12noon – till day break';
+    return;
+  }
+  openingHoursText.innerHTML = 'Mon – Thurs: 9am – 11pm<br>Fri – Sun: 9am – 1am';
+}
+
 function buildCategoryNav() {
   const cfg = navConfigFor(state.activeSection);
   function safe(val) {
@@ -78,6 +88,7 @@ function switchSection(section) {
   document.getElementById('groupEatery').classList.toggle('active', section === 'eatery');
   document.getElementById('groupLounge').classList.toggle('active', section === 'lounge');
   buildCategoryNav();
+  updateOpeningHours(section);
   document.getElementById('searchInput').value = '';
   doSearch('');
   window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -161,6 +172,7 @@ document.querySelectorAll('.menu-section').forEach(function(s) {
 
 /* ── Initial render ─────────────────────────────────────────────────────── */
 buildCategoryNav();
+updateOpeningHours(state.activeSection);
 renderAll();
 
 /* ── Persist customer name ──────────────────────────────────────────────── */

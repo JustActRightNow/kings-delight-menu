@@ -115,11 +115,13 @@ function renderCartPanel() {
   /* ── Plate management cards ── */
   state.plates.forEach(function(plate, pIdx) {
     if (!plate.items.length) return;
-    const isActive = pIdx === state.activePlateIndex;
-    const plateSubtotal = plate.items.reduce(function(subtotal, item) { return subtotal + (item.free ? 0 : item.price * item.qty); }, 0);
-    html += '<div class="plate-card' + (isActive ? ' active-plate' : '') + '">';
+    const plateType = plate.orderType || 'eat-in';
+    const plateSubtotal = plate.items.reduce(function(s, item) { return s + (item.free ? 0 : item.price * item.qty); }, 0);
+    const hasPackable = plate.items.some(function(i) { return i.needsPack; });
+
+    html += '<div class="plate-card">';
     html += '<div class="plate-header">';
-    html += '<span class="plate-label">Plate ' + (pIdx + 1) + (isActive ? ' \u00b7 Active' : '') + '</span>';
+    html += '<span class="plate-label">Plate ' + (pIdx + 1) + '</span>';
     html += '<button class="plate-action-btn" onclick="editPlate(' + pIdx + ');" title="Edit plate" aria-label="Edit plate"><svg class="plate-action-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17.25V21h3.75L17.8 9.95l-3.75-3.75L3 17.25zm17.71-10.04a1.003 1.003 0 000-1.42L18.21 3.29a1.003 1.003 0 00-1.42 0l-1.83 1.83 3.75 3.75 2-1.66z"/></svg></button>';
     html += '<button class="plate-action-btn" onclick="duplicatePlate(' + pIdx + ');" title="Duplicate plate">\u29c9</button>';
     html += '<button class="plate-action-btn del" onclick="deletePlate(' + pIdx + ');" title="Remove plate">\u2715</button>';
@@ -130,49 +132,19 @@ function renderCartPanel() {
       const amt = item.free ? 'Free' : '\u20a6' + (item.price * item.qty).toLocaleString();
       html += '<div class="checkout-summary-item"><span>' + escHtml(label) + '</span><span class="item-amt">' + escHtml(amt) + '</span></div>';
     });
+    html += '<div class="order-type-toggle" style="margin:8px 0 6px">';
+    html += '<button class="ot-btn' + (plateType === 'eat-in' ? ' active' : '') + '" onclick="setPlateOrderType(' + pIdx + ',\'eat-in\')">\uD83C\uDF7D\uFE0F Eat In</button>';
+    html += '<button class="ot-btn' + (plateType === 'take-out' ? ' active' : '') + '" onclick="setPlateOrderType(' + pIdx + ',\'take-out\')">🥡 Take Out</button>';
+    html += '</div>';
+    if (plateType === 'take-out' && hasPackable) {
+      html += '<div class="pack-row"><span>\uD83D\uDCE6 Takeaway pack</span><span>\u20a6' + PACK_PRICE.toLocaleString() + '</span></div>';
+    }
     html += '<div class="plate-sub-total"><span>Plate subtotal</span><span>\u20a6' + plateSubtotal.toLocaleString() + '</span></div>';
     html += '</div>';
     html += '</div>';
   });
   html += '<button class="add-plate-btn" onclick="addNewPlate();">\u2795 Add Another Plate</button>';
 
-  var grouped = { eatery: [], lounge: [] };
-  state.plates.forEach(function(plate, pIdx) {
-    plate.items.forEach(function(item, iIdx) {
-      var section = item.section || 'eatery';
-      if (!grouped[section]) grouped[section] = [];
-      grouped[section].push({ item: item, pIdx: pIdx, iIdx: iIdx });
-    });
-  });
-  [['eatery', '🍽️ Eatery'], ['lounge', '🍹 Lounge']].forEach(function(def) {
-    var key = def[0];
-    var label = def[1];
-    if (!grouped[key] || grouped[key].length === 0) return;
-    html += '<div class="cart-section-group"><div class="cart-section-title">' + label + '</div>';
-    grouped[key].forEach(function(entry) {
-      var item = entry.item;
-      if (item.free) {
-        html += '<div class="cp-item"><div class="cp-item-name">' + item.name + '</div>';
-        html += '<div class="cp-item-price" style="color:rgba(120,210,120,0.75);font-style:italic">Free</div>';
-        html += '<button class="qty-btn" style="margin-left:8px" onclick="changePlateItemQty(' + entry.pIdx + ',' + entry.iIdx + ',-1)">\u2715</button></div>';
-      } else {
-        html += '<div class="cp-item"><div class="cp-item-name">' + item.name + '</div>';
-        html += '<div class="qty-ctrl">';
-        html += '<button class="qty-btn" onclick="changePlateItemQty(' + entry.pIdx + ',' + entry.iIdx + ',-1)">\u2212</button>';
-        html += '<span class="qty-num">' + item.qty + '</span>';
-        html += '<button class="qty-btn" onclick="changePlateItemQty(' + entry.pIdx + ',' + entry.iIdx + ',1)">+</button></div>';
-        html += '<div class="cp-item-price">\u20a6' + (item.price * item.qty).toLocaleString() + '</div></div>';
-      }
-    });
-    html += '</div>';
-  });
-
-  if (state.orderType === 'take-out') {
-    const n = packablePlateCount();
-    if (n > 0) {
-      html += '<div class="pack-row"><span>Takeaway pack \u00d7 ' + n + ' plate' + (n > 1 ? 's' : '') + '</span><span>\u20a6' + (PACK_PRICE * n).toLocaleString() + '</span></div>';
-    }
-  }
   list.innerHTML = html;
   document.getElementById('cpTotal').textContent = '\u20a6' + grandTotal().toLocaleString();
 }
@@ -266,25 +238,29 @@ function closeCheckout() { document.getElementById('checkoutPanel').classList.re
  */
 function renderCheckout() {
   let html = '';
-
-  /* ── Order Summary ── */
   html += '<p class="checkout-section-title">Order Summary</p>';
-  state.plates.forEach(function(plate, pIdx) {
-    if (!plate.items.length) return;
-    const hasMulti = state.plates.filter(p => p.items.length).length > 1;
-    if (hasMulti) html += '<p class="checkout-plate-label">Plate ' + (pIdx + 1) + '</p>';
+
+  const nonEmptyPlates = state.plates.filter(p => p.items.length > 0);
+  nonEmptyPlates.forEach(function(plate, idx) {
+    const plateType = plate.orderType || 'eat-in';
+    const sectionKey = plate.items[0] ? (plate.items[0].section || 'eatery') : 'eatery';
+    const sectionLabel = sectionKey === 'lounge' ? '\uD83C\uDF79 Lounge' : '\uD83C\uDF7D\uFE0F Eatery';
+    const typeLabel = plateType === 'take-out' ? '\uD83E\uDD61 Take Out' : 'Eat In';
+    const pNum = state.plates.indexOf(plate) + 1;
+    const plateHeader = nonEmptyPlates.length > 1
+      ? 'Plate ' + pNum + ' \u00b7 ' + sectionLabel + ' \u00b7 ' + typeLabel
+      : sectionLabel + ' \u00b7 ' + typeLabel;
+    html += '<p class="checkout-plate-label">' + plateHeader + '</p>';
     plate.items.forEach(function(item) {
       const label = (item.qty > 1 ? item.qty + '\u00d7 ' : '') + item.name;
       const amt = item.free ? 'Free' : '\u20a6' + (item.price * item.qty).toLocaleString();
       html += '<div class="checkout-summary-item"><span>' + escHtml(label) + '</span><span class="item-amt">' + escHtml(amt) + '</span></div>';
     });
-  });
-  if (state.orderType === 'take-out') {
-    const n = packablePlateCount();
-    if (n > 0) {
-      html += '<div class="checkout-summary-item" style="margin-top:6px"><span>📦 Takeaway pack \u00d7 ' + n + ' plate' + (n > 1 ? 's' : '') + '</span><span class="item-amt">\u20a6' + (PACK_PRICE * n).toLocaleString() + '</span></div>';
+    if (plateType === 'take-out' && plate.items.some(function(i) { return i.needsPack; })) {
+      html += '<div class="checkout-summary-item" style="margin-top:4px"><span>\uD83D\uDCE6 Takeaway pack</span><span class="item-amt">\u20a6' + PACK_PRICE.toLocaleString() + '</span></div>';
     }
-  }
+  });
+
   html += '<div class="co-total-row"><span class="co-total-label">Total</span><span class="co-total-amt">\u20a6' + grandTotal().toLocaleString() + '</span></div>';
   document.getElementById('checkoutBody').innerHTML = html;
 }
