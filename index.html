@@ -201,14 +201,14 @@
 <!-- CART BAR -->
 <div class="cart-bar" id="cartBar">
   <div class="cart-bar-inner">
-    <div class="cart-badge" id="cartCount">0</div>
-    <div class="cart-preview">
-      <div class="cart-preview-text" id="cartPreview">Your order</div>
-      <div class="plate-indicator" id="plateIndicator"></div>
+    <div class="plate-switcher" id="plateSwitcher"></div>
+    <div class="cart-bar-actions">
+      <div class="cart-badge" id="cartCount">0</div>
+      <div class="cart-preview">
+        <div class="cart-preview-text" id="cartPreview">Your order</div>
+      </div>
+      <button class="view-order-btn" onclick="openCart()" aria-label="View your order">View Order</button>
     </div>
-    <div class="cart-total-bar" id="cartTotalBar">₦0</div>
-    <button class="add-plate-bar-btn" onclick="addNewPlate()" aria-label="Add a new plate">Add Plate</button>
-    <button class="view-order-btn" onclick="openCart()" aria-label="View your order">View Order</button>
   </div>
 </div>
 

@@ -304,8 +304,33 @@ body.lounge-mode .price-dual .m { color: var(--gold); }
 .cart-bar.visible { transform: translateY(0); }
 .cart-bar-inner {
   max-width: 660px; margin: 0 auto;
-  display: flex; align-items: center; gap: 12px;
-  padding: 12px 0;
+  display: flex; flex-direction: column;
+  padding: 10px 0;
+  gap: 8px;
+}
+.plate-switcher {
+  display: flex; gap: 6px;
+  overflow-x: auto; -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.plate-switcher::-webkit-scrollbar { display: none; }
+.plate-pill {
+  flex-shrink: 0;
+  padding: 5px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--gold-border);
+  background: transparent;
+  color: var(--cream-60);
+  font-family: 'Jost', sans-serif; font-size: 11px; font-weight: 500;
+  letter-spacing: 0.05em; cursor: pointer;
+  transition: background 0.18s, color 0.18s, border-color 0.18s;
+}
+.plate-pill.active {
+  background: var(--gold); color: #111; border-color: transparent;
+}
+.plate-pill:not(.active):hover { border-color: var(--gold); color: var(--gold); }
+.cart-bar-actions {
+  display: flex; align-items: center; gap: 10px;
 }
 .cart-badge {
   width: 30px; height: 30px; border-radius: 50%;
@@ -320,12 +345,6 @@ body.lounge-mode .price-dual .m { color: var(--gold); }
   font-size: 12px; color: var(--cream-60);
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
-.cart-total-bar {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 16px; font-weight: 600; color: var(--gold);
-  flex-shrink: 0;
-  transition: color var(--accent-transition);
-}
 .view-order-btn {
   padding: 9px 18px; background: var(--gold); color: #111;
   border: none; border-radius: 6px;
@@ -334,14 +353,6 @@ body.lounge-mode .price-dual .m { color: var(--gold); }
   flex-shrink: 0; transition: opacity 0.15s, background var(--accent-transition);
 }
 .view-order-btn:hover { opacity: 0.88; }
-.add-plate-bar-btn {
-  padding: 9px 18px; background: var(--gold); color: #111;
-  border: none; border-radius: 6px;
-  font-family: 'Jost', sans-serif; font-size: 12px; font-weight: 600;
-  letter-spacing: 0.05em; cursor: pointer;
-  flex-shrink: 0; transition: opacity 0.15s, background var(--accent-transition);
-}
-.add-plate-bar-btn:hover { opacity: 0.88; }
 
 /* CART PANEL */
 .cart-panel {
@@ -602,12 +613,6 @@ body.lounge-mode .footer-note { color: var(--gold); }
 .pack-row {
   display: flex; justify-content: space-between; font-size: 12px;
   color: var(--cream-35); padding: 8px 0; border-top: 1px solid var(--border); margin-bottom: 2px;
-}
-
-/* ACTIVE PLATE INDICATOR */
-.plate-indicator {
-  font-size: 10px; color: var(--gold); letter-spacing: 0.08em; opacity: 0.85;
-  transition: color var(--accent-transition);
 }
 
 /* CHECKOUT PANEL */
