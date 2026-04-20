@@ -42,15 +42,7 @@ function sanitizeInput(s) {
  * and inline quantity controls on the menu page.
  */
 function renderAll() {
-  const count = totalItemCount();
-  document.getElementById('cartCount').textContent = count;
   document.getElementById('cartBar').classList.toggle('visible', hasItems());
-
-  const activePlate = getActivePlate();
-  const preview = activePlate.items.length
-    ? activePlate.items.map(i => (i.qty > 1 ? i.qty + '\u00d7 ' : '') + i.name).join(', ')
-    : 'Your order';
-  document.getElementById('cartPreview').textContent = state.plates.length > 1 ? state.plates.length + ' plates' : preview;
   renderPlateSwitcher();
   renderCartPanel();
   updateMenuItemQtys();
