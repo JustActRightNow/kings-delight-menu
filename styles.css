@@ -149,8 +149,8 @@ body.lounge-mode {
 }
 .hero-sub {
   margin-top: 8px;
-  font-family: 'Cormorant Garamond', serif;
-  font-style: italic;
+  font-family: 'Jost', sans-serif;
+  font-style: normal;
   font-size: 15px;
   color: var(--cream-35);
   letter-spacing: 0.1em;
@@ -684,7 +684,7 @@ body.lounge-mode .footer-note { color: var(--gold); }
 }
 
 /* PROMO / OFFERS SECTION */
-.promo-section .section-title { color: var(--gold); }
+.promo-section .section-title { color: #000; }
 .promo-section .section-icon {
   background: rgba(255,191,0,0.15);
   border-color: rgba(255,191,0,0.35);
